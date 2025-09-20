@@ -2,6 +2,10 @@
 
 This document dissects the Python Docling pipeline with a special focus on the image-to-Markdown conversion flow and translates it into an actionable .NET backlog.
 
+## Documentazione supplementare
+
+- [Stato attuale del porting](docs/progress.md)
+
 ## 1. Step-by-step: from input image to Markdown export
 
 The table below enumerates the key macro steps Docling executes when converting page images into Markdown artefacts. For each step we capture the Python implementation touchpoints and the required .NET work items.
