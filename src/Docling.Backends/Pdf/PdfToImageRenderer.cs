@@ -50,10 +50,9 @@ public sealed class PdfToImageRenderer : IPdfPageRenderer
         var zeroIndexedPages = pages?.ToArray() ?? Enumerable.Range(0, Conversion.GetPageCount(buffer, settings.Password)).ToArray();
 
         var orderedPages = zeroIndexedPages.OrderBy(static page => page).ToArray();
-        var oneIndexedPages = orderedPages.Select(static page => page + 1);
 
         var pageIndex = 0;
-        await foreach (var bitmap in Conversion.ToImagesAsync(buffer, oneIndexedPages, settings.Password, renderOptions, cancellationToken).ConfigureAwait(false))
+        await foreach (var bitmap in Conversion.ToImagesAsync(buffer, orderedPages, settings.Password, renderOptions, cancellationToken).ConfigureAwait(false))
         {
             yield return new PageImage(new PageReference(orderedPages[pageIndex++], settings.Dpi), bitmap);
         }
