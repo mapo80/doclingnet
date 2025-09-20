@@ -95,51 +95,51 @@ The diagram tracks each pipeline node to its Python counterpart so that the .NET
 
 ## 3. Implementation backlog (detailed with Python parity references)
 
-- [x] Capture Python pipeline stages and image-to-Markdown flow mapping (`standard_pdf_pipeline.py`, `markdown_serializer.py`).
-- [ ] **Solution scaffolding**
-  - [ ] Create `.sln` and core projects (`Docling.Core`, `Docling.Backends`, `Docling.Pipelines`, `Docling.Export`, `Docling.Models`).
-  - [ ] Mirror configuration surface from `standard_pdf_options.py` into `.NET` options classes.
-- [ ] **Shared primitives**
-  - [ ] Implement geometry types (`BoundingBox`, `Polygon`, `PageSize`) matching `docling/types/geometry.py` semantics.【F:docling_pkg/docling/types/geometry.py†L18-L210】
-  - [ ] Port provenance and document models baseline (`DoclingDocument`, `DocItem`) aligned with `docling_core/types/doc/document.py` constructors.【F:docling_core_pkg/docling_core/types/doc/document.py†L400-L520】
-- [ ] **Backends & ingestion**
-  - [ ] Implement `PdfiumBackend` parity (`docling/backends/pdfium_backend.py`) for rasterising PDFs.
-  - [ ] Implement `ImageBackend` parity (`docling/backends/image_backend.py`) with metadata extraction.
-  - [ ] Build `PageImageStore` equivalent for caching pages during pipeline runs (`standard_pdf_pipeline.py::_ingest_stage`).
-- [ ] **Preprocessing stage**
-  - [ ] Port DPI/colour/deskew controls from `_preprocess_stage` and `image_utils.py`.
-  - [ ] Implement deterministic preprocessing tests using fixture pages (Python `test_preprocess.py`).
-- [ ] **Layout analysis stage**
-  - [ ] Define `ILayoutDetectionService` interface matching `LayoutService.run` inputs/outputs.【F:docling_pkg/docling/models/layout_service.py†L40-L210】
-  - [ ] Implement adapter invoking Python service (HTTP/gRPC) and translate polygons.
-  - [ ] Build diagnostic overlay generator reproducing `_emit_layout_debug_artifacts` outputs.
-- [ ] **OCR integration**
-  - [ ] Model `OcrRequest`/`OcrLine` types per `ocr_service.py`.
-  - [ ] Implement text normalization utilities (ligatures, whitespace) per `ocr_postprocess.py`.
-  - [ ] Enable per-block and per-cell OCR invocation orchestrated by pipeline.
-- [ ] **Table understanding**
-  - [ ] Wrap TableFormer Python API (`tableformer_service.py`) with gRPC/REST client.
-  - [ ] Implement `TableBuilder` in `.NET` mirroring `docling/builders/table_builder.py` spanning logic and cell merges.
-  - [ ] Support `TableStructureDebugArtifact` parity for troubleshooting.
-- [ ] **Page & document assembly**
-  - [ ] Port `PageBuilder` logic for assembling paragraphs, figures, captions (`docling/builders/page_builder.py`).
-  - [ ] Integrate per-item provenance (`DoclingDocumentBuilder`) and ensure ordering rules match Python.
-- [ ] **Image export pipeline**
-  - [ ] Implement cropper mirroring `image_exporter.py` padding, rounding, and caching.
-  - [ ] Support image dedupe and checksum logic referencing `image_utils.py::hash_image_bytes`.
-  - [ ] Provide debug overlays / JSON manifests for figure/table crops like Python's `ImageExporter.DebugExport`.
-- [ ] **Markdown serializer**
-  - [ ] Port `MarkdownDocSerializer` handling for text, tables, figures, and image modes (`markdown_serializer.py`).
-  - [ ] Implement caption numbering logic based on `Document.save_as_markdown` orchestrator.
-  - [ ] Provide extension hooks for alt-text enrichment parity with Python `EnrichmentService` (future).
-- [ ] **Tooling & CLI**
-  - [ ] Build CLI runner equivalent to `docling_cli/__main__.py` focusing on image-to-Markdown scenario.
-  - [ ] Provide configuration/telemetry output analogous to Python CLI logs.
-- [ ] **Regression & automation**
-  - [ ] Establish shared fixtures (same PDFs/images) processed by Python pipeline to generate golden Markdown + assets.
-  - [ ] Implement `.NET` integration tests comparing Markdown and asset metadata to golden outputs (tolerances for floating point/ordering).
-  - [ ] Configure CI workflow executing both Python and `.NET` pipelines and diffing outputs per commit.
-- [ ] Package redistribution strategy (NuGet package) and documentation alignment with README.
+- [x] [DLN-001] Capture Python pipeline stages and image-to-Markdown flow mapping (`standard_pdf_pipeline.py`, `markdown_serializer.py`).
+- [ ] [DLN-002] **Solution scaffolding**
+  - [ ] [DLN-003] Create `.sln` and core projects (`Docling.Core`, `Docling.Backends`, `Docling.Pipelines`, `Docling.Export`, `Docling.Models`).
+  - [ ] [DLN-004] Mirror configuration surface from `standard_pdf_options.py` into `.NET` options classes.
+- [ ] [DLN-005] **Shared primitives**
+  - [ ] [DLN-006] Implement geometry types (`BoundingBox`, `Polygon`, `PageSize`) matching `docling/types/geometry.py` semantics.【F:docling_pkg/docling/types/geometry.py†L18-L210】
+  - [ ] [DLN-007] Port provenance and document models baseline (`DoclingDocument`, `DocItem`) aligned with `docling_core/types/doc/document.py` constructors.【F:docling_core_pkg/docling_core/types/doc/document.py†L400-L520】
+- [ ] [DLN-008] **Backends & ingestion**
+  - [ ] [DLN-009] Implement `PdfiumBackend` parity (`docling/backends/pdfium_backend.py`) for rasterising PDFs.
+  - [ ] [DLN-010] Implement `ImageBackend` parity (`docling/backends/image_backend.py`) with metadata extraction.
+  - [ ] [DLN-011] Build `PageImageStore` equivalent for caching pages during pipeline runs (`standard_pdf_pipeline.py::_ingest_stage`).
+- [ ] [DLN-012] **Preprocessing stage**
+  - [ ] [DLN-013] Port DPI/colour/deskew controls from `_preprocess_stage` and `image_utils.py`.
+  - [ ] [DLN-014] Implement deterministic preprocessing tests using fixture pages (Python `test_preprocess.py`).
+- [ ] [DLN-015] **Layout analysis stage**
+  - [ ] [DLN-016] Define `ILayoutDetectionService` interface matching `LayoutService.run` inputs/outputs.【F:docling_pkg/docling/models/layout_service.py†L40-L210】
+  - [ ] [DLN-017] Implement adapter invoking Python service (HTTP/gRPC) and translate polygons.
+  - [ ] [DLN-018] Build diagnostic overlay generator reproducing `_emit_layout_debug_artifacts` outputs.
+- [ ] [DLN-019] **OCR integration**
+  - [ ] [DLN-020] Model `OcrRequest`/`OcrLine` types per `ocr_service.py`.
+  - [ ] [DLN-021] Implement text normalization utilities (ligatures, whitespace) per `ocr_postprocess.py`.
+  - [ ] [DLN-022] Enable per-block and per-cell OCR invocation orchestrated by pipeline.
+- [ ] [DLN-023] **Table understanding**
+  - [ ] [DLN-024] Wrap TableFormer Python API (`tableformer_service.py`) with gRPC/REST client.
+  - [ ] [DLN-025] Implement `TableBuilder` in `.NET` mirroring `docling/builders/table_builder.py` spanning logic and cell merges.
+  - [ ] [DLN-026] Support `TableStructureDebugArtifact` parity for troubleshooting.
+- [ ] [DLN-027] **Page & document assembly**
+  - [ ] [DLN-028] Port `PageBuilder` logic for assembling paragraphs, figures, captions (`docling/builders/page_builder.py`).
+  - [ ] [DLN-029] Integrate per-item provenance (`DoclingDocumentBuilder`) and ensure ordering rules match Python.
+- [ ] [DLN-030] **Image export pipeline**
+  - [ ] [DLN-031] Implement cropper mirroring `image_exporter.py` padding, rounding, and caching.
+  - [ ] [DLN-032] Support image dedupe and checksum logic referencing `image_utils.py::hash_image_bytes`.
+  - [ ] [DLN-033] Provide debug overlays / JSON manifests for figure/table crops like Python's `ImageExporter.DebugExport`.
+- [ ] [DLN-034] **Markdown serializer**
+  - [ ] [DLN-035] Port `MarkdownDocSerializer` handling for text, tables, figures, and image modes (`markdown_serializer.py`).
+  - [ ] [DLN-036] Implement caption numbering logic based on `Document.save_as_markdown` orchestrator.
+  - [ ] [DLN-037] Provide extension hooks for alt-text enrichment parity with Python `EnrichmentService` (future).
+- [ ] [DLN-038] **Tooling & CLI**
+  - [ ] [DLN-039] Build CLI runner equivalent to `docling_cli/__main__.py` focusing on image-to-Markdown scenario.
+  - [ ] [DLN-040] Provide configuration/telemetry output analogous to Python CLI logs.
+- [ ] [DLN-041] **Regression & automation**
+  - [ ] [DLN-042] Establish shared fixtures (same PDFs/images) processed by Python pipeline to generate golden Markdown + assets.
+  - [ ] [DLN-043] Implement `.NET` integration tests comparing Markdown and asset metadata to golden outputs (tolerances for floating point/ordering).
+  - [ ] [DLN-044] Configure CI workflow executing both Python and `.NET` pipelines and diffing outputs per commit.
+- [ ] [DLN-045] Package redistribution strategy (NuGet package) and documentation alignment with README.
 
 ## 4. Cross-language validation and regression strategy
 
