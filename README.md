@@ -40,47 +40,32 @@ The table below enumerates the key macro steps Docling executes when converting 
 ### Mermaid pipeline blueprint
 
 ```mermaid
-flowchart TD
-    A[Input Document (PDF/Image)] --> B{Backend Selection}
-    B -->|PDF| B1[PdfiumBackend<br/>docling/backends/pdfium_backend.py]
-    B -->|Image| B2[ImageBackend<br/>docling/backends/image_backend.py]
-    B1 & B2 --> C[PageImage Store<br/>docling/pipeline/standard_pdf_pipeline.py::_ingest_stage]
-    C --> D[Preprocessing Stage<br/>_preprocess_stage
-        - resize_to_dpi
-        - deskew
-        - denoise]
-    D --> E[Layout Stage
-        docling/models/layout_service.py
-        emits LayoutItems]
-    E --> F1[Block Routing
-        page_builder.map_layout_to_blocks]
-    F1 --> G1[Text Blocks]
-    F1 --> G2[Table Blocks]
-    F1 --> G3[Figure Blocks]
-    G1 --> H1[OCR Stage
-        docling/models/ocr_service.py
-        -> OcrLines]
-    G2 --> H2[TableFormer Stage
-        docling/models/tableformer_service.py
-        -> Cell Graph]
-    H2 --> I1[Per-Cell OCR
-        table_builder.ocr_cells]
-    G3 --> J1[Figure Registration
-        page_builder.create_picture_item]
-    H1 --> K1[Paragraph Assembly
-        page_builder.build_paragraphs]
-    I1 --> K2[Table Assembly
-        table_builder.build_table_item]
-    J1 --> K3[Image Item Assembly]
-    C --> L[Image Exporter
-        docling/export/image_exporter.py
-        -> ImageRef]
-    K1 & K2 & K3 --> M[Document Assembly
-        standard_pdf_pipeline._assemble_document]
-    L --> M
-    M --> N[Markdown Serializer
-        docling_core/serializers/markdown_serializer.py]
-    N --> O[Markdown Output + Assets]
+graph TD;
+    A[Input Document &#40;PDF/Image&#41;] --> B{Backend Selection};
+    B -->|PDF| B1[PdfiumBackend<br/>docling/backends/pdfium_backend.py];
+    B -->|Image| B2[ImageBackend<br/>docling/backends/image_backend.py];
+    B1 --> C[PageImage Store<br/>standard_pdf_pipeline.py::_ingest_stage];
+    B2 --> C;
+    C --> D[Preprocessing Stage<br/>_preprocess_stage<br/>&bull; resize_to_dpi<br/>&bull; deskew<br/>&bull; denoise];
+    D --> E[Layout Stage<br/>layout_service.py<br/>emits LayoutItems];
+    E --> F1[Block Routing<br/>page_builder.map_layout_to_blocks];
+    F1 --> G1[Text Blocks];
+    F1 --> G2[Table Blocks];
+    F1 --> G3[Figure Blocks];
+    G1 --> H1[OCR Stage<br/>ocr_service.py<br/>&rarr; OcrLines];
+    G2 --> H2[TableFormer Stage<br/>tableformer_service.py<br/>&rarr; Cell Graph];
+    H2 --> I1[Per-Cell OCR<br/>table_builder.ocr_cells];
+    G3 --> J1[Figure Registration<br/>page_builder.create_picture_item];
+    H1 --> K1[Paragraph Assembly<br/>page_builder.build_paragraphs];
+    I1 --> K2[Table Assembly<br/>table_builder.build_table_item];
+    J1 --> K3[Image Item Assembly];
+    C --> L[Image Exporter<br/>image_exporter.py<br/>&rarr; ImageRef];
+    K1 --> M[Document Assembly<br/>standard_pdf_pipeline._assemble_document];
+    K2 --> M;
+    K3 --> M;
+    L --> M;
+    M --> N[Markdown Serializer<br/>markdown_serializer.py];
+    N --> O[Markdown Output + Assets];
 ```
 
 The diagram tracks each pipeline node to its Python counterpart so that the .NET implementation can mirror data flows, diagnostics, and side effects.
