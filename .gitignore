@@ -1,0 +1,8 @@
+bin/
+obj/
+**/bin/
+**/obj/
+**/*.user
+**/.vs/
+TestResults/
+packages/custom/
