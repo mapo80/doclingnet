@@ -40,7 +40,11 @@ internal sealed partial class LayoutSdkRunner : ILayoutSdkRunner
         var sdkOptions = CreateSdkOptions(_options);
         var backendFactory = CreateBackendFactory(sdkOptions);
 
-        _sdk = new LayoutSdk.LayoutSdk(sdkOptions, backendFactory, new PassthroughOverlayRenderer(), new SkiaImagePreprocessor());
+        _sdk = new LayoutSdk.LayoutSdk(
+            sdkOptions,
+            backendFactory,
+            new Docling.Models.Layout.PassthroughOverlayRenderer(),
+            new SkiaImagePreprocessor());
         _semaphore = new SemaphoreSlim(_options.MaxDegreeOfParallelism);
         RunnerLogger.Initialized(_logger, _options.Runtime.ToString(), _options.Language.ToString(), _workingDirectory);
     }
@@ -239,12 +243,4 @@ internal sealed partial class LayoutSdkRunner : ILayoutSdkRunner
         public static partial void DeletionFailed(ILogger logger, string path, Exception exception);
     }
 
-    private sealed class PassthroughOverlayRenderer : LayoutSdk.Rendering.IImageOverlayRenderer
-    {
-        public SKBitmap CreateOverlay(SKBitmap image, IReadOnlyList<LayoutSdk.BoundingBox> boxes)
-        {
-            ArgumentNullException.ThrowIfNull(image);
-            return image.Copy();
-        }
-    }
 }

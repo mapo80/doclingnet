@@ -72,40 +72,47 @@ The diagram tracks each pipeline node to its Python counterpart so that the .NET
 
 ## Custom NuGet packages
 
-Some machine-learning dependencies are distributed as private NuGet packages. To keep the Git repository lean we **never commit** those archives. Instead, every contributor should:
+Some machine-learning dependencies are distributed as private NuGet packages. To keep the Git repository lean we **never commit** those archives. Runtime projects always use the real `EasyOcrNet`, `Docling.LayoutSdk`, and `TableFormerSdk` libraries, so you must download them before restoring the solution:
 
-1. Create (once) the local package cache folder:
+1. Create the local package cache folder:
    ```bash
    mkdir -p packages/custom
    ```
 2. Download the required `.nupkg` assets into that folder.
-3. Restore the solution – `NuGet.config` already points MSBuild to `packages/custom` before falling back to `nuget.org`.
+   ```bash
+   curl -L -o packages/custom/EasyOcrNet.1.0.0.nupkg \
+     https://github.com/mapo80/easyocrnet/releases/download/v2025.09.19/EasyOcrNet.1.0.0.nupkg
+   curl -L -o packages/custom/Docling.LayoutSdk.1.0.2.nupkg \
+     https://github.com/mapo80/ds4sd-docling-layout-heron-onnx/releases/download/models-2025-09-19/Docling.LayoutSdk.1.0.2.nupkg
+   curl -L -o packages/custom/TableFormerSdk.1.0.0.nupkg \
+     https://github.com/mapo80/ds4sd-docling-tableformer-onnx/releases/download/v1.0.0/TableFormerSdk.1.0.0.nupkg
+   ```
+3. Restore the solution – `NuGet.config` already points MSBuild to `packages/custom` before falling back to `nuget.org`:
+   ```bash
+   dotnet restore
+   ```
 
-When a new custom package is needed, document the source URL and the expected filename in this section so that other developers can reproduce the setup quickly. The `.gitignore` file already excludes `packages/custom/` ensuring large binaries never slip into version control.
+When a new custom package is needed, document the source URL and the expected filename in this section so that other developers can reproduce the setup quickly. The `.gitignore` file already excludes `packages/custom/` ensuring large binaries never slip into version control. When the real packages are present MSBuild copies the `contentFiles` tree next to the binaries, so the runtime automatically discovers detector and recogniser weights without any manual extraction.
 
-### EasyOCR.NET bootstrap
+## Code coverage
 
-The EasyOCR engine relies on the `EasyOcrNet` package released from [mapo80/easyocrnet](https://github.com/mapo80/easyocrnet). Download the latest release asset and place it inside the custom cache before restoring the solution:
+`dotnet test` is configured via `Directory.Build.props` to collect coverage automatically using Coverlet. The pipeline enforces a **minimum of 90% line coverage** across the test projects, so the command fails when the threshold is not met. Coverage artefacts are emitted in Cobertura format under `tests/Docling.Tests/TestResults/`:
 
 ```bash
-curl -L -o packages/custom/EasyOcrNet.1.0.0.nupkg \
-  https://github.com/mapo80/easyocrnet/releases/download/v2025.09.19/EasyOcrNet.1.0.0.nupkg
-dotnet restore
+dotnet test
+open tests/Docling.Tests/TestResults/<GUID>/coverage.cobertura.xml
 ```
 
-The package contains the ONNX/OpenVINO models under `contentFiles/any/any/models`. At build time MSBuild copies those assets next to the binaries, so the runtime automatically discovers detector and recognizer weights without any manual extraction.
-
-### Layout Heron SDK bootstrap
-
-The layout analysis stage uses the Docling Heron ONNX models distributed through the `Docling.LayoutSdk` package published in [mapo80/ds4sd-docling-layout-heron-onnx](https://github.com/mapo80/ds4sd-docling-layout-heron-onnx). Download the latest SDK release into the shared cache alongside EasyOCR:
+To visualise the report locally you can use tools such as [ReportGenerator](https://github.com/danielpalme/ReportGenerator):
 
 ```bash
-curl -L -o packages/custom/Docling.LayoutSdk.1.0.2.nupkg \
-  https://github.com/mapo80/ds4sd-docling-layout-heron-onnx/releases/download/models-2025-09-19/Docling.LayoutSdk.1.0.2.nupkg
-dotnet restore
+dotnet tool install --global dotnet-reportgenerator-globaltool
+reportgenerator \
+  -reports:tests/Docling.Tests/TestResults/*/coverage.cobertura.xml \
+  -targetdir:coverage-report
 ```
 
-The SDK bundles multiple runtime flavours (ONNX, ORT and OpenVINO) plus the associated native dependencies. No manual extraction is required: MSBuild will copy the `contentFiles` tree next to the build output so the pipeline can initialise the inference runtime transparently.
+Open `coverage-report/index.htm` in a browser to inspect module, namespace, and file level statistics.
 
 ## 2. Target .NET architecture
 
@@ -153,10 +160,10 @@ The SDK bundles multiple runtime flavours (ONNX, ORT and OpenVINO) plus the asso
 - [x] [DLN-019] **OCR integration**
   - [x] [DLN-020] Model `OcrRequest`/`OcrLine` types per `ocr_service.py`.
   - [x] [DLN-021] Implement text normalization utilities (ligatures, whitespace) per `ocr_postprocess.py`.
-  - [ ] [DLN-022] Enable per-block and per-cell OCR invocation orchestrated by pipeline.
+  - [x] [DLN-022] Enable per-block and per-cell OCR invocation orchestrated by pipeline.
 - [ ] [DLN-023] **Table understanding**
-  - [ ] [DLN-024] Wrap TableFormer Python API (`tableformer_service.py`) with gRPC/REST client.
-  - [ ] [DLN-025] Implement `TableBuilder` in `.NET` mirroring `docling/builders/table_builder.py` spanning logic and cell merges.
+- [ ] [DLN-024] Integrate the `TableFormerSdk` NuGet package from [`ds4sd-docling-tableformer-onnx`](https://github.com/mapo80/ds4sd-docling-tableformer-onnx) and expose table structure inference via `ITableStructureService`.
+  - [x] [DLN-025] Implement `TableBuilder` in `.NET` mirroring `docling/builders/table_builder.py` spanning logic and cell merges.
   - [ ] [DLN-026] Support `TableStructureDebugArtifact` parity for troubleshooting.
 - [ ] [DLN-027] **Page & document assembly**
   - [ ] [DLN-028] Port `PageBuilder` logic for assembling paragraphs, figures, captions (`docling/builders/page_builder.py`).
