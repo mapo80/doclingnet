@@ -113,6 +113,54 @@ public sealed class TableFormerTableStructureServiceTests : IDisposable
         Assert.Equal(0, structure.ColumnCount);
     }
 
+    [Fact]
+    public async Task InferStructureAsyncEmitsDebugArtifactWhenOverlayRequested()
+    {
+        var imageBytes = CreateImageBytes(16, 16);
+        var request = new TableStructureRequest(new PageReference(3, 150), BoundingBox.FromSize(0, 0, 16, 16), imageBytes);
+
+        SKBitmap? bitmap = null;
+        try
+        {
+            bitmap = new SKBitmap(16, 16);
+            using (var canvas = new SKCanvas(bitmap))
+            {
+                canvas.Clear(SKColors.Blue);
+            }
+
+            var regions = new List<TableRegion> { new(0f, 0f, 16f, 16f, "class_1") };
+            var snapshot = new TableFormerPerformanceSnapshot(TableFormerRuntime.Onnx, TableFormerModelVariant.Accurate, 1, 1, 1, 1, 1);
+            var result = new TableStructureResult(regions, bitmap, TableFormerLanguage.English, TableFormerRuntime.Onnx, TimeSpan.Zero, snapshot);
+            using var invoker = new RecordingInvoker(result);
+
+            var options = new TableFormerStructureServiceOptions
+            {
+                GenerateOverlay = true,
+                WorkingDirectory = _workingDirectory,
+            };
+
+            using var service = new TableFormerTableStructureService(options, NullLogger<TableFormerTableStructureService>.Instance, invoker);
+            var structure = await service.InferStructureAsync(request);
+
+            Assert.NotNull(structure.DebugArtifact);
+            var artifact = structure.DebugArtifact!;
+            Assert.Equal(request.Page, artifact.Page);
+            Assert.Equal("image/png", artifact.MediaType);
+            Assert.True(artifact.ImageContent.Length > 0);
+
+            Assert.Single(invoker.Invocations);
+            Assert.True(invoker.Invocations[0].Overlay);
+            Assert.NotNull(result.OverlayImage);
+            Assert.Equal(IntPtr.Zero, result.OverlayImage!.Handle);
+
+            bitmap = null;
+        }
+        finally
+        {
+            bitmap?.Dispose();
+        }
+    }
+
     private static ReadOnlyMemory<byte> CreateImageBytes(int width, int height)
     {
         using var bitmap = new SKBitmap(width, height);
