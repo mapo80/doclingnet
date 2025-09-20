@@ -1,0 +1,16 @@
+# Stato attuale del porting Docling
+
+## Copertura di integrazione
+- Il test `ConvertPipelineProcessesDatasetImage` orchestra il `ConvertPipeline` con i servizi reali di preprocessing, layout ed EasyOCR sulla pagina campione `2305.03393v1-pg9-img.png`, verificando che il `PipelineContext` venga aggiornato con gli stati di completamento, che gli item di layout rispettino i limiti della pagina normalizzata e che i blocchi OCR si sovrappongano alle regioni di layout o coprano l'intera pagina quando richiesto.【F:tests/Docling.Tests/Integration/PipelineIntegrationTests.cs†L30-L197】
+- La stessa esecuzione integra ora anche la chiamata a TableFormer: le regioni di layout marcate come tabelle vengono rasterizzate, inviate al servizio reale `TableFormerTableStructureService` e verificate per garantire che le celle inferite rimangano entro il bounding box originale e popolino `PipelineContextKeys.TableStructures`.【F:tests/Docling.Tests/Integration/PipelineIntegrationTests.cs†L102-L187】
+- Il test `ConvertPipelineProcessesDatasetPdf` rasterizza `amt_handbook_sample.pdf` tramite `PdfBackend` e percorre l'intera pipeline reale su tutte le pagine, assicurando normalizzazione coerente, limiti geometrici per layout e OCR e la generazione delle strutture tabellari quando individuate dal layout.【F:tests/Docling.Tests/Integration/PipelineIntegrationTests.cs†L249-L468】
+
+## Funzionalità già implementate
+- Il preprocessore di default esegue normalizzazione DPI, conversione del colore (con supporto per grayscale e binarizzazione), normalizzazione del contrasto e un pass di deskew opzionale prima di restituire un nuovo `PageImage` con metadati aggiornati.【F:src/Docling.Pipelines/Preprocessing/DefaultPagePreprocessor.cs†L20-L125】
+- La fase `LayoutAnalysisStage` crea i payload PNG da `PageImageStore`, invoca il servizio di layout configurato e registra nel contesto i risultati, oltre a produrre overlay di debug quando richiesto.【F:src/Docling.Pipelines/Layout/LayoutAnalysisStage.cs†L19-L162】
+- La fase `OcrStage` integra le predizioni di layout e le strutture tabellari, applica una soglia di area per evitare regioni troppo piccole, gestisce il fallback full-page e aggrega i blocchi riconosciuti nel `PipelineContext`.【F:src/Docling.Pipelines/Ocr/OcrStage.cs†L19-L196】
+- Le opzioni di pipeline espongono contratti tipizzati per layout, OCR e preprocessing, garantendo la validazione degli invarianti e la configurabilità dell'intero flusso di conversione.【F:src/Docling.Pipelines/Options/PipelineOptions.cs†L1-L120】【F:src/Docling.Pipelines/Preprocessing/PreprocessingOptions.cs†L1-L83】【F:src/Docling.Pipelines/Options/LayoutOptions.cs†L1-L57】
+
+## Asset di test
+- Il file PNG fornito nella cartella `dataset` è incluso automaticamente negli artefatti di compilazione dei test e viene referenziato tramite un percorso relativo stabile (`Assets/2305.03393v1-pg9-img.png`).【F:tests/Docling.Tests/Docling.Tests.csproj†L16-L23】【F:tests/Docling.Tests/Integration/PipelineIntegrationTests.cs†L32-L75】
+- Il PDF `amt_handbook_sample.pdf` viene copiato negli output dei test e alimenta l'integrazione `ConvertPipelineProcessesDatasetPdf`, che ne streamma il contenuto tramite `PdfBackend` per eseguire tutte le fasi reali della pipeline.【F:tests/Docling.Tests/Docling.Tests.csproj†L22-L24】【F:tests/Docling.Tests/Integration/PipelineIntegrationTests.cs†L249-L287】

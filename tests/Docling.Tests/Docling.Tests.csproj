@@ -15,6 +15,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\\..\\dataset\\2305.03393v1-pg9-img.png">
+      <Link>Assets\2305.03393v1-pg9-img.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\\..\\dataset\\amt_handbook_sample.pdf">
+      <Link>Assets\amt_handbook_sample.pdf</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 
