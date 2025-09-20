@@ -150,9 +150,9 @@ The SDK bundles multiple runtime flavours (ONNX, ORT and OpenVINO) plus the asso
   - [x] [DLN-016] Define `ILayoutDetectionService` interface matching `LayoutService.run` inputs/outputs.【F:docling_pkg/docling/models/layout_service.py†L40-L210】
   - [x] [DLN-017] Implement adapter invoking Python service (HTTP/gRPC) and translate polygons.
   - [x] [DLN-018] Build diagnostic overlay generator reproducing `_emit_layout_debug_artifacts` outputs.
-- [ ] [DLN-019] **OCR integration**
-  - [ ] [DLN-020] Model `OcrRequest`/`OcrLine` types per `ocr_service.py`.
-  - [ ] [DLN-021] Implement text normalization utilities (ligatures, whitespace) per `ocr_postprocess.py`.
+- [x] [DLN-019] **OCR integration**
+  - [x] [DLN-020] Model `OcrRequest`/`OcrLine` types per `ocr_service.py`.
+  - [x] [DLN-021] Implement text normalization utilities (ligatures, whitespace) per `ocr_postprocess.py`.
   - [ ] [DLN-022] Enable per-block and per-cell OCR invocation orchestrated by pipeline.
 - [ ] [DLN-023] **Table understanding**
   - [ ] [DLN-024] Wrap TableFormer Python API (`tableformer_service.py`) with gRPC/REST client.
