@@ -95,6 +95,18 @@ dotnet restore
 
 The package contains the ONNX/OpenVINO models under `contentFiles/any/any/models`. At build time MSBuild copies those assets next to the binaries, so the runtime automatically discovers detector and recognizer weights without any manual extraction.
 
+### Layout Heron SDK bootstrap
+
+The layout analysis stage uses the Docling Heron ONNX models distributed through the `Docling.LayoutSdk` package published in [mapo80/ds4sd-docling-layout-heron-onnx](https://github.com/mapo80/ds4sd-docling-layout-heron-onnx). Download the latest SDK release into the shared cache alongside EasyOCR:
+
+```bash
+curl -L -o packages/custom/Docling.LayoutSdk.1.0.2.nupkg \
+  https://github.com/mapo80/ds4sd-docling-layout-heron-onnx/releases/download/models-2025-09-19/Docling.LayoutSdk.1.0.2.nupkg
+dotnet restore
+```
+
+The SDK bundles multiple runtime flavours (ONNX, ORT and OpenVINO) plus the associated native dependencies. No manual extraction is required: MSBuild will copy the `contentFiles` tree next to the build output so the pipeline can initialise the inference runtime transparently.
+
 ## 2. Target .NET architecture
 
 ### Solution layout
