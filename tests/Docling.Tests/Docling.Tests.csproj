@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <IsTestProject>true</IsTestProject>
+    <NoWarn>$(NoWarn);CA2007</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="SkiaSharp" Version="3.119.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Docling.Core\Docling.Core.csproj" />
+    <ProjectReference Include="..\..\src\Docling.Backends\Docling.Backends.csproj" />
+    <ProjectReference Include="..\..\src\Docling.Pipelines\Docling.Pipelines.csproj" />
+    <ProjectReference Include="..\..\src\Docling.Export\Docling.Export.csproj" />
+    <ProjectReference Include="..\..\src\Docling.Models\Docling.Models.csproj" />
+  </ItemGroup>
+</Project>
