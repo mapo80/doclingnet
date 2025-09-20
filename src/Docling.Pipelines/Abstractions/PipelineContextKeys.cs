@@ -42,4 +42,14 @@ public static class PipelineContextKeys
     /// Gets the key referencing optional layout debug overlays.
     /// </summary>
     public const string LayoutDebugArtifacts = "Docling.Pipelines.LayoutDebugArtifacts";
+
+    /// <summary>
+    /// Gets the key referencing OCR results produced for the current document.
+    /// </summary>
+    public const string OcrResults = "Docling.Pipelines.OcrResults";
+
+    /// <summary>
+    /// Flag indicating that OCR completed successfully.
+    /// </summary>
+    public const string OcrCompleted = "Docling.Pipelines.OcrCompleted";
 }

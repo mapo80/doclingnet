@@ -109,7 +109,7 @@ public sealed class EasyOcrService : IOcrService
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var normalizedText = NormalizeText(result.Text);
+            var normalizedText = OcrTextNormalizer.Normalize(result.Text);
             if (string.IsNullOrEmpty(normalizedText))
             {
                 continue;
@@ -160,8 +160,6 @@ public sealed class EasyOcrService : IOcrService
         var easyOptions = new EasyOcrConfigurationOptions(modelDirectory, language, backend, device);
         return new EasyOcrEngine(new EasyOcrNet.EasyOcr(easyOptions));
     }
-
-    private static string NormalizeText(string text) => text?.Trim() ?? string.Empty;
 
     private static CropContext CreateCrop(SKBitmap source, BoundingBox region)
     {
