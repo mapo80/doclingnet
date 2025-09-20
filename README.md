@@ -70,6 +70,31 @@ graph TD;
 
 The diagram tracks each pipeline node to its Python counterpart so that the .NET implementation can mirror data flows, diagnostics, and side effects.
 
+## Custom NuGet packages
+
+Some machine-learning dependencies are distributed as private NuGet packages. To keep the Git repository lean we **never commit** those archives. Instead, every contributor should:
+
+1. Create (once) the local package cache folder:
+   ```bash
+   mkdir -p packages/custom
+   ```
+2. Download the required `.nupkg` assets into that folder.
+3. Restore the solution – `NuGet.config` already points MSBuild to `packages/custom` before falling back to `nuget.org`.
+
+When a new custom package is needed, document the source URL and the expected filename in this section so that other developers can reproduce the setup quickly. The `.gitignore` file already excludes `packages/custom/` ensuring large binaries never slip into version control.
+
+### EasyOCR.NET bootstrap
+
+The EasyOCR engine relies on the `EasyOcrNet` package released from [mapo80/easyocrnet](https://github.com/mapo80/easyocrnet). Download the latest release asset and place it inside the custom cache before restoring the solution:
+
+```bash
+curl -L -o packages/custom/EasyOcrNet.1.0.0.nupkg \
+  https://github.com/mapo80/easyocrnet/releases/download/v2025.09.19/EasyOcrNet.1.0.0.nupkg
+dotnet restore
+```
+
+The package contains the ONNX/OpenVINO models under `contentFiles/any/any/models`. At build time MSBuild copies those assets next to the binaries, so the runtime automatically discovers detector and recognizer weights without any manual extraction.
+
 ## 2. Target .NET architecture
 
 ### Solution layout
@@ -96,23 +121,23 @@ The diagram tracks each pipeline node to its Python counterpart so that the .NET
 ## 3. Implementation backlog (detailed with Python parity references)
 
 - [x] [DLN-001] Capture Python pipeline stages and image-to-Markdown flow mapping (`standard_pdf_pipeline.py`, `markdown_serializer.py`).
-- [ ] [DLN-002] **Solution scaffolding**
-  - [ ] [DLN-003] Create `.sln` and core projects (`Docling.Core`, `Docling.Backends`, `Docling.Pipelines`, `Docling.Export`, `Docling.Models`).
-  - [ ] [DLN-004] Mirror configuration surface from `standard_pdf_options.py` into `.NET` options classes.
-- [ ] [DLN-005] **Shared primitives**
-  - [ ] [DLN-006] Implement geometry types (`BoundingBox`, `Polygon`, `PageSize`) matching `docling/types/geometry.py` semantics.【F:docling_pkg/docling/types/geometry.py†L18-L210】
-  - [ ] [DLN-007] Port provenance and document models baseline (`DoclingDocument`, `DocItem`) aligned with `docling_core/types/doc/document.py` constructors.【F:docling_core_pkg/docling_core/types/doc/document.py†L400-L520】
-- [ ] [DLN-008] **Backends & ingestion**
-  - [ ] [DLN-009] Implement `PdfiumBackend` parity (`docling/backends/pdfium_backend.py`) for rasterising PDFs.
-  - [ ] [DLN-010] Implement `ImageBackend` parity (`docling/backends/image_backend.py`) with metadata extraction.
-  - [ ] [DLN-011] Build `PageImageStore` equivalent for caching pages during pipeline runs (`standard_pdf_pipeline.py::_ingest_stage`).
-- [ ] [DLN-012] **Preprocessing stage**
-  - [ ] [DLN-013] Port DPI/colour/deskew controls from `_preprocess_stage` and `image_utils.py`.
-  - [ ] [DLN-014] Implement deterministic preprocessing tests using fixture pages (Python `test_preprocess.py`).
-- [ ] [DLN-015] **Layout analysis stage**
-  - [ ] [DLN-016] Define `ILayoutDetectionService` interface matching `LayoutService.run` inputs/outputs.【F:docling_pkg/docling/models/layout_service.py†L40-L210】
-  - [ ] [DLN-017] Implement adapter invoking Python service (HTTP/gRPC) and translate polygons.
-  - [ ] [DLN-018] Build diagnostic overlay generator reproducing `_emit_layout_debug_artifacts` outputs.
+- [x] [DLN-002] **Solution scaffolding**
+  - [x] [DLN-003] Create `.sln` and core projects (`Docling.Core`, `Docling.Backends`, `Docling.Pipelines`, `Docling.Export`, `Docling.Models`).
+  - [x] [DLN-004] Mirror configuration surface from `standard_pdf_options.py` into `.NET` options classes.
+- [x] [DLN-005] **Shared primitives**
+  - [x] [DLN-006] Implement geometry types (`BoundingBox`, `Polygon`, `PageSize`) matching `docling/types/geometry.py` semantics.【F:docling_pkg/docling/types/geometry.py†L18-L210】
+  - [x] [DLN-007] Port provenance and document models baseline (`DoclingDocument`, `DocItem`) aligned with `docling_core/types/doc/document.py` constructors.【F:docling_core_pkg/docling_core/types/doc/document.py†L400-L520】
+- [x] [DLN-008] **Backends & ingestion**
+  - [x] [DLN-009] Implement `PdfiumBackend` parity (`docling/backends/pdfium_backend.py`) for rasterising PDFs.
+  - [x] [DLN-010] Implement `ImageBackend` parity (`docling/backends/image_backend.py`) with metadata extraction.
+  - [x] [DLN-011] Build `PageImageStore` equivalent for caching pages during pipeline runs (`standard_pdf_pipeline.py::_ingest_stage`).
+- [x] [DLN-012] **Preprocessing stage**
+  - [x] [DLN-013] Port DPI/colour/deskew controls from `_preprocess_stage` and `image_utils.py`.
+  - [x] [DLN-014] Implement deterministic preprocessing tests using fixture pages (Python `test_preprocess.py`).
+- [x] [DLN-015] **Layout analysis stage**
+  - [x] [DLN-016] Define `ILayoutDetectionService` interface matching `LayoutService.run` inputs/outputs.【F:docling_pkg/docling/models/layout_service.py†L40-L210】
+  - [x] [DLN-017] Implement adapter invoking Python service (HTTP/gRPC) and translate polygons.
+  - [x] [DLN-018] Build diagnostic overlay generator reproducing `_emit_layout_debug_artifacts` outputs.
 - [ ] [DLN-019] **OCR integration**
   - [ ] [DLN-020] Model `OcrRequest`/`OcrLine` types per `ocr_service.py`.
   - [ ] [DLN-021] Implement text normalization utilities (ligatures, whitespace) per `ocr_postprocess.py`.
