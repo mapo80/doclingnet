@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Docling.Core.Geometry;
+using Docling.Core.Primitives;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using SkiaSharp;
@@ -40,10 +41,15 @@ public sealed class TableFormerTableStructureService : ITableStructureService, I
     private readonly string _workingDirectory;
     private readonly ITableFormerInvoker _tableFormer;
     private bool _disposed;
-    private static readonly Action<ILogger, string, Exception> LogDeleteFailed = LoggerMessage.Define<string>(
+    private static readonly Action<ILogger, string, Exception?> LogDeleteFailed = LoggerMessage.Define<string>(
         LogLevel.Warning,
         new EventId(1, nameof(TryDelete)),
         "Failed to delete temporary TableFormer image '{Path}'.");
+
+    private static readonly Action<ILogger, Exception?> LogOverlayEncodeFailed = LoggerMessage.Define(
+        LogLevel.Warning,
+        new EventId(2, nameof(TryCreateDebugArtifact)),
+        "Failed to encode TableFormer overlay image; skipping debug artifact.");
 
     public TableFormerTableStructureService(
         TableFormerStructureServiceOptions? options = null,
@@ -105,7 +111,8 @@ public sealed class TableFormerTableStructureService : ITableStructureService, I
             var cells = ConvertRegions(request.BoundingBox, bitmap.Width, bitmap.Height, result.Regions);
             var rowCount = CountAxisGroups(cells, static cell => (cell.BoundingBox.Top, cell.BoundingBox.Height));
             var columnCount = CountAxisGroups(cells, static cell => (cell.BoundingBox.Left, cell.BoundingBox.Width));
-            return new TableStructure(request.Page, cells, rowCount, columnCount);
+            var debugArtifact = _generateOverlay ? TryCreateDebugArtifact(request.Page, result) : null;
+            return new TableStructure(request.Page, cells, rowCount, columnCount, debugArtifact);
         }
         finally
         {
@@ -226,6 +233,37 @@ public sealed class TableFormerTableStructureService : ITableStructureService, I
         catch (UnauthorizedAccessException ex)
         {
             LogDeleteFailed(_logger, path, ex);
+        }
+    }
+
+    private TableStructureDebugArtifact? TryCreateDebugArtifact(PageReference page, TableStructureResult result)
+    {
+        using var overlay = result.OverlayImage;
+        if (overlay is null)
+        {
+            return null;
+        }
+
+        try
+        {
+            using var snapshot = SKImage.FromBitmap(overlay);
+            if (snapshot is null)
+            {
+                return null;
+            }
+
+            using var encoded = snapshot.Encode(SKEncodedImageFormat.Png, 90);
+            if (encoded is null || encoded.Size == 0)
+            {
+                return null;
+            }
+
+            return new TableStructureDebugArtifact(page, encoded.ToArray());
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or ObjectDisposedException)
+        {
+            LogOverlayEncodeFailed(_logger, ex);
+            return null;
         }
     }
 }

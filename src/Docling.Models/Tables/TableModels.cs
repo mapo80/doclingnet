@@ -9,7 +9,14 @@ namespace Docling.Models.Tables;
 
 public sealed record TableCell(BoundingBox BoundingBox, int RowSpan, int ColumnSpan, string? Text);
 
-public sealed record TableStructure(PageReference Page, IReadOnlyList<TableCell> Cells, int RowCount, int ColumnCount);
+public sealed record TableStructureDebugArtifact(PageReference Page, ReadOnlyMemory<byte> ImageContent, string MediaType = "image/png");
+
+public sealed record TableStructure(
+    PageReference Page,
+    IReadOnlyList<TableCell> Cells,
+    int RowCount,
+    int ColumnCount,
+    TableStructureDebugArtifact? DebugArtifact = null);
 
 public interface ITableStructureService
 {
