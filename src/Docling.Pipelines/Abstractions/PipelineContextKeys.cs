@@ -34,6 +34,11 @@ public static class PipelineContextKeys
     public const string LayoutItems = "Docling.Pipelines.LayoutItems";
 
     /// <summary>
+    /// Gets the key referencing the inferred table structures for the current document.
+    /// </summary>
+    public const string TableStructures = "Docling.Pipelines.TableStructures";
+
+    /// <summary>
     /// Flag indicating that layout analysis completed successfully.
     /// </summary>
     public const string LayoutAnalysisCompleted = "Docling.Pipelines.LayoutAnalysisCompleted";

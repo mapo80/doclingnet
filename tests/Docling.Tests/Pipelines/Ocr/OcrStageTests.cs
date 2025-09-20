@@ -9,6 +9,7 @@ using Docling.Core.Geometry;
 using Docling.Core.Primitives;
 using Docling.Models.Layout;
 using Docling.Models.Ocr;
+using Docling.Models.Tables;
 using Docling.Pipelines.Abstractions;
 using Docling.Pipelines.Ocr;
 using Docling.Pipelines.Options;
@@ -78,6 +79,93 @@ public sealed class OcrStageTests
         block.Lines.Should().ContainSingle(line => line.Text == "hello");
         context.GetRequired<bool>(PipelineContextKeys.OcrCompleted).Should().BeTrue();
         factory.Service.Disposed.Should().BeTrue();
+    }
+
+    [Fact]
+    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "PageImageStore clones and disposes supplied images.")]
+    public async Task ExecuteAsyncRecognizesTableCells()
+    {
+        using var store = new PageImageStore();
+        var pageReference = new PageReference(5, 200);
+        store.Add(CreatePageImage(pageReference, width: 120, height: 120));
+
+        var tableStructure = new TableStructure(
+            pageReference,
+            new List<TableCell>
+            {
+                new(BoundingBox.FromSize(10, 10, 40, 40), RowSpan: 1, ColumnSpan: 1, Text: null),
+                new(BoundingBox.FromSize(60, 10, 40, 40), RowSpan: 1, ColumnSpan: 1, Text: null),
+            },
+            RowCount: 1,
+            ColumnCount: 2);
+
+        var options = new PdfPipelineOptions
+        {
+            Ocr = new EasyOcrOptions
+            {
+                Languages = new[] { "en" },
+                BitmapAreaThreshold = 0.01,
+                ForceFullPageOcr = false,
+            },
+        };
+
+        var factory = new RecordingOcrServiceFactory(request =>
+        {
+            request.Metadata.Should().ContainKey("docling:source").WhoseValue.Should().Be("table_cell");
+            return new List<OcrLine> { new("cell", request.Region, 0.8) };
+        });
+
+        var stage = new OcrStage(factory, options, NullLogger<OcrStage>.Instance);
+        var context = new PipelineContext(new ServiceCollection().BuildServiceProvider());
+        context.Set(PipelineContextKeys.PageImageStore, store);
+        context.Set(PipelineContextKeys.PageSequence, new List<PageReference> { pageReference });
+        context.Set(PipelineContextKeys.TableStructures, new List<TableStructure> { tableStructure });
+
+        await stage.ExecuteAsync(context, CancellationToken.None);
+
+        factory.Service.Requests.Should().HaveCount(2);
+        factory.Service.Requests.Should().OnlyContain(request => request.Metadata.ContainsKey("docling:table_column_index"));
+
+        var result = context.GetRequired<OcrDocumentResult>(PipelineContextKeys.OcrResults);
+        result.Blocks.Should().HaveCount(2);
+        result.Blocks.Should().OnlyContain(block => block.Kind == OcrRegionKind.TableCell);
+        context.GetRequired<bool>(PipelineContextKeys.OcrCompleted).Should().BeTrue();
+    }
+
+    [Fact]
+    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "PageImageStore clones and disposes supplied images.")]
+    public async Task ExecuteAsyncSkipsSmallTableCells()
+    {
+        using var store = new PageImageStore();
+        var pageReference = new PageReference(8, 200);
+        store.Add(CreatePageImage(pageReference, width: 200, height: 200));
+
+        var tinyCell = new TableCell(BoundingBox.FromSize(0, 0, 10, 10), RowSpan: 1, ColumnSpan: 1, Text: null);
+        var tableStructure = new TableStructure(pageReference, new List<TableCell> { tinyCell }, RowCount: 1, ColumnCount: 1);
+
+        var options = new PdfPipelineOptions
+        {
+            Ocr = new EasyOcrOptions
+            {
+                Languages = new[] { "en" },
+                BitmapAreaThreshold = 0.25,
+                ForceFullPageOcr = false,
+            },
+        };
+
+        var factory = new RecordingOcrServiceFactory(_ => new List<OcrLine>());
+        var stage = new OcrStage(factory, options, NullLogger<OcrStage>.Instance);
+        var context = new PipelineContext(new ServiceCollection().BuildServiceProvider());
+        context.Set(PipelineContextKeys.PageImageStore, store);
+        context.Set(PipelineContextKeys.PageSequence, new List<PageReference> { pageReference });
+        context.Set(PipelineContextKeys.TableStructures, new List<TableStructure> { tableStructure });
+
+        await stage.ExecuteAsync(context, CancellationToken.None);
+
+        factory.Service.Requests.Should().BeEmpty();
+        var result = context.GetRequired<OcrDocumentResult>(PipelineContextKeys.OcrResults);
+        result.Blocks.Should().BeEmpty();
+        context.GetRequired<bool>(PipelineContextKeys.OcrCompleted).Should().BeTrue();
     }
 
     [Fact]

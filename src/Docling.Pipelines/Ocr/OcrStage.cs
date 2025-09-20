@@ -15,6 +15,7 @@ using Docling.Models.Layout;
 using Docling.Models.Ocr;
 using Docling.Pipelines.Abstractions;
 using Docling.Pipelines.Options;
+using Docling.Models.Tables;
 using Microsoft.Extensions.Logging;
 
 namespace Docling.Pipelines.Ocr;
@@ -66,6 +67,9 @@ public sealed partial class OcrStage : IPipelineStage
         var layoutItems = context.TryGet<IReadOnlyList<LayoutItem>>(PipelineContextKeys.LayoutItems, out var layout)
             ? layout
             : Array.Empty<LayoutItem>();
+        var tableStructures = context.TryGet<IReadOnlyList<TableStructure>>(PipelineContextKeys.TableStructures, out var structures)
+            ? structures
+            : Array.Empty<TableStructure>();
 
         using var service = _ocrServiceFactory.Create(_options.Ocr);
 
@@ -77,7 +81,7 @@ public sealed partial class OcrStage : IPipelineStage
             using var pageImage = store.Rent(page);
             var pageArea = pageImage.BoundingBox.Area;
             var pageItems = layoutItems.Where(item => item.Page.PageNumber == page.PageNumber).ToList();
-            var processedBlocks = 0;
+            var processedRegions = 0;
 
             foreach (var item in pageItems)
             {
@@ -103,7 +107,7 @@ public sealed partial class OcrStage : IPipelineStage
 
                 var block = new OcrBlockResult(page, item.BoundingBox, OcrRegionKind.LayoutBlock, metadata, lines);
                 blocks.Add(block);
-                processedBlocks++;
+                processedRegions++;
 
                 StageLogger.RegionRecognised(
                     _logger,
@@ -113,7 +117,23 @@ public sealed partial class OcrStage : IPipelineStage
                     stopwatch.ElapsedMilliseconds);
             }
 
-            if (processedBlocks == 0 && _options.Ocr.ForceFullPageOcr)
+            if (tableStructures.Count > 0)
+            {
+                var pageTables = SelectTablesForPage(tableStructures, page.PageNumber);
+                if (pageTables.Count > 0)
+                {
+                    processedRegions += await RecognizeTableCellsAsync(
+                        service,
+                        page,
+                        pageImage,
+                        pageTables,
+                        pageArea,
+                        blocks,
+                        cancellationToken).ConfigureAwait(false);
+                }
+            }
+
+            if (processedRegions == 0 && _options.Ocr.ForceFullPageOcr)
             {
                 StageLogger.FullPageFallback(_logger, page.PageNumber);
                 var metadata = CreateFullPageMetadata(page);
@@ -149,6 +169,205 @@ public sealed partial class OcrStage : IPipelineStage
 
         return lines;
     }
+
+    private async Task<int> RecognizeTableCellsAsync(
+        IOcrService service,
+        PageReference page,
+        PageImage pageImage,
+        IReadOnlyList<TableStructure> tableStructures,
+        double pageArea,
+        List<OcrBlockResult> blocks,
+        CancellationToken cancellationToken)
+    {
+        var processed = 0;
+
+        for (var tableIndex = 0; tableIndex < tableStructures.Count; tableIndex++)
+        {
+            var table = tableStructures[tableIndex];
+            foreach (var placement in EnumerateTableCells(table))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var cellRegion = placement.Cell.BoundingBox;
+                if (cellRegion.IsEmpty)
+                {
+                    continue;
+                }
+
+                var ratio = ComputeAreaRatio(cellRegion, pageArea);
+                if (ratio < _options.Ocr.BitmapAreaThreshold)
+                {
+                    StageLogger.RegionSkipped(_logger, page.PageNumber, ratio);
+                    continue;
+                }
+
+                var metadata = CreateTableCellMetadata(tableIndex, placement, ratio);
+                var request = new OcrRequest(page, pageImage.Bitmap, cellRegion, metadata);
+                var stopwatch = Stopwatch.StartNew();
+                var lines = await CollectAsync(service, request, cancellationToken).ConfigureAwait(false);
+                stopwatch.Stop();
+
+                blocks.Add(new OcrBlockResult(page, placement.Cell.BoundingBox, OcrRegionKind.TableCell, metadata, lines));
+                processed++;
+
+                StageLogger.RegionRecognised(
+                    _logger,
+                    lines.Count,
+                    page.PageNumber,
+                    $"table_cell:r{placement.RowIndex}c{placement.ColumnIndex}",
+                    stopwatch.ElapsedMilliseconds);
+            }
+        }
+
+        return processed;
+    }
+
+    private static IReadOnlyList<TableStructure> SelectTablesForPage(IReadOnlyList<TableStructure> tables, int pageNumber)
+    {
+        if (tables.Count == 0)
+        {
+            return Array.Empty<TableStructure>();
+        }
+
+        var pageTables = new List<TableStructure>();
+        for (var i = 0; i < tables.Count; i++)
+        {
+            var table = tables[i];
+            if (table.Page.PageNumber == pageNumber)
+            {
+                pageTables.Add(table);
+            }
+        }
+
+        return pageTables.Count == 0 ? Array.Empty<TableStructure>() : pageTables;
+    }
+
+    private static IEnumerable<TableCellPlacement> EnumerateTableCells(TableStructure table)
+    {
+        if (table.RowCount <= 0 || table.ColumnCount <= 0)
+        {
+            yield break;
+        }
+
+        if (table.Cells.Count == 0)
+        {
+            yield break;
+        }
+
+        var occupancy = CreateOccupancy(table.RowCount, table.ColumnCount);
+
+        foreach (var cell in table.Cells)
+        {
+            if (!TryFindNextAvailable(occupancy, out var rowIndex, out var columnIndex))
+            {
+                yield break;
+            }
+
+            var rowSpan = NormalizeSpan(cell.RowSpan, table.RowCount - rowIndex);
+            var columnSpan = NormalizeSpan(cell.ColumnSpan, table.ColumnCount - columnIndex);
+
+            MarkOccupied(occupancy, rowIndex, columnIndex, rowSpan, columnSpan);
+
+            if (rowSpan <= 0 || columnSpan <= 0)
+            {
+                continue;
+            }
+
+            yield return new TableCellPlacement(cell, rowIndex, columnIndex, rowSpan, columnSpan);
+        }
+    }
+
+    private static int NormalizeSpan(int span, int remaining)
+    {
+        if (remaining <= 0)
+        {
+            return 0;
+        }
+
+        if (span <= 0)
+        {
+            return Math.Min(1, remaining);
+        }
+
+        return Math.Min(span, remaining);
+    }
+
+    private static bool TryFindNextAvailable(bool[][] occupancy, out int rowIndex, out int columnIndex)
+    {
+        var rows = occupancy.Length;
+        var columns = rows > 0 ? occupancy[0].Length : 0;
+
+        for (var r = 0; r < rows; r++)
+        {
+            for (var c = 0; c < columns; c++)
+            {
+                if (!occupancy[r][c])
+                {
+                    rowIndex = r;
+                    columnIndex = c;
+                    return true;
+                }
+            }
+        }
+
+        rowIndex = -1;
+        columnIndex = -1;
+        return false;
+    }
+
+    private static void MarkOccupied(bool[][] occupancy, int startRow, int startColumn, int rowSpan, int columnSpan)
+    {
+        var rows = occupancy.Length;
+        var columns = rows > 0 ? occupancy[0].Length : 0;
+
+        var endRow = Math.Min(startRow + rowSpan, rows);
+        var endColumn = Math.Min(startColumn + columnSpan, columns);
+
+        for (var r = startRow; r < endRow; r++)
+        {
+            for (var c = startColumn; c < endColumn; c++)
+            {
+                occupancy[r][c] = true;
+            }
+        }
+    }
+
+    private static bool[][] CreateOccupancy(int rows, int columns)
+    {
+        if (rows <= 0 || columns <= 0)
+        {
+            return Array.Empty<bool[]>();
+        }
+
+        var occupancy = new bool[rows][];
+        for (var r = 0; r < rows; r++)
+        {
+            occupancy[r] = new bool[columns];
+        }
+
+        return occupancy;
+    }
+
+    private static ReadOnlyDictionary<string, string> CreateTableCellMetadata(
+        int tableIndex,
+        TableCellPlacement placement,
+        double ratio)
+    {
+        var dictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["docling:source"] = "table_cell",
+            ["docling:table_index"] = tableIndex.ToString(CultureInfo.InvariantCulture),
+            ["docling:table_row_index"] = placement.RowIndex.ToString(CultureInfo.InvariantCulture),
+            ["docling:table_column_index"] = placement.ColumnIndex.ToString(CultureInfo.InvariantCulture),
+            ["docling:table_row_span"] = placement.RowSpan.ToString(CultureInfo.InvariantCulture),
+            ["docling:table_column_span"] = placement.ColumnSpan.ToString(CultureInfo.InvariantCulture),
+            ["docling:area_ratio"] = ratio.ToString("F6", CultureInfo.InvariantCulture),
+        };
+
+        return new ReadOnlyDictionary<string, string>(dictionary);
+    }
+
+    private readonly record struct TableCellPlacement(TableCell Cell, int RowIndex, int ColumnIndex, int RowSpan, int ColumnSpan);
 
     private static double ComputeAreaRatio(BoundingBox region, double pageArea)
     {
