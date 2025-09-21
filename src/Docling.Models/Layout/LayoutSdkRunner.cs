@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -19,6 +20,7 @@ internal interface ILayoutSdkRunner : IDisposable
     Task<IReadOnlyList<LayoutSdk.BoundingBox>> InferAsync(ReadOnlyMemory<byte> imageContent, CancellationToken cancellationToken);
 }
 
+[ExcludeFromCodeCoverage]
 internal sealed partial class LayoutSdkRunner : ILayoutSdkRunner
 {
     private readonly LayoutSdkDetectionOptions _options;

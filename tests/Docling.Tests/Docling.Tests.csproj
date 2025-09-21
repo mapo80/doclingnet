@@ -35,5 +35,6 @@
     <ProjectReference Include="..\..\src\Docling.Pipelines\Docling.Pipelines.csproj" />
     <ProjectReference Include="..\..\src\Docling.Export\Docling.Export.csproj" />
     <ProjectReference Include="..\..\src\Docling.Models\Docling.Models.csproj" />
+    <ProjectReference Include="..\..\src\Docling.Tooling\Docling.Tooling.csproj" />
   </ItemGroup>
 </Project>

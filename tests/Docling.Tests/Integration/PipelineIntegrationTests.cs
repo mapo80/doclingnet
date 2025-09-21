@@ -18,6 +18,7 @@ using Docling.Pipelines.Layout;
 using Docling.Pipelines.Ocr;
 using Docling.Pipelines.Options;
 using Docling.Pipelines.Preprocessing;
+using Docling.Pipelines.Tables;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -121,11 +122,6 @@ public sealed class PipelineIntegrationTests
             WorkingDirectory = tableFormerWorkingDirectory,
         };
 
-        using var tableStructureService = new TableFormerTableStructureService(
-            tableFormerOptions,
-            NullLogger<TableFormerTableStructureService>.Instance);
-        using var tableStructureStage = new TableStructureInferenceStage(tableStructureService);
-
         var pdfOptions = new PdfPipelineOptions
         {
             Ocr = new EasyOcrOptions
@@ -137,6 +133,14 @@ public sealed class PipelineIntegrationTests
                 DownloadEnabled = false,
             },
         };
+
+        using var tableStructureService = new TableFormerTableStructureService(
+            tableFormerOptions,
+            NullLogger<TableFormerTableStructureService>.Instance);
+        var tableStructureStage = new TableStructureInferenceStage(
+            tableStructureService,
+            pdfOptions,
+            NullLogger<TableStructureInferenceStage>.Instance);
 
         var ocrStage = new OcrStage(ocrFactory, pdfOptions, NullLogger<OcrStage>.Instance);
 
@@ -335,11 +339,6 @@ public sealed class PipelineIntegrationTests
             WorkingDirectory = tableFormerWorkingDirectory,
         };
 
-        using var tableStructureService = new TableFormerTableStructureService(
-            tableFormerOptions,
-            NullLogger<TableFormerTableStructureService>.Instance);
-        using var tableStructureStage = new TableStructureInferenceStage(tableStructureService);
-
         var pipelineOptions = new PdfPipelineOptions
         {
             Ocr = new EasyOcrOptions
@@ -351,6 +350,14 @@ public sealed class PipelineIntegrationTests
                 DownloadEnabled = false,
             },
         };
+
+        using var tableStructureService = new TableFormerTableStructureService(
+            tableFormerOptions,
+            NullLogger<TableFormerTableStructureService>.Instance);
+        var tableStructureStage = new TableStructureInferenceStage(
+            tableStructureService,
+            pipelineOptions,
+            NullLogger<TableStructureInferenceStage>.Instance);
 
         var ocrStage = new OcrStage(ocrFactory, pipelineOptions, NullLogger<OcrStage>.Instance);
 
@@ -586,98 +593,4 @@ public sealed class PipelineIntegrationTests
         return encoded.ToArray();
     }
 
-    private sealed class TableStructureInferenceStage : IPipelineStage, IDisposable
-    {
-        private readonly TableFormerTableStructureService _service;
-
-        public TableStructureInferenceStage(TableFormerTableStructureService service)
-        {
-            _service = service ?? throw new ArgumentNullException(nameof(service));
-        }
-
-        public string Name => "table_structure";
-
-        public async Task ExecuteAsync(PipelineContext context, CancellationToken cancellationToken)
-        {
-            ArgumentNullException.ThrowIfNull(context);
-
-            var store = context.GetRequired<PageImageStore>(PipelineContextKeys.PageImageStore);
-            var layoutItems = context.TryGet<IReadOnlyList<LayoutItem>>(PipelineContextKeys.LayoutItems, out var items)
-                ? items
-                : Array.Empty<LayoutItem>();
-
-            var tables = layoutItems.Where(item => item.Kind == LayoutItemKind.Table).ToList();
-            if (tables.Count == 0)
-            {
-                context.Set(PipelineContextKeys.TableStructures, Array.Empty<TableStructure>());
-                return;
-            }
-
-            var structures = new List<TableStructure>(tables.Count);
-            foreach (var table in tables)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                using var pageImage = store.Rent(table.Page);
-                var rasterized = RasterizeTable(pageImage, table.BoundingBox);
-                if (rasterized.IsEmpty)
-                {
-                    continue;
-                }
-
-                var request = new TableStructureRequest(table.Page, table.BoundingBox, rasterized);
-                var structure = await _service.InferStructureAsync(request, cancellationToken).ConfigureAwait(false);
-                structures.Add(structure);
-            }
-
-            IReadOnlyList<TableStructure> finalStructures = structures.Count == 0
-                ? Array.Empty<TableStructure>()
-                : structures;
-            context.Set(PipelineContextKeys.TableStructures, finalStructures);
-        }
-
-        public void Dispose()
-        {
-            _service.Dispose();
-        }
-
-        private static ReadOnlyMemory<byte> RasterizeTable(PageImage pageImage, BoundingBox bounds)
-        {
-            var left = Math.Max(0f, (float)bounds.Left);
-            var top = Math.Max(0f, (float)bounds.Top);
-            var right = Math.Min(pageImage.Width, (float)bounds.Right);
-            var bottom = Math.Min(pageImage.Height, (float)bounds.Bottom);
-
-            if (right <= left || bottom <= top)
-            {
-                return ReadOnlyMemory<byte>.Empty;
-            }
-
-            var width = Math.Max(1, (int)Math.Ceiling(right - left));
-            var height = Math.Max(1, (int)Math.Ceiling(bottom - top));
-
-            using var cropped = new SKBitmap(width, height, pageImage.Bitmap.ColorType, pageImage.Bitmap.AlphaType);
-            using (var canvas = new SKCanvas(cropped))
-            {
-                var source = new SKRect(left, top, right, bottom);
-                var destination = new SKRect(0, 0, width, height);
-                canvas.DrawBitmap(pageImage.Bitmap, source, destination);
-                canvas.Flush();
-            }
-
-            using var snapshot = SKImage.FromBitmap(cropped);
-            if (snapshot is null)
-            {
-                return ReadOnlyMemory<byte>.Empty;
-            }
-
-            using var encoded = snapshot.Encode(SKEncodedImageFormat.Png, 100);
-            if (encoded is null || encoded.Size == 0)
-            {
-                return ReadOnlyMemory<byte>.Empty;
-            }
-
-            return encoded.ToArray();
-        }
-    }
 }

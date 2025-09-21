@@ -169,6 +169,8 @@ public class PdfPipelineOptions : PaginatedPipelineOptions
 
     public bool GenerateParsedPages { get; init; }
 
+    public bool GenerateImageDebugArtifacts { get; init; }
+
     public override void Validate()
     {
         base.Validate();

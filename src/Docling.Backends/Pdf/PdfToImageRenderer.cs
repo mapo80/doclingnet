@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -15,6 +16,7 @@ namespace Docling.Backends.Pdf;
 /// <summary>
 /// Default <see cref="IPdfPageRenderer"/> implementation backed by the <c>PdfToImage</c> NuGet package.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public sealed class PdfToImageRenderer : IPdfPageRenderer
 {
     [SupportedOSPlatform("windows")]

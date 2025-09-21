@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -18,6 +19,7 @@ namespace Docling.Models.Ocr;
 /// <summary>
 /// EasyOCR implementation of <see cref="IOcrService"/> backed by the EasyOcrNet package.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public sealed class EasyOcrService : IOcrService
 {
     private static readonly Dictionary<string, OcrLanguage> LanguageMap = CreateLanguageMap();

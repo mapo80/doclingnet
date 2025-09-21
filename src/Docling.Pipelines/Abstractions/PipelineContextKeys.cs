@@ -57,4 +57,39 @@ public static class PipelineContextKeys
     /// Flag indicating that OCR completed successfully.
     /// </summary>
     public const string OcrCompleted = "Docling.Pipelines.OcrCompleted";
+
+    /// <summary>
+    /// Gets the key referencing the assembled <see cref="Docling.Core.Documents.DoclingDocument"/> instance.
+    /// </summary>
+    public const string Document = "Docling.Pipelines.Document";
+
+    /// <summary>
+    /// Flag indicating that document assembly completed successfully.
+    /// </summary>
+    public const string DocumentAssemblyCompleted = "Docling.Pipelines.DocumentAssemblyCompleted";
+
+    /// <summary>
+    /// Gets the key referencing the collection of image exports produced for the current document.
+    /// </summary>
+    public const string ImageExports = "Docling.Pipelines.ImageExports";
+
+    /// <summary>
+    /// Gets the key referencing debug artefacts describing exported images.
+    /// </summary>
+    public const string ImageExportDebugArtifacts = "Docling.Pipelines.ImageExportDebugArtifacts";
+
+    /// <summary>
+    /// Flag indicating that image export completed successfully.
+    /// </summary>
+    public const string ImageExportCompleted = "Docling.Pipelines.ImageExportCompleted";
+
+    /// <summary>
+    /// Gets the key referencing the markdown serialization result for the current document.
+    /// </summary>
+    public const string MarkdownSerializationResult = "Docling.Pipelines.MarkdownSerializationResult";
+
+    /// <summary>
+    /// Flag indicating that markdown serialization completed successfully.
+    /// </summary>
+    public const string MarkdownSerializationCompleted = "Docling.Pipelines.MarkdownSerializationCompleted";
 }

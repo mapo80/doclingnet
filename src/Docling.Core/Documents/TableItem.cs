@@ -12,6 +12,7 @@ namespace Docling.Core.Documents;
 public sealed class TableItem : DocItem
 {
     private readonly ReadOnlyCollection<TableCellItem> _cells;
+    private ImageRef? _previewImage;
 
     public TableItem(
         PageReference page,
@@ -44,4 +45,29 @@ public sealed class TableItem : DocItem
     public int ColumnCount { get; }
 
     public IReadOnlyList<TableCellItem> Cells => _cells;
+
+    public ImageRef? PreviewImage => _previewImage;
+
+    public void SetPreviewImage(ImageRef image)
+    {
+        ArgumentNullException.ThrowIfNull(image);
+        _previewImage = image;
+        SetMetadata("docling:preview_image", image.Metadata);
+        SetMetadata("docling:preview_media_type", image.MediaType);
+        SetMetadata("docling:preview_width", image.Width);
+        SetMetadata("docling:preview_height", image.Height);
+        SetMetadata("docling:preview_dpi", image.Dpi);
+    }
+
+    public void ClearPreviewImage()
+    {
+        _previewImage = null;
+        SetMetadata(
+            "docling:preview_image",
+            new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase));
+        SetMetadata<string?>("docling:preview_media_type", null);
+        SetMetadata("docling:preview_width", 0);
+        SetMetadata("docling:preview_height", 0);
+        SetMetadata("docling:preview_dpi", 0d);
+    }
 }
