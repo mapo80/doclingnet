@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using LayoutSdk;
 using LayoutSdk.Rendering;
 using SkiaSharp;
 
 namespace Docling.Models.Layout;
 
+[ExcludeFromCodeCoverage]
 internal sealed class PassthroughOverlayRenderer : IImageOverlayRenderer
 {
     public SKBitmap CreateOverlay(SKBitmap baseImage, IReadOnlyList<BoundingBox> boxes)

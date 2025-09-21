@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Docling.Core.Geometry;
 using Docling.Core.Primitives;
 
@@ -14,6 +15,8 @@ public abstract class DocItem
 {
     private readonly Dictionary<string, object?> _metadata;
     private readonly SortedSet<string> _tags;
+    private readonly List<DocItemProvenance> _provenance;
+    private readonly ReadOnlyCollection<DocItemProvenance> _provenanceView;
     private readonly ReadOnlyDictionary<string, object?> _metadataView;
 
     protected DocItem(
@@ -42,6 +45,9 @@ public abstract class DocItem
                 AddTag(tag);
             }
         }
+
+        _provenance = new List<DocItemProvenance>();
+        _provenanceView = _provenance.AsReadOnly();
     }
 
     public string Id { get; }
@@ -57,6 +63,8 @@ public abstract class DocItem
     public IReadOnlyDictionary<string, object?> Metadata => _metadataView;
 
     public IReadOnlyCollection<string> Tags => _tags;
+
+    public IReadOnlyList<DocItemProvenance> Provenance => _provenanceView;
 
     public bool HasTag(string tag)
     {
@@ -89,6 +97,32 @@ public abstract class DocItem
         return false;
     }
 
+    public void SetProvenance(IEnumerable<DocItemProvenance>? provenance)
+    {
+        _provenance.Clear();
+        if (provenance is not null)
+        {
+            foreach (var entry in provenance)
+            {
+                if (entry is null)
+                {
+                    continue;
+                }
+
+                _provenance.Add(entry);
+            }
+        }
+
+        UpdateProvenanceMetadata();
+    }
+
+    public void AddProvenance(DocItemProvenance provenance)
+    {
+        ArgumentNullException.ThrowIfNull(provenance);
+        _provenance.Add(provenance);
+        UpdateProvenanceMetadata();
+    }
+
     protected void SetMetadata<T>(string key, T value)
     {
         ArgumentException.ThrowIfNullOrEmpty(key);
@@ -112,6 +146,21 @@ public abstract class DocItem
     protected void UpdateBoundingBox(BoundingBox box)
     {
         BoundingBox = box;
+    }
+
+    private void UpdateProvenanceMetadata()
+    {
+        if (_provenance.Count == 0)
+        {
+            SetMetadata("docling:provenance", Array.Empty<IReadOnlyDictionary<string, object?>>());
+            return;
+        }
+
+        var serialized = _provenance
+            .Select(entry => entry.ToMetadata())
+            .ToArray();
+
+        SetMetadata("docling:provenance", serialized);
     }
 
     private static string GenerateId(DocItemKind kind, PageReference page)
