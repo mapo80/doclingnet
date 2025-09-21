@@ -241,6 +241,7 @@ internal static class Program
         services.AddSingleton<IPipelineStage>(provider => provider.GetRequiredService<ImageExportStage>());
         services.AddSingleton<IPipelineStage>(provider => provider.GetRequiredService<MarkdownSerializationStage>());
 
+        services.AddSingleton<PipelineTelemetryObserver>();
         services.AddSingleton<IPipelineObserver, LoggingPipelineObserver>();
 
         if (options.InputKind == DocumentInputKind.Pdf)
