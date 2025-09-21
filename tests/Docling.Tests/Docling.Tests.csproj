@@ -23,6 +23,10 @@
       <Link>Assets\amt_handbook_sample.pdf</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\\..\\dataset\\groundtruth\\**\\*.*">
+      <Link>GroundTruth\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
