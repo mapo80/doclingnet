@@ -120,7 +120,7 @@ Open `coverage-report/index.htm` in a browser to inspect module, namespace, and 
 
 ### Latest coverage snapshot
 
-_Command: `dotnet test --collect:"XPlat Code Coverage" --results-directory TestResults --settings coverlet.runsettings --filter 'FullyQualifiedName!~PipelineIntegrationTests'` (artifacts under `TestResults/da1499c0-ca96-4a3e-b760-b68446f2187f/coverage.cobertura.xml`)_
+_Command: `dotnet test --collect:"XPlat Code Coverage" --results-directory TestResults --settings coverlet.runsettings --filter 'FullyQualifiedName!~PipelineIntegrationTests'` (artifacts under `TestResults/aca6b069-8701-43f4-b088-016deeb4671b/coverage.cobertura.xml`)_
 
 The run settings restrict coverage analysis to the `Docling.Export` assembly, which exercises the Markdown/image export surface that now participates in the CLI pipeline.
 
@@ -197,7 +197,7 @@ The run settings restrict coverage analysis to the `Docling.Export` assembly, wh
   - [x] [DLN-037] Provide extension hooks for alt-text enrichment parity with Python `EnrichmentService` via `IMarkdownAltTextProvider` and `MarkdownAltTextContext` (`src/Docling.Export/Serialization/MarkdownDocSerializer.cs`, `src/Docling.Export/Serialization/IMarkdownAltTextProvider.cs`, `src/Docling.Export/Serialization/MarkdownAltTextContext.cs`).
 - [x] [DLN-038] **Tooling & CLI** – introdotto l'eseguibile `docling` con parsing delle opzioni, bootstrap delle dipendenze e orchestrazione della pipeline completa (`src/Docling.Tooling/Program.cs`, `src/Docling.Tooling/Commands/ConvertCommandOptions.cs`).
   - [x] [DLN-039] Build CLI runner equivalent to `docling_cli/__main__.py` focusing on image-to-Markdown scenario – il runner scrive markdown, asset, metadati e diagnostica con logging strutturato (`src/Docling.Tooling/Runtime/ConvertCommandRunner.cs`, `src/Docling.Tooling/Runtime/LoggingPipelineObserver.cs`).
-  - [ ] [DLN-040] Provide configuration/telemetry output analogous to Python CLI logs.
+  - [x] [DLN-040] Provide configuration/telemetry output analogous to Python CLI logs – il runner emette snapshot JSON con configurazione e telemetria tramite `PipelineTelemetryObserver` e logger strutturati (`src/Docling.Tooling/Runtime/ConvertCommandRunner.cs`, `src/Docling.Tooling/Runtime/PipelineTelemetryObserver.cs`).
 - [ ] [DLN-041] **Regression & automation**
   - [ ] [DLN-042] Establish shared fixtures (same PDFs/images) processed by Python pipeline to generate golden Markdown + assets.
   - [ ] [DLN-043] Implement `.NET` integration tests comparing Markdown and asset metadata to golden outputs (tolerances for floating point/ordering).

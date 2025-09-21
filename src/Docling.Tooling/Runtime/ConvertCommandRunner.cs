@@ -34,6 +34,7 @@ internal sealed partial class ConvertCommandRunner
     private readonly List<IPipelineObserver> _observers;
     private readonly ILogger<ConvertCommandRunner> _logger;
     private readonly ILoggerFactory _loggerFactory;
+    private readonly PipelineTelemetryObserver _telemetryObserver;
     private readonly IPdfBackend? _pdfBackend;
     private readonly IImageBackend? _imageBackend;
     private static readonly JsonSerializerOptions MetadataSerializerOptions = new(JsonSerializerDefaults.Web)
@@ -51,7 +52,8 @@ internal sealed partial class ConvertCommandRunner
         ILogger<ConvertCommandRunner> logger,
         ILoggerFactory loggerFactory,
         IPdfBackend? pdfBackend = null,
-        IImageBackend? imageBackend = null)
+        IImageBackend? imageBackend = null,
+        PipelineTelemetryObserver? telemetryObserver = null)
     {
         _options = options ?? throw new ArgumentNullException(nameof(options));
         _services = services ?? throw new ArgumentNullException(nameof(services));
@@ -69,6 +71,7 @@ internal sealed partial class ConvertCommandRunner
         _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
         _pdfBackend = pdfBackend;
         _imageBackend = imageBackend;
+        _telemetryObserver = telemetryObserver ?? new PipelineTelemetryObserver();
     }
 
     public async Task<int> ExecuteAsync(CancellationToken cancellationToken)
@@ -84,6 +87,10 @@ internal sealed partial class ConvertCommandRunner
             _options.ImageMode.ToString(),
             _options.GeneratePageImages,
             _options.GeneratePictureImages);
+
+        var configurationSnapshot = CreateConfigurationSnapshot();
+        var configurationJson = JsonSerializer.Serialize(configurationSnapshot, MetadataSerializerOptions);
+        RunnerLogger.ConfigurationSnapshot(_logger, Environment.NewLine, configurationJson);
 
         Directory.CreateDirectory(_options.OutputDirectory);
 
@@ -102,9 +109,14 @@ internal sealed partial class ConvertCommandRunner
             builder.AddStage(stage);
         }
 
+        _telemetryObserver.Reset();
+        builder.AddObserver(_telemetryObserver);
         foreach (var observer in _observers)
         {
-            builder.AddObserver(observer);
+            if (!ReferenceEquals(observer, _telemetryObserver))
+            {
+                builder.AddObserver(observer);
+            }
         }
 
         var pipeline = builder.Build(_loggerFactory.CreateLogger<ConvertPipeline>());
@@ -134,7 +146,23 @@ internal sealed partial class ConvertCommandRunner
         await WriteMetadataAsync(metadata, cancellationToken).ConfigureAwait(false);
 
         stopwatch.Stop();
-        RunnerLogger.ConversionCompleted(_logger, stopwatch.ElapsedMilliseconds, metadata.MarkdownPath, metadata.Assets.Count);
+        var elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+
+        context.TryGet(PipelineContextKeys.Document, out DoclingDocument? document);
+        var stageTelemetry = _telemetryObserver.CreateSnapshot();
+        _telemetryObserver.Reset();
+        var telemetrySnapshot = CreateTelemetrySnapshot(
+            metadata,
+            pages,
+            document,
+            serializationResult,
+            imageExports,
+            elapsedMilliseconds,
+            stageTelemetry);
+        var telemetryJson = JsonSerializer.Serialize(telemetrySnapshot, MetadataSerializerOptions);
+        RunnerLogger.TelemetrySummary(_logger, Environment.NewLine, telemetryJson);
+
+        RunnerLogger.ConversionCompleted(_logger, elapsedMilliseconds, metadata.MarkdownPath, metadata.Assets.Count);
 
         return 0;
     }
@@ -343,6 +371,83 @@ internal sealed partial class ConvertCommandRunner
             _ => kind.ToString(),
         };
 
+    private CliConfigurationSnapshot CreateConfigurationSnapshot()
+    {
+        return new CliConfigurationSnapshot(
+            _options.DocumentId,
+            _options.InputPath,
+            _options.InputKind.ToString(),
+            _options.SourceName,
+            _options.OutputDirectory,
+            _options.MarkdownFileName,
+            _options.AssetsDirectoryName,
+            _options.PreprocessingDpi,
+            _options.RenderDpi,
+            _options.ForceFullPageOcr,
+            _options.TableMode.ToString(),
+            _options.ImageMode.ToString(),
+            _options.OcrLanguages.ToArray(),
+            _options.GeneratePageImages,
+            _options.GeneratePictureImages,
+            _options.GenerateLayoutDebugArtifacts,
+            _options.GenerateImageDebugArtifacts,
+            _options.GenerateTableDebugArtifacts,
+            _stages.Select(stage => stage.Name).ToArray());
+    }
+
+    private static CliTelemetrySnapshot CreateTelemetrySnapshot(
+        CliOutputMetadata metadata,
+        List<PageReference> pages,
+        DoclingDocument? document,
+        MarkdownSerializationResult serializationResult,
+        IReadOnlyList<ImageExportArtifact>? imageExports,
+        long elapsedMilliseconds,
+        IReadOnlyList<PipelineStageTelemetry> stageTelemetry)
+    {
+        var paragraphCount = GetItemCount(document, DocItemKind.Paragraph);
+        var headingCount = GetItemCount(document, DocItemKind.Heading);
+        var pictureCount = GetItemCount(document, DocItemKind.Picture);
+        var tableCount = GetItemCount(document, DocItemKind.Table);
+        var captionCount = GetItemCount(document, DocItemKind.Caption);
+
+        var stageSnapshots = stageTelemetry
+            .Select(entry => new CliStageTelemetry(entry.Stage, entry.DurationMilliseconds))
+            .ToArray();
+
+        return new CliTelemetrySnapshot(
+            metadata.DocumentId,
+            metadata.SourcePath,
+            pages.Count,
+            document?.Items.Count ?? 0,
+            paragraphCount,
+            headingCount,
+            pictureCount,
+            tableCount,
+            captionCount,
+            document?.Properties.Count ?? 0,
+            serializationResult.Metadata.Count,
+            serializationResult.Markdown.Length,
+            metadata.Assets.Count,
+            metadata.ExportedImageCount,
+            metadata.LayoutDebugOverlays.Count,
+            metadata.ImageDebugArtifacts.Count,
+            metadata.TableDebugImages.Count,
+            imageExports?.Count ?? 0,
+            elapsedMilliseconds,
+            metadata.GeneratedAt,
+            stageSnapshots);
+    }
+
+    private static int GetItemCount(DoclingDocument? document, DocItemKind kind)
+    {
+        if (document is null)
+        {
+            return 0;
+        }
+
+        return document.GetItemsOfKind(kind).Count;
+    }
+
     private static partial class RunnerLogger
     {
         [LoggerMessage(EventId = 3800, Level = LogLevel.Information, Message = "Starting Docling conversion for {Input} (document id: {DocumentId}). Configuration: DPI={Dpi}, OCR languages={Languages}, TableMode={TableMode}, ImageMode={ImageMode}, PageImages={PageImages}, PictureImages={PictureImages}.")]
@@ -362,6 +467,12 @@ internal sealed partial class ConvertCommandRunner
 
         [LoggerMessage(EventId = 3802, Level = LogLevel.Information, Message = "Conversion completed in {Elapsed} ms. Markdown written to {MarkdownPath} with {AssetCount} asset(s).")]
         public static partial void ConversionCompleted(ILogger logger, long elapsed, string markdownPath, int assetCount);
+
+        [LoggerMessage(EventId = 3803, Level = LogLevel.Information, Message = "Configuration snapshot:{NewLine}{ConfigurationJson}")]
+        public static partial void ConfigurationSnapshot(ILogger logger, string newLine, string configurationJson);
+
+        [LoggerMessage(EventId = 3804, Level = LogLevel.Information, Message = "Telemetry summary:{NewLine}{TelemetryJson}")]
+        public static partial void TelemetrySummary(ILogger logger, string newLine, string telemetryJson);
     }
 
     private sealed record CliAssetMetadata(
@@ -387,4 +498,50 @@ internal sealed partial class ConvertCommandRunner
         IReadOnlyList<string> TableDebugImages,
         int ExportedImageCount,
         DateTimeOffset GeneratedAt);
+
+    private sealed record CliConfigurationSnapshot(
+        string DocumentId,
+        string SourcePath,
+        string InputKind,
+        string SourceName,
+        string OutputDirectory,
+        string MarkdownFileName,
+        string AssetsDirectoryName,
+        double PreprocessingDpi,
+        int RenderDpi,
+        bool ForceFullPageOcr,
+        string TableMode,
+        string ImageMode,
+        IReadOnlyList<string> OcrLanguages,
+        bool GeneratePageImages,
+        bool GeneratePictureImages,
+        bool GenerateLayoutDebugArtifacts,
+        bool GenerateImageDebugArtifacts,
+        bool GenerateTableDebugArtifacts,
+        IReadOnlyList<string> PipelineStages);
+
+    private sealed record CliTelemetrySnapshot(
+        string DocumentId,
+        string SourcePath,
+        int PageCount,
+        int DocumentItemCount,
+        int ParagraphCount,
+        int HeadingCount,
+        int PictureCount,
+        int TableCount,
+        int CaptionCount,
+        int DocumentPropertyCount,
+        int MetadataPropertyCount,
+        int MarkdownLength,
+        int AssetCount,
+        int ExportedImageCount,
+        int LayoutDebugCount,
+        int ImageDebugCount,
+        int TableDebugCount,
+        int ImageExportCount,
+        long ElapsedMilliseconds,
+        DateTimeOffset GeneratedAt,
+        IReadOnlyList<CliStageTelemetry> Stages);
+
+    private sealed record CliStageTelemetry(string Stage, long DurationMilliseconds);
 }
