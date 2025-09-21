@@ -118,6 +118,21 @@ reportgenerator \
 
 Open `coverage-report/index.htm` in a browser to inspect module, namespace, and file level statistics.
 
+### Latest coverage snapshot
+
+_Command: `dotnet test --collect:"XPlat Code Coverage" --results-directory TestResults --settings coverlet.runsettings --filter 'FullyQualifiedName!~PipelineIntegrationTests'` (artifacts under `TestResults/051ccc21-caab-4914-b9bb-85945a4f7ffe/coverage.cobertura.xml`)_
+
+The run settings restrict coverage analysis to the `Docling.Export` assembly, which exercises the Markdown/image export surface that now participates in the CLI pipeline.
+
+| Metric | Value |
+| --- | --- |
+| Line coverage | 90.33% |
+| Branch coverage | 72.41% |
+
+| Package | Line coverage |
+| --- | --- |
+| Docling.Export | 90.33% |
+
 ## 2. Target .NET architecture
 
 ### Solution layout
@@ -165,21 +180,21 @@ Open `coverage-report/index.htm` in a browser to inspect module, namespace, and 
   - [x] [DLN-020] Model `OcrRequest`/`OcrLine` types per `ocr_service.py`.
   - [x] [DLN-021] Implement text normalization utilities (ligatures, whitespace) per `ocr_postprocess.py`.
   - [x] [DLN-022] Enable per-block and per-cell OCR invocation orchestrated by pipeline.
-- [ ] [DLN-023] **Table understanding**
-- [ ] [DLN-024] Integrate the `TableFormerSdk` NuGet package from [`ds4sd-docling-tableformer-onnx`](https://github.com/mapo80/ds4sd-docling-tableformer-onnx) and expose table structure inference via `ITableStructureService`.
+- [x] [DLN-023] **Table understanding** – `TableFormerTableStructureService` integra TableFormerSDK per inferire celle normalizzate dalle regioni di layout (`src/Docling.Models/Tables/TableFormerTableStructureService.cs`).
+- [x] [DLN-024] Integrate the `TableFormerSdk` NuGet package from [`ds4sd-docling-tableformer-onnx`](https://github.com/mapo80/ds4sd-docling-tableformer-onnx) and expose table structure inference via `ITableStructureService` – il servizio espone direttamente l'SDK alla pipeline e alimenta `TableBuilder` (`src/Docling.Models/Tables/TableFormerTableStructureService.cs`, `src/Docling.Models/Tables/TableBuilder.cs`).
   - [x] [DLN-025] Implement `TableBuilder` in `.NET` mirroring `docling/builders/table_builder.py` spanning logic and cell merges.
-  - [ ] [DLN-026] Support `TableStructureDebugArtifact` parity for troubleshooting.
-- [ ] [DLN-027] **Page & document assembly**
-  - [ ] [DLN-028] Port `PageBuilder` logic for assembling paragraphs, figures, captions (`docling/builders/page_builder.py`).
-  - [ ] [DLN-029] Integrate per-item provenance (`DoclingDocumentBuilder`) and ensure ordering rules match Python.
-- [ ] [DLN-030] **Image export pipeline**
-  - [ ] [DLN-031] Implement cropper mirroring `image_exporter.py` padding, rounding, and caching.
-  - [ ] [DLN-032] Support image dedupe and checksum logic referencing `image_utils.py::hash_image_bytes`.
-  - [ ] [DLN-033] Provide debug overlays / JSON manifests for figure/table crops like Python's `ImageExporter.DebugExport`.
-- [ ] [DLN-034] **Markdown serializer**
-  - [ ] [DLN-035] Port `MarkdownDocSerializer` handling for text, tables, figures, and image modes (`markdown_serializer.py`).
-  - [ ] [DLN-036] Implement caption numbering logic based on `Document.save_as_markdown` orchestrator.
-  - [ ] [DLN-037] Provide extension hooks for alt-text enrichment parity with Python `EnrichmentService` (future).
+  - [x] [DLN-026] Support `TableStructureDebugArtifact` parity for troubleshooting – gli artefatti di debug sono prodotti dal servizio TableFormer e dal costruttore tabelle (`src/Docling.Models/Tables/TableFormerTableStructureService.cs`, `src/Docling.Models/Tables/TableBuilder.cs`).
+- [x] [DLN-027] **Page & document assembly** – la pipeline ricompone gli elementi della pagina aggregando layout, OCR e strutture di tabella tramite lo stage `PageAssemblyStage` (`src/Docling.Pipelines/Assembly/PageAssemblyStage.cs`).
+  - [x] [DLN-028] Port `PageBuilder` logic for assembling paragraphs, figures, captions (`docling/builders/page_builder.py`).
+  - [x] [DLN-029] Integrate per-item provenance via `DoclingDocumentBuilder` attaching layout/OCR spans to each item (`src/Docling.Core/Documents/DoclingDocumentBuilder.cs`, `src/Docling.Pipelines/Assembly/PageAssemblyStage.cs`).
+- [x] [DLN-030] **Image export pipeline** – lo stage `ImageExportStage` esporta figure, tabelle e pagine tramite `ImageCropService` creando `ImageRef` allegati agli item (`src/Docling.Pipelines/Export/ImageExportStage.cs`, `src/Docling.Core/Documents/ImageRef.cs`).
+  - [x] [DLN-031] Il cropper applica padding/arrotondamenti come `image_exporter.py` e memorizza in cache i ritagli normalizzati tramite `ImageCropService` (`src/Docling.Export/Imaging/ImageCropService.cs`).
+  - [x] [DLN-032] Support image dedupe and checksum logic referencing `image_utils.py::hash_image_bytes` – gli export riusano i PNG per checksum e allegano l'hash ai metadati (`src/Docling.Pipelines/Export/ImageExportStage.cs`, `tests/Docling.Tests/Pipelines/Export/ImageExportStageTests.cs`).
+  - [x] [DLN-033] Provide debug overlays / JSON manifests for figure/table crops like Python's `ImageExporter.DebugExport` (`src/Docling.Pipelines/Export/ImageExportStage.cs`, `src/Docling.Export/Imaging/ImageExportDebugArtifact.cs`).
+- [x] [DLN-034] **Markdown serializer** – introdotto il serializer `.NET` che converte `DoclingDocument` in Markdown e asset associati (`src/Docling.Export/Serialization/MarkdownDocSerializer.cs`, `src/Docling.Pipelines/Serialization/MarkdownSerializationStage.cs`).
+  - [x] [DLN-035] Port `MarkdownDocSerializer` handling for text, tables, figures, and image modes (`markdown_serializer.py`) replicando modalità placeholder, referenced, embedded.
+  - [x] [DLN-036] Implement caption numbering logic based on `Document.save_as_markdown` orchestrator, numerando figure e tabelle con fallback coerente (`src/Docling.Export/Serialization/MarkdownDocSerializer.cs`).
+  - [x] [DLN-037] Provide extension hooks for alt-text enrichment parity with Python `EnrichmentService` via `IMarkdownAltTextProvider` and `MarkdownAltTextContext` (`src/Docling.Export/Serialization/MarkdownDocSerializer.cs`, `src/Docling.Export/Serialization/IMarkdownAltTextProvider.cs`, `src/Docling.Export/Serialization/MarkdownAltTextContext.cs`).
 - [ ] [DLN-038] **Tooling & CLI**
   - [ ] [DLN-039] Build CLI runner equivalent to `docling_cli/__main__.py` focusing on image-to-Markdown scenario.
   - [ ] [DLN-040] Provide configuration/telemetry output analogous to Python CLI logs.

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Docling.Pipelines.Abstractions;
@@ -10,7 +11,8 @@ namespace Docling.Tooling.Runtime;
 /// <summary>
 /// Observer emitting structured logs for each pipeline stage transition.
 /// </summary>
-public sealed class LoggingPipelineObserver : IPipelineObserver
+[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Instantiated via dependency injection.")]
+internal sealed partial class LoggingPipelineObserver : IPipelineObserver
 {
     private readonly ILogger<LoggingPipelineObserver> _logger;
 
@@ -21,13 +23,24 @@ public sealed class LoggingPipelineObserver : IPipelineObserver
 
     public Task OnStageStartingAsync(PipelineStageExecutionContext context, CancellationToken cancellationToken)
     {
-        _logger.LogDebug("Stage {Stage} starting.", context.Stage.Name);
+        ArgumentNullException.ThrowIfNull(context);
+        ObserverLogger.StageStarting(_logger, context.Stage.Name);
         return Task.CompletedTask;
     }
 
     public Task OnStageCompletedAsync(PipelineStageExecutionContext context, CancellationToken cancellationToken)
     {
-        _logger.LogDebug("Stage {Stage} completed.", context.Stage.Name);
+        ArgumentNullException.ThrowIfNull(context);
+        ObserverLogger.StageCompleted(_logger, context.Stage.Name);
         return Task.CompletedTask;
+    }
+
+    private static partial class ObserverLogger
+    {
+        [LoggerMessage(EventId = 3850, Level = LogLevel.Debug, Message = "Stage {Stage} starting.")]
+        public static partial void StageStarting(ILogger logger, string stage);
+
+        [LoggerMessage(EventId = 3851, Level = LogLevel.Debug, Message = "Stage {Stage} completed.")]
+        public static partial void StageCompleted(ILogger logger, string stage);
     }
 }
