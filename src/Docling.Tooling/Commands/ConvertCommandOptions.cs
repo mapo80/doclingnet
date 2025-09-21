@@ -298,16 +298,45 @@ internal sealed class ConvertCommandOptions
         }
 
         var outputFullPath = Path.GetFullPath(outputDirectory);
+        var normalizedRoot = EnsureTrailingSeparator(outputFullPath);
         var markdownName = markdownFileName.Trim();
         if (string.IsNullOrEmpty(markdownName))
         {
             return ParseResult.Failure("--markdown cannot be empty.");
         }
 
+        if (Path.IsPathRooted(markdownName))
+        {
+            return ParseResult.Failure("--markdown must be a relative path inside the output directory.");
+        }
+
+        var markdownFullPath = Path.GetFullPath(Path.Combine(outputFullPath, markdownName));
+        if (!IsWithinRoot(markdownFullPath, outputFullPath, normalizedRoot))
+        {
+            return ParseResult.Failure("--markdown path resolves outside the output directory.");
+        }
+
+        markdownName = GetRelativePathWithinRoot(markdownFullPath, outputFullPath);
+        if (string.IsNullOrEmpty(markdownName))
+        {
+            return ParseResult.Failure("--markdown must resolve to a file inside the output directory.");
+        }
+
         var assetsName = assetsDirectoryName.Trim();
         if (assetsName.Length == 0)
         {
             assetsName = "assets";
+        }
+
+        if (Path.IsPathRooted(assetsName))
+        {
+            return ParseResult.Failure("--assets must be a relative path inside the output directory.");
+        }
+
+        var assetsFullPath = Path.GetFullPath(Path.Combine(outputFullPath, assetsName));
+        if (!IsWithinRoot(assetsFullPath, outputFullPath, normalizedRoot))
+        {
+            return ParseResult.Failure("--assets path resolves outside the output directory.");
         }
 
         if (languages.Count == 0)
@@ -335,7 +364,7 @@ internal sealed class ConvertCommandOptions
             inputKind.Value,
             outputFullPath,
             markdownName,
-            assetsName,
+            GetRelativePathWithinRoot(assetsFullPath, outputFullPath),
             documentId,
             sourceName,
             preprocessingDpi,
@@ -384,6 +413,45 @@ internal sealed class ConvertCommandOptions
         }
 
         return null;
+    }
+
+    private static bool IsWithinRoot(string candidatePath, string root, string normalizedRoot)
+    {
+        var comparison = OperatingSystem.IsWindows()
+            ? StringComparison.OrdinalIgnoreCase
+            : StringComparison.Ordinal;
+
+        if (candidatePath.Equals(root, comparison))
+        {
+            return true;
+        }
+
+        return candidatePath.StartsWith(normalizedRoot, comparison);
+    }
+
+    private static string EnsureTrailingSeparator(string path)
+    {
+        if (!path.EndsWith(Path.DirectorySeparatorChar) && !path.EndsWith(Path.AltDirectorySeparatorChar))
+        {
+            return path + Path.DirectorySeparatorChar;
+        }
+
+        return path;
+    }
+
+    private static string GetRelativePathWithinRoot(string candidatePath, string root)
+    {
+        var comparison = OperatingSystem.IsWindows()
+            ? StringComparison.OrdinalIgnoreCase
+            : StringComparison.Ordinal;
+
+        if (candidatePath.Equals(root, comparison))
+        {
+            return string.Empty;
+        }
+
+        var relative = Path.GetRelativePath(root, candidatePath);
+        return relative.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
     }
 
     internal readonly record struct ParseResult(bool Success, bool ShowHelp, string? Error, ConvertCommandOptions? Options)

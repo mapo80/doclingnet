@@ -15,10 +15,9 @@ public sealed class ConvertCommandOptionsTests
     [Fact]
     public void ParseWhenArgumentsValidReturnsOptions()
     {
-        var tempFile = Path.Combine(Path.GetTempPath(), $"docling-{Guid.NewGuid():N}.pdf");
+        var tempFile = CreateTemporaryInput();
         try
         {
-            File.WriteAllBytes(tempFile, new byte[] { 1, 2, 3 });
             var args = new[]
             {
                 "--input", tempFile,
@@ -83,5 +82,78 @@ public sealed class ConvertCommandOptionsTests
         result.Success.Should().BeFalse();
         result.ShowHelp.Should().BeFalse();
         result.Error.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void ParseWhenMarkdownEscapesOutputReturnsFailure()
+    {
+        var tempFile = CreateTemporaryInput();
+        try
+        {
+            var result = ConvertCommandOptions.Parse(new[]
+            {
+                "--input", tempFile,
+                "--output", "out",
+                "--markdown", "../escape.md",
+            });
+
+            result.Success.Should().BeFalse();
+            result.Error.Should().Contain("--markdown");
+        }
+        finally
+        {
+            File.Delete(tempFile);
+        }
+    }
+
+    [Fact]
+    public void ParseWhenAssetsAbsoluteReturnsFailure()
+    {
+        var tempFile = CreateTemporaryInput();
+        var absoluteAssets = Path.Combine(Path.GetTempPath(), "docling-assets");
+        try
+        {
+            var result = ConvertCommandOptions.Parse(new[]
+            {
+                "--input", tempFile,
+                "--assets", absoluteAssets,
+            });
+
+            result.Success.Should().BeFalse();
+            result.Error.Should().Contain("--assets");
+        }
+        finally
+        {
+            File.Delete(tempFile);
+        }
+    }
+
+    [Fact]
+    public void ParseWhenAssetsEscapesOutputReturnsFailure()
+    {
+        var tempFile = CreateTemporaryInput();
+        try
+        {
+            var result = ConvertCommandOptions.Parse(new[]
+            {
+                "--input", tempFile,
+                "--output", "out",
+                "--assets", "../shared",
+            });
+
+            result.Success.Should().BeFalse();
+            result.Error.Should().Contain("--assets");
+        }
+        finally
+        {
+            File.Delete(tempFile);
+        }
+    }
+
+    private static string CreateTemporaryInput()
+    {
+        var tempFile = Path.Combine(Path.GetTempPath(), $"docling-{Guid.NewGuid():N}.pdf");
+        File.WriteAllBytes(tempFile, new byte[] { 1, 2, 3 });
+        return tempFile;
     }
 }
