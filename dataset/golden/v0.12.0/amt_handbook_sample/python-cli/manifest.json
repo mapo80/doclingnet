@@ -1,0 +1,42 @@
+{
+  "caseId": "DLN043A-002",
+  "markdownSha256": "8fdeb22d32bfef10224de13ffb092cf0e763630bbb7015f8f0400991bcc090d4",
+  "assets": [
+    {
+      "path": "assets/image_000000_7880c668f42619d23260ebe2d2a3624cf487d1147c05b593dd41781b921f87e5.png",
+      "kind": "PICTURE",
+      "sha256": "34c8b8043d17b661154ddd9f14c675554dac46629db7ab99de376dea11015179",
+      "pageNumber": 1,
+      "widthPx": 479,
+      "heightPx": 327,
+      "dpi": 144,
+      "boundingBox": {
+        "left": 70.5353775024414,
+        "top": 530.8287963867188,
+        "right": 310.095458984375,
+        "bottom": 694.746337890625
+      }
+    },
+    {
+      "path": "assets/image_000001_ff71580c343a6a508aed6a05d957e5834548df8f71121d6e41c1da223e50189e.png",
+      "kind": "PICTURE",
+      "sha256": "cd5f050158a2fce5350d0dd81c63637700b2989d148d8a3d38d3ae20050cd6d9",
+      "pageNumber": 1,
+      "widthPx": 478,
+      "heightPx": 543,
+      "dpi": 144,
+      "boundingBox": {
+        "left": 320.56085205078125,
+        "top": 421.91839599609375,
+        "right": 559.3866577148438,
+        "bottom": 693.32275390625
+      }
+    }
+  ],
+  "pages": [
+    {
+      "pageNumber": 1,
+      "dpi": 144
+    }
+  ]
+}
