@@ -208,10 +208,10 @@ The run settings restrict coverage analysis to the `Docling.Export` assembly, wh
   - [x] [DLN-039] Build CLI runner equivalent to `docling_cli/__main__.py` focusing on image-to-Markdown scenario – il runner scrive markdown, asset, metadati e diagnostica con logging strutturato (`src/Docling.Tooling/Runtime/ConvertCommandRunner.cs`, `src/Docling.Tooling/Runtime/LoggingPipelineObserver.cs`).
   - [x] [DLN-040] Provide configuration/telemetry output analogous to Python CLI logs – il runner emette snapshot JSON con configurazione e telemetria tramite `PipelineTelemetryObserver` e logger strutturati (`src/Docling.Tooling/Runtime/ConvertCommandRunner.cs`, `src/Docling.Tooling/Runtime/PipelineTelemetryObserver.cs`).
 - [ ] [DLN-041] **Regression & automation**
-  - [ ] [DLN-042] Establish shared fixtures (same PDFs/images) processed by Python pipeline to generate golden Markdown + assets.
+  - [x] [DLN-042] Establish shared fixtures (same PDFs/images) processed by Python pipeline to generate golden Markdown + assets.
 - [ ] [DLN-043] **Story: Regression parity validation** – come team vogliamo una suite end-to-end che confronti la pipeline `.NET` con gli output d'oro generati da Docling Python, così da individuare regressioni funzionali e di formato in modo sistematico.
   - [x] [DLN-043a] Definire il catalogo dei casi di test e il formato dei golden (Markdown, asset, metadati) da generare con la CLI Python, inclusi criteri di aggiornamento e versioning. → [Roadmap](docs/regression_parity_golden_catalog.md)
-  - [ ] [DLN-043b] Implementare l'estrattore di risultati della pipeline `.NET` che normalizza path, checksum e coordinate per il confronto, con supporto a tolleranze configurabili.
+  - [x] [DLN-043b] Implementare l'estrattore di risultati della pipeline `.NET` che normalizza path, checksum e coordinate per il confronto, con supporto a tolleranze configurabili.
   - [x] [DLN-043c] Creare la suite di test di integrazione `.NET` che confronta Markdown, immagini e manifesti contro i golden, producendo report differenziati per testo, immagini e metadati (`tests/Docling.Tests/Tooling/RegressionParityTests.cs`).
   - [x] [DLN-043d] Automatizzare la generazione periodica dei golden e l'esecuzione della suite all'interno della CI locale (script o target dedicato) per garantire esecuzioni ripetibili. → `eng/regression-parity.sh`
   - [ ] [DLN-044] Configure CI workflow executing both Python and `.NET` pipelines and diffing outputs per commit.
