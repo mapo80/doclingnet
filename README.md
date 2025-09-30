@@ -98,6 +98,15 @@ Some machine-learning dependencies are distributed as private NuGet packages. To
 
 When a new custom package is needed, document the source URL and the expected filename in this section so that other developers can reproduce the setup quickly. The `.gitignore` file already excludes `packages/custom/` ensuring large binaries never slip into version control. When the real packages are present MSBuild copies the `contentFiles` tree next to the binaries, so the runtime automatically discovers detector and recogniser weights without any manual extraction.
 
+## Regression parity automation
+
+Use the scripts under `eng/` to refresh the Python goldens and run the `.NET` parity suite in a repeatable manner:
+
+- `./eng/regression-parity.sh all` regenerates the catalog under `dataset/golden/<version>/`, runs `dotnet restore`, and executes `RegressionParityTests` with `DOCLING_PARITY_GOLDEN_ROOT` pointing to the refreshed bundle.
+- `pwsh ./eng/regression-parity.ps1 -Command all` offers the same workflow on Windows shells.
+
+Pass `--case <id>`/`-Case <id>` to target a specific catalog entry (e.g., `DLN043A-001`) or `--skip-tests`/`-SkipTests` when you only need to update the golden artefacts. Both scripts honour the environment variables `DOCLING_PYTHON_CLI`, `DOCLING_PARITY_GOLDEN_ROOT`, `DOCLING_PARITY_EXTRA_ARGS`, and `GOLDEN_VERSION` so the automation can be wired into local CI pipelines.
+
 ## Code coverage
 
 `dotnet test` is configured via `Directory.Build.props` to collect coverage automatically using Coverlet. The pipeline enforces a **minimum of 90% line coverage** across the test projects, so the command fails when the threshold is not met. Coverage artefacts are emitted in Cobertura format under `tests/Docling.Tests/TestResults/`:
@@ -200,7 +209,11 @@ The run settings restrict coverage analysis to the `Docling.Export` assembly, wh
   - [x] [DLN-040] Provide configuration/telemetry output analogous to Python CLI logs – il runner emette snapshot JSON con configurazione e telemetria tramite `PipelineTelemetryObserver` e logger strutturati (`src/Docling.Tooling/Runtime/ConvertCommandRunner.cs`, `src/Docling.Tooling/Runtime/PipelineTelemetryObserver.cs`).
 - [ ] [DLN-041] **Regression & automation**
   - [ ] [DLN-042] Establish shared fixtures (same PDFs/images) processed by Python pipeline to generate golden Markdown + assets.
-  - [ ] [DLN-043] Implement `.NET` integration tests comparing Markdown and asset metadata to golden outputs (tolerances for floating point/ordering).
+- [ ] [DLN-043] **Story: Regression parity validation** – come team vogliamo una suite end-to-end che confronti la pipeline `.NET` con gli output d'oro generati da Docling Python, così da individuare regressioni funzionali e di formato in modo sistematico.
+  - [x] [DLN-043a] Definire il catalogo dei casi di test e il formato dei golden (Markdown, asset, metadati) da generare con la CLI Python, inclusi criteri di aggiornamento e versioning. → [Roadmap](docs/regression_parity_golden_catalog.md)
+  - [ ] [DLN-043b] Implementare l'estrattore di risultati della pipeline `.NET` che normalizza path, checksum e coordinate per il confronto, con supporto a tolleranze configurabili.
+  - [x] [DLN-043c] Creare la suite di test di integrazione `.NET` che confronta Markdown, immagini e manifesti contro i golden, producendo report differenziati per testo, immagini e metadati (`tests/Docling.Tests/Tooling/RegressionParityTests.cs`).
+  - [x] [DLN-043d] Automatizzare la generazione periodica dei golden e l'esecuzione della suite all'interno della CI locale (script o target dedicato) per garantire esecuzioni ripetibili. → `eng/regression-parity.sh`
   - [ ] [DLN-044] Configure CI workflow executing both Python and `.NET` pipelines and diffing outputs per commit.
 - [ ] [DLN-045] Package redistribution strategy (NuGet package) and documentation alignment with README.
 

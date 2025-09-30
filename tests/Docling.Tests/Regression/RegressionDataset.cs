@@ -25,7 +25,7 @@ internal static class RegressionDatasets
     }
 }
 
-internal enum RegressionDatasetId
+public enum RegressionDatasetId
 {
     AmtHandbookSample,
     Arxiv230503393Page9,
