@@ -15,18 +15,20 @@ public sealed class LayoutSdkDetectionServiceTests
     [Fact]
     public async Task DetectAsyncProjectsBoundingBoxes()
     {
-        using var runner = new FakeRunner(new List<LayoutSdk.BoundingBox>[]
-        {
-            new()
-            {
-                new LayoutSdk.BoundingBox(0, 0, 100, 40, "text"),
-                new LayoutSdk.BoundingBox(10, 20, 50, 30, "table"),
-            },
-            new()
-            {
-                new LayoutSdk.BoundingBox(5, 5, 25, 25, "figure"),
-            },
-        });
+        using var runner = new FakeRunner(
+            new LayoutSdkInferenceResult(
+                new List<LayoutSdk.BoundingBox>
+                {
+                    new LayoutSdk.BoundingBox(0, 0, 100, 40, "text"),
+                    new LayoutSdk.BoundingBox(10, 20, 50, 30, "table"),
+                },
+                null),
+            new LayoutSdkInferenceResult(
+                new List<LayoutSdk.BoundingBox>
+                {
+                    new LayoutSdk.BoundingBox(5, 5, 25, 25, "figure"),
+                },
+                null));
         using var service = new LayoutSdkDetectionService(new LayoutSdkDetectionOptions(), NullLogger<LayoutSdkDetectionService>.Instance, runner);
         var items = await service.DetectAsync(CreateRequest(2), CancellationToken.None);
 
@@ -38,15 +40,85 @@ public sealed class LayoutSdkDetectionServiceTests
     }
 
     [Fact]
+    public async Task DetectAsyncReprojectsBoxesUsingNormalizationMetadata()
+    {
+        var metadata = new LayoutSdkNormalisationMetadata(1000, 800, 640, 512, 0.64, 0, 64);
+        using var runner = new FakeRunner(
+            new LayoutSdkInferenceResult(
+                new List<LayoutSdk.BoundingBox>
+                {
+                    new LayoutSdk.BoundingBox(160, 200, 320, 128, "text"),
+                },
+                metadata));
+
+        using var service = new LayoutSdkDetectionService(new LayoutSdkDetectionOptions(), NullLogger<LayoutSdkDetectionService>.Instance, runner);
+        var items = await service.DetectAsync(CreateRequest(1), CancellationToken.None);
+
+        items.Should().ContainSingle();
+        var box = items[0].BoundingBox;
+        box.Left.Should().BeApproximately(250, 1e-3);
+        box.Top.Should().BeApproximately(212.5, 1e-3);
+        box.Right.Should().BeApproximately(750, 1e-3);
+        box.Bottom.Should().BeApproximately(412.5, 1e-3);
+    }
+
+    [Fact]
+    public async Task DetectAsyncKeepsBoxesWhenMetadataIdentity()
+    {
+        var metadata = new LayoutSdkNormalisationMetadata(640, 640, 640, 640, 1.0, 0, 0);
+        using var runner = new FakeRunner(
+            new LayoutSdkInferenceResult(
+                new List<LayoutSdk.BoundingBox>
+                {
+                    new LayoutSdk.BoundingBox(10, 20, 30, 40, "text"),
+                },
+                metadata));
+
+        using var service = new LayoutSdkDetectionService(new LayoutSdkDetectionOptions(), NullLogger<LayoutSdkDetectionService>.Instance, runner);
+        var items = await service.DetectAsync(CreateRequest(1), CancellationToken.None);
+
+        items.Should().ContainSingle();
+        var box = items[0].BoundingBox;
+        box.Left.Should().Be(10);
+        box.Top.Should().Be(20);
+        box.Right.Should().Be(40);
+        box.Bottom.Should().Be(60);
+    }
+
+    [Fact]
+    public async Task DetectAsyncSkipsBoxesClippedAwayByReprojection()
+    {
+        var metadata = new LayoutSdkNormalisationMetadata(1000, 800, 640, 512, 0.64, 0, 64);
+        using var runner = new FakeRunner(
+            new LayoutSdkInferenceResult(
+                new List<LayoutSdk.BoundingBox>
+                {
+                    new LayoutSdk.BoundingBox(0, 10, 40, 40, "text"),
+                    new LayoutSdk.BoundingBox(160, 200, 320, 128, "text"),
+                },
+                metadata));
+
+        using var service = new LayoutSdkDetectionService(new LayoutSdkDetectionOptions(), NullLogger<LayoutSdkDetectionService>.Instance, runner);
+        var items = await service.DetectAsync(CreateRequest(1), CancellationToken.None);
+
+        items.Should().ContainSingle();
+        var box = items[0].BoundingBox;
+        box.Left.Should().BeApproximately(250, 1e-3);
+        box.Top.Should().BeApproximately(212.5, 1e-3);
+        box.Right.Should().BeApproximately(750, 1e-3);
+        box.Bottom.Should().BeApproximately(412.5, 1e-3);
+    }
+
+    [Fact]
     public async Task DetectAsyncFallsBackToTextOnUnknownLabel()
     {
-        using var runner = new FakeRunner(new List<LayoutSdk.BoundingBox>[]
-        {
-            new()
-            {
-                new LayoutSdk.BoundingBox(0, 0, 10, 10, "mystery"),
-            },
-        });
+        using var runner = new FakeRunner(
+            new LayoutSdkInferenceResult(
+                new List<LayoutSdk.BoundingBox>
+                {
+                    new LayoutSdk.BoundingBox(0, 0, 10, 10, "mystery"),
+                },
+                null));
         using var service = new LayoutSdkDetectionService(new LayoutSdkDetectionOptions(), NullLogger<LayoutSdkDetectionService>.Instance, runner);
         var result = await service.DetectAsync(CreateRequest(1), CancellationToken.None);
 
@@ -57,13 +129,13 @@ public sealed class LayoutSdkDetectionServiceTests
     [Fact]
     public async Task DetectAsyncThrowsWhenBoundingBoxInvalid()
     {
-        using var runner = new FakeRunner(new List<LayoutSdk.BoundingBox>[]
-        {
-            new()
-            {
-                new LayoutSdk.BoundingBox(0, 0, 0, 10, "text"),
-            },
-        });
+        using var runner = new FakeRunner(
+            new LayoutSdkInferenceResult(
+                new List<LayoutSdk.BoundingBox>
+                {
+                    new LayoutSdk.BoundingBox(0, 0, 0, 10, "text"),
+                },
+                null));
 
         using var service = new LayoutSdkDetectionService(new LayoutSdkDetectionOptions(), NullLogger<LayoutSdkDetectionService>.Instance, runner);
         await Assert.ThrowsAsync<LayoutServiceException>(() => service.DetectAsync(CreateRequest(1), CancellationToken.None));
@@ -72,11 +144,34 @@ public sealed class LayoutSdkDetectionServiceTests
     [Fact]
     public async Task DetectAsyncThrowsWhenDisposed()
     {
-        using var runner = new FakeRunner(Array.Empty<IReadOnlyList<LayoutSdk.BoundingBox>>());
+        using var runner = new FakeRunner();
         using var service = new LayoutSdkDetectionService(new LayoutSdkDetectionOptions(), NullLogger<LayoutSdkDetectionService>.Instance, runner);
         service.Dispose();
 
         await Assert.ThrowsAsync<ObjectDisposedException>(() => service.DetectAsync(CreateRequest(1), CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task DetectAsyncCapturesNormalizationMetadata()
+    {
+        var metadata = new LayoutSdkNormalisationMetadata(1000, 800, 640, 512, 0.64, 0, 64);
+        using var runner = new FakeRunner(
+            new LayoutSdkInferenceResult(
+                new List<LayoutSdk.BoundingBox>
+                {
+                    new LayoutSdk.BoundingBox(0, 0, 100, 40, "text"),
+                },
+                metadata));
+        using var service = new LayoutSdkDetectionService(new LayoutSdkDetectionOptions(), NullLogger<LayoutSdkDetectionService>.Instance, runner);
+
+        _ = await service.DetectAsync(CreateRequest(1), CancellationToken.None);
+
+        var telemetry = ((ILayoutNormalizationMetadataSource)service).ConsumeNormalizationMetadata();
+        telemetry.Should().ContainSingle();
+        telemetry[0].Page.Should().Be(new PageReference(0, 200));
+        telemetry[0].Metadata.Should().Be(metadata);
+
+        ((ILayoutNormalizationMetadataSource)service).ConsumeNormalizationMetadata().Should().BeEmpty();
     }
 
     private static LayoutRequest CreateRequest(int pageCount)
@@ -100,20 +195,22 @@ public sealed class LayoutSdkDetectionServiceTests
 
     private sealed class FakeRunner : ILayoutSdkRunner
     {
-        private readonly Queue<IReadOnlyList<LayoutSdk.BoundingBox>> _results;
+        private readonly Queue<LayoutSdkInferenceResult> _results;
 
-        public FakeRunner(IReadOnlyList<LayoutSdk.BoundingBox>[] results)
+        public FakeRunner(params LayoutSdkInferenceResult[] results)
         {
-            _results = new Queue<IReadOnlyList<LayoutSdk.BoundingBox>>(results);
+            _results = new Queue<LayoutSdkInferenceResult>(results);
         }
 
         public void Dispose()
         {
         }
 
-        public Task<IReadOnlyList<LayoutSdk.BoundingBox>> InferAsync(ReadOnlyMemory<byte> imageContent, CancellationToken cancellationToken)
+        public Task<LayoutSdkInferenceResult> InferAsync(ReadOnlyMemory<byte> imageContent, CancellationToken cancellationToken)
         {
-            return Task.FromResult(_results.Count > 0 ? _results.Dequeue() : Array.Empty<LayoutSdk.BoundingBox>());
+            return Task.FromResult(_results.Count > 0
+                ? _results.Dequeue()
+                : new LayoutSdkInferenceResult(Array.Empty<LayoutSdk.BoundingBox>(), null));
         }
     }
 }

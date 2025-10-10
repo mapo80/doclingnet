@@ -1,0 +1,85 @@
+{
+  "data": {
+    "completed": true,
+    "documentId": "2305.03393v1-pg9-img",
+    "sourceId": "2305.03393v1-pg9-img",
+    "createdAt": "2025-10-01T13:22:21.2163221+00:00",
+    "pageCount": 1,
+    "pages": [
+      {
+        "pageNumber": 1,
+        "dpi": 300
+      }
+    ],
+    "properties": {},
+    "itemCount": 2,
+    "items": [
+      {
+        "id": "PARAGRAPH-1-9ae15444dc6b41a48bcd2458a49771a8",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 881.83203125,
+          "top": 219.1826171875,
+          "right": 1275.0000305175781,
+          "bottom": 786.8771362304688,
+          "width": 393.1679992675781,
+          "height": 567.6945190429688
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 881.83203125,
+              "top": 219.1826171875,
+              "right": 1275.0000305175781,
+              "bottom": 786.8771362304688,
+              "width": 393.1679992675781,
+              "height": 567.6945190429688
+            },
+            "charStart": 0,
+            "charEnd": 190
+          }
+        ],
+        "content": {
+          "text": "experiments\nEPYC 7763\nit includes a\nor simple and\nTable: /l/ It is\nand slightly\nds a 21 speed\non the same\nbNet |22/. Ef-\n)del show that\nizing complex\nL counterpart_\nInference\ntime (secs\n2.73"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-bf3afc45285441cc905037925c8cdbb0",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 791.1851806640625,
+          "top": 799.5169677734375,
+          "right": 1274.9999694824219,
+          "bottom": 1097.54736328125,
+          "width": 483.8147888183594,
+          "height": 298.0303955078125
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 791.1851806640625,
+              "top": 799.5169677734375,
+              "right": 1274.9999694824219,
+              "bottom": 1097.54736328125,
+              "width": 483.8147888183594,
+              "height": 298.0303955078125
+            },
+            "charStart": 0,
+            "charEnd": 113
+          }
+        ],
+        "content": {
+          "text": "0 | U.oo (| 0.05\n7 | 0.853 | 1.97\n8 | 0.843 | 3.77\n5 | 0.859 | 1.91\n| 0.834 | 3.81\n2 | 0.857 | 1.22\n1 | 0.824 | 2"
+        }
+      }
+    ]
+  },
+  "stage": "page_assembly",
+  "completedAt": "2025-10-01T13:22:21.2665305+00:00"
+}

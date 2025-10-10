@@ -37,6 +37,7 @@ internal sealed partial class ConvertCommandRunner
     private readonly PipelineTelemetryObserver _telemetryObserver;
     private readonly IPdfBackend? _pdfBackend;
     private readonly IImageBackend? _imageBackend;
+    private readonly WorkflowDebugObserver? _workflowDebugObserver;
     private static readonly JsonSerializerOptions MetadataSerializerOptions = new(JsonSerializerDefaults.Web)
     {
         WriteIndented = true,
@@ -53,7 +54,8 @@ internal sealed partial class ConvertCommandRunner
         ILoggerFactory loggerFactory,
         IPdfBackend? pdfBackend = null,
         IImageBackend? imageBackend = null,
-        PipelineTelemetryObserver? telemetryObserver = null)
+        PipelineTelemetryObserver? telemetryObserver = null,
+        WorkflowDebugObserver? workflowDebugObserver = null)
     {
         _options = options ?? throw new ArgumentNullException(nameof(options));
         _services = services ?? throw new ArgumentNullException(nameof(services));
@@ -72,6 +74,7 @@ internal sealed partial class ConvertCommandRunner
         _pdfBackend = pdfBackend;
         _imageBackend = imageBackend;
         _telemetryObserver = telemetryObserver ?? new PipelineTelemetryObserver();
+        _workflowDebugObserver = workflowDebugObserver;
     }
 
     public async Task<int> ExecuteAsync(CancellationToken cancellationToken)
@@ -130,6 +133,7 @@ internal sealed partial class ConvertCommandRunner
         var layoutDebugMetadata = await WriteLayoutDebugArtifactsAsync(context, cancellationToken).ConfigureAwait(false);
         var imageDebugMetadata = await WriteImageDebugArtifactsAsync(context, cancellationToken).ConfigureAwait(false);
         var tableDebugMetadata = await WriteTableDebugArtifactsAsync(context, cancellationToken).ConfigureAwait(false);
+        var workflowDebugMetadata = await WriteWorkflowDebugArtifactsAsync(cancellationToken).ConfigureAwait(false);
 
         var metadata = new CliOutputMetadata(
             _options.DocumentId,
@@ -140,6 +144,7 @@ internal sealed partial class ConvertCommandRunner
             layoutDebugMetadata,
             imageDebugMetadata,
             tableDebugMetadata,
+            workflowDebugMetadata,
             imageExports?.Count ?? 0,
             DateTimeOffset.UtcNow);
 
@@ -342,6 +347,35 @@ internal sealed partial class ConvertCommandRunner
         return output;
     }
 
+    private Task<List<string>> WriteWorkflowDebugArtifactsAsync(CancellationToken cancellationToken)
+    {
+        _ = cancellationToken;
+
+        if (_workflowDebugObserver is null)
+        {
+            return Task.FromResult(new List<string>());
+        }
+
+        var artifacts = _workflowDebugObserver.GetCreatedArtifacts();
+        if (artifacts.Count == 0)
+        {
+            return Task.FromResult(new List<string>());
+        }
+
+        var output = new List<string>(artifacts.Count);
+        foreach (var path in artifacts)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                continue;
+            }
+
+            output.Add(NormalizeRelativePath(path));
+        }
+
+        return Task.FromResult(output);
+    }
+
     private async Task WriteMetadataAsync(CliOutputMetadata metadata, CancellationToken cancellationToken)
     {
         var path = Path.Combine(_options.OutputDirectory, ConvertCommandOptions.MetadataFileName);
@@ -432,6 +466,7 @@ internal sealed partial class ConvertCommandRunner
             metadata.LayoutDebugOverlays.Count,
             metadata.ImageDebugArtifacts.Count,
             metadata.TableDebugImages.Count,
+            metadata.WorkflowDebugFiles.Count,
             imageExports?.Count ?? 0,
             elapsedMilliseconds,
             metadata.GeneratedAt,
@@ -496,6 +531,7 @@ internal sealed partial class ConvertCommandRunner
         IReadOnlyList<string> LayoutDebugOverlays,
         IReadOnlyList<CliImageDebugMetadata> ImageDebugArtifacts,
         IReadOnlyList<string> TableDebugImages,
+        IReadOnlyList<string> WorkflowDebugFiles,
         int ExportedImageCount,
         DateTimeOffset GeneratedAt);
 
@@ -538,6 +574,7 @@ internal sealed partial class ConvertCommandRunner
         int LayoutDebugCount,
         int ImageDebugCount,
         int TableDebugCount,
+        int WorkflowDebugCount,
         int ImageExportCount,
         long ElapsedMilliseconds,
         DateTimeOffset GeneratedAt,

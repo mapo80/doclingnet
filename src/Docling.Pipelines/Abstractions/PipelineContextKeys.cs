@@ -34,6 +34,11 @@ public static class PipelineContextKeys
     public const string LayoutItems = "Docling.Pipelines.LayoutItems";
 
     /// <summary>
+    /// Gets the key referencing layout normalization metadata captured during inference.
+    /// </summary>
+    public const string LayoutNormalisationMetadata = "Docling.Pipelines.LayoutNormalisationMetadata";
+
+    /// <summary>
     /// Gets the key referencing the inferred table structures for the current document.
     /// </summary>
     public const string TableStructures = "Docling.Pipelines.TableStructures";
@@ -47,6 +52,11 @@ public static class PipelineContextKeys
     /// Gets the key referencing optional layout debug overlays.
     /// </summary>
     public const string LayoutDebugArtifacts = "Docling.Pipelines.LayoutDebugArtifacts";
+
+    /// <summary>
+    /// Gets the key referencing the last layout analysis failure message, if any.
+    /// </summary>
+    public const string LayoutAnalysisError = "Docling.Pipelines.LayoutAnalysisError";
 
     /// <summary>
     /// Gets the key referencing OCR results produced for the current document.

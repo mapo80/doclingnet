@@ -1,0 +1,15 @@
+{
+  "data": {
+    "completed": true,
+    "pageCount": 1,
+    "pages": [
+      {
+        "pageNumber": 1,
+        "dpi": 300,
+        "cached": true
+      }
+    ]
+  },
+  "stage": "page_preprocessing",
+  "completedAt": "2025-09-30T10:43:15.1566715+00:00"
+}

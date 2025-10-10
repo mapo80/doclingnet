@@ -32,6 +32,7 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
 using TableFormerSdk.Enums;
+using LayoutSdk;
 
 namespace Docling.Tooling;
 
@@ -151,7 +152,7 @@ internal static class Program
         Console.WriteLine("                         [--languages <iso-codes>] [--dpi <value>] [--render-dpi <value>]");
         Console.WriteLine("                         [--table-mode fast|accurate] [--image-mode referenced|embedded|placeholder]");
         Console.WriteLine("                         [--no-page-images] [--no-picture-images] [--full-page-ocr]");
-        Console.WriteLine("                         [--layout-debug] [--image-debug] [--table-debug]");
+        Console.WriteLine("                         [--layout-debug] [--image-debug] [--table-debug] [--workflow-debug]");
     }
 
     private static bool IsRootHelp(string value)
@@ -186,6 +187,7 @@ internal static class Program
         {
             ValidateModelFiles = true,
             MaxDegreeOfParallelism = 1,
+            Runtime = LayoutRuntime.Ort,
         });
         services.AddSingleton<ILayoutDetectionService>(provider => new LayoutSdkDetectionService(
             provider.GetRequiredService<LayoutSdkDetectionOptions>(),
@@ -243,6 +245,12 @@ internal static class Program
 
         services.AddSingleton<PipelineTelemetryObserver>();
         services.AddSingleton<IPipelineObserver, LoggingPipelineObserver>();
+
+        if (options.GenerateWorkflowDebugArtifacts)
+        {
+            services.AddSingleton<WorkflowDebugObserver>();
+            services.AddSingleton<IPipelineObserver>(provider => provider.GetRequiredService<WorkflowDebugObserver>());
+        }
 
         if (options.InputKind == DocumentInputKind.Pdf)
         {
@@ -311,17 +319,53 @@ internal static class Program
                 Languages = options.OcrLanguages.ToArray(),
                 ForceFullPageOcr = options.ForceFullPageOcr,
                 BitmapAreaThreshold = 0.0005,
+                ModelStorageDirectory = ResolveEasyOcrModelDirectory(),
             },
         };
     }
 
+    private static string? ResolveEasyOcrModelDirectory()
+    {
+        var baseDirectory = AppContext.BaseDirectory;
+        var defaultDirectory = Path.Combine(baseDirectory, "contentFiles", "any", "any", "models");
+        var candidates = new[]
+        {
+            defaultDirectory,
+            Path.GetFullPath(Path.Combine(baseDirectory, "..", "..", "..", "..", "packages", "custom", "EasyOcrNet.1.0.0", "contentFiles", "any", "any", "models")),
+            Path.Combine(Environment.CurrentDirectory, "packages", "custom", "EasyOcrNet.1.0.0", "contentFiles", "any", "any", "models"),
+        };
+
+        foreach (var candidate in candidates)
+        {
+            if (!Directory.Exists(candidate))
+            {
+                continue;
+            }
+
+            if (File.Exists(Path.Combine(candidate, "detection.onnx")))
+            {
+                return candidate;
+            }
+
+            var onnxVariant = Path.Combine(candidate, "onnx");
+            if (Directory.Exists(onnxVariant) && File.Exists(Path.Combine(onnxVariant, "detection.onnx")))
+            {
+                return onnxVariant;
+            }
+        }
+
+        return null;
+    }
+
     private static PreprocessingOptions CreatePreprocessingOptions(ConvertCommandOptions options)
     {
+        var enableAdvancedPreprocessing = options.InputKind == DocumentInputKind.Pdf;
+
         return new PreprocessingOptions
         {
             TargetDpi = options.PreprocessingDpi,
-            EnableDeskew = true,
-            NormalizeContrast = true,
+            EnableDeskew = enableAdvancedPreprocessing,
+            NormalizeContrast = enableAdvancedPreprocessing,
         };
     }
 

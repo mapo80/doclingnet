@@ -1,0 +1,14 @@
+{
+  "data": {
+    "completed": false,
+    "itemCount": 0,
+    "debugOverlayCount": 0,
+    "normalisationCount": 0,
+    "items": [],
+    "debugOverlays": [],
+    "normalisations": [],
+    "failure": "Docling.Models.Layout.LayoutServiceException: The layout SDK produced a bounding box with non-positive dimensions.\n   at Docling.Models.Layout.LayoutSdkDetectionService.CreateLayoutItem(PageReference pageReference, BoundingBox boundingBox) in /workspace/doclingnet/src/Docling.Models/Layout/LayoutSdkDetectionService.cs:line 149\n   at Docling.Models.Layout.LayoutSdkDetectionService.DetectAsync(LayoutRequest request, CancellationToken cancellationToken) in /workspace/doclingnet/src/Docling.Models/Layout/LayoutSdkDetectionService.cs:line 103\n   at Docling.Pipelines.Layout.LayoutAnalysisStage.ExecuteAsync(PipelineContext context, CancellationToken cancellationToken) in /workspace/doclingnet/src/Docling.Pipelines/Layout/LayoutAnalysisStage.cs:line 93"
+  },
+  "stage": "layout_analysis",
+  "completedAt": "2025-10-01T11:23:52.5338521+00:00"
+}

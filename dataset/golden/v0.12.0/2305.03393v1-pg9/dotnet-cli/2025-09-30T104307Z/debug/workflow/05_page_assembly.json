@@ -1,0 +1,53 @@
+{
+  "data": {
+    "completed": true,
+    "documentId": "2305.03393v1-pg9-img",
+    "sourceId": "2305.03393v1-pg9-img",
+    "createdAt": "2025-09-30T10:43:24.2660679+00:00",
+    "pageCount": 1,
+    "pages": [
+      {
+        "pageNumber": 1,
+        "dpi": 300
+      }
+    ],
+    "properties": {},
+    "itemCount": 1,
+    "items": [
+      {
+        "id": "PARAGRAPH-1-ce9c1458747d4974aa9c5f6f1ec3ed2d",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 0,
+          "top": 0,
+          "right": 1414,
+          "bottom": 1755,
+          "width": 1414,
+          "height": 1755
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 0,
+              "top": 0,
+              "right": 1414,
+              "bottom": 1755,
+              "width": 1414,
+              "height": 1755
+            },
+            "charStart": 0,
+            "charEnd": 2309
+          }
+        ],
+        "content": {
+          "text": "for Table Structure Recognit\nOptimized Table Tokenizatio\nce timing resulte fot MD EPedze73\ncompute tbe TED score: Inference single core with\norcle obtained from the same machie\nCPTI @2.45 GHz\n1 Eyper Parameter Optimization to perform HPO, since it includend\nUe have chosen the PubTabNet datanat TED scores separately for blehl It is\nWe have veroe set of tables. Alsc we reporResults are presented in Table s\nhighly diverbese(tables with cell spans) Regs the same TED score and gligteed\ncomplex tablesitha OTSL; Our model achieves {owever OTSL yields \u0026 ? speea\nevident that witres in comparison to HTML\nbetter mAP score8 runtime over HTMI\nup in the inference Lutation On the\nOTSL and HTML representPubTabNet |22}; Ef-\nIable 1 HPQ perfeForener |9} architecture trainer sbnges of the model show that\nIablforter-based Tablofoaye; 9} ercbder and decodeteciallys 0f tbeogaiaing complex\nfects of reducing tbe #On OTSL perform better; especthan the HTML counterpart\nsmaller models traineaaintain \u0026 much higher IAP score\ntable structures;, and maintam \u0026 4TmAP T Iaterence\nTEblexT al | (0.75) (time (secs)\n# |ec-#yers | Language [ simple [complex | 0 955 | 0.8s / \u0022 2.73\nc-layers ( dec-layers | oTsL | 0.965 | 0.934 | 0.955 | 0.857 |_6.39\nHTML | 0969 | 4927 | 0.927/ o.8s3 | \u0022 1.97\nOTSL | 0.938 | 0.909 | 0.938 | 0843 |_ 377\nFTML | 0952 | 0%09 | @.915 | 0.859 | \u0022 1.81\nOTSL | 0.923 | 0.897 | 0.931 | 0.834 | _ 8.81\nFTM_ | 0.945 | 09 40.942| 0.857 | \u0022 1.22\nOTSL | 0.952 | 093 | 0.931 | D.824\nHTML_Lug44_L 0.903\n5.2 Quantitative Results caatation that produced the best preddenol\nWe picked the model paracaetet Confith afThbNet aotetsheub dexeatdesgsk\nquality (enc_6, detedft B chree publicly avaiableidat Me(about IM samples)\ntrained and evaluatet {Ll3k samples) and Pub ablearly evident tbat the model\nsamples) , FinTabNet re presented in Table p} It is clead Ykeeping high TEDs and\nPerformance cesults trerombtHTML Acroes the bEadNeepihat contain sparse\nned O OTSL OutpeiffOulf financial tables\nmAP scores even 0L\u003C mot has AD advantage over HTML\nand large bablly; the results show that Obable-JM and achieves signifcadtny\nAdditilied on \u0026 bigger data set likeve_faster inference due to fewer decodug\nwhen applied e Finaly OTSL achieves fastee representation:\nimproved scores refult % the reduced sequence\nsteps which 18"
+        }
+      }
+    ]
+  },
+  "stage": "page_assembly",
+  "completedAt": "2025-09-30T10:43:24.2883826+00:00"
+}

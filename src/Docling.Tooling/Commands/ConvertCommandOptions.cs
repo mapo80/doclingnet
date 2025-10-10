@@ -42,6 +42,7 @@ internal sealed class ConvertCommandOptions
         bool generateLayoutDebugArtifacts,
         bool generateImageDebugArtifacts,
         bool generateTableDebugArtifacts,
+        bool generateWorkflowDebugArtifacts,
         bool forceFullPageOcr,
         IReadOnlyList<string> ocrLanguages,
         TableFormerMode tableMode,
@@ -61,6 +62,7 @@ internal sealed class ConvertCommandOptions
         GenerateLayoutDebugArtifacts = generateLayoutDebugArtifacts;
         GenerateImageDebugArtifacts = generateImageDebugArtifacts;
         GenerateTableDebugArtifacts = generateTableDebugArtifacts;
+        GenerateWorkflowDebugArtifacts = generateWorkflowDebugArtifacts;
         ForceFullPageOcr = forceFullPageOcr;
         OcrLanguages = ocrLanguages;
         TableMode = tableMode;
@@ -95,6 +97,8 @@ internal sealed class ConvertCommandOptions
 
     public bool GenerateTableDebugArtifacts { get; }
 
+    public bool GenerateWorkflowDebugArtifacts { get; }
+
     public bool ForceFullPageOcr { get; }
 
     public IReadOnlyList<string> OcrLanguages { get; }
@@ -123,6 +127,7 @@ internal sealed class ConvertCommandOptions
         var generateLayoutDebugArtifacts = false;
         var generateImageDebugArtifacts = false;
         var generateTableDebugArtifacts = false;
+        var generateWorkflowDebugArtifacts = false;
         var forceFullPageOcr = false;
         var languages = new List<string>();
         var tableMode = TableFormerMode.Accurate;
@@ -221,6 +226,10 @@ internal sealed class ConvertCommandOptions
 
                 case "table-debug":
                     generateTableDebugArtifacts = true;
+                    break;
+
+                case "workflow-debug":
+                    generateWorkflowDebugArtifacts = true;
                     break;
 
                 case "no-page-images":
@@ -374,6 +383,7 @@ internal sealed class ConvertCommandOptions
             generateLayoutDebugArtifacts,
             generateImageDebugArtifacts,
             generateTableDebugArtifacts,
+            generateWorkflowDebugArtifacts,
             forceFullPageOcr,
             languages.AsReadOnly(),
             tableMode,

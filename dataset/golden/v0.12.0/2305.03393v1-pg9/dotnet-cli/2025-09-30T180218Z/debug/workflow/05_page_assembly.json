@@ -1,0 +1,117 @@
+{
+  "data": {
+    "completed": true,
+    "documentId": "2305.03393v1-pg9-img",
+    "sourceId": "2305.03393v1-pg9-img",
+    "createdAt": "2025-09-30T18:02:55.4711458+00:00",
+    "pageCount": 1,
+    "pages": [
+      {
+        "pageNumber": 1,
+        "dpi": 300
+      }
+    ],
+    "properties": {},
+    "itemCount": 3,
+    "items": [
+      {
+        "id": "PARAGRAPH-1-19eabe857d76480b887dfa9d871848e2",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 823.7081909179688,
+          "top": 90.28142547607422,
+          "right": 1414,
+          "bottom": 417.5792770385742,
+          "width": 590.2918090820312,
+          "height": 327.2978515625
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 823.7081909179688,
+              "top": 90.28142547607422,
+              "right": 1414,
+              "bottom": 417.5792770385742,
+              "width": 590.2918090820312,
+              "height": 327.2978515625
+            },
+            "charStart": 0,
+            "charEnd": 55
+          }
+        ],
+        "content": {
+          "text": "re Recognition\nts for \u0026ll experiments\nAMD EPYC 7763\nith"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-b547de7cbd7c4b41b148097eb274667e",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 982.9578857421875,
+          "top": 221.67100524902344,
+          "right": 1413.9999694824219,
+          "bottom": 868.4680633544922,
+          "width": 431.0420837402344,
+          "height": 646.7970581054688
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 982.9578857421875,
+              "top": 221.67100524902344,
+              "right": 1413.9999694824219,
+              "bottom": 868.4680633544922,
+              "width": 431.0420837402344,
+              "height": 646.7970581054688
+            },
+            "charStart": 0,
+            "charEnd": 121
+          }
+        ],
+        "content": {
+          "text": "ents\n7763\ndes \u0026\nle and\n} It is\nlightly\nC speed\ne sare\n122]. Ef-\n1aw that\ncomplex\nnterpart_\nerence\n2 (secs)\n2.73\n5.39\n1.97"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-508df9180ef1486692146242ab8c74f9",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 845.0332641601562,
+          "top": 880.4411010742188,
+          "right": 1414,
+          "bottom": 1184.7454223632812,
+          "width": 568.9667358398438,
+          "height": 304.3043212890625
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 845.0332641601562,
+              "top": 880.4411010742188,
+              "right": 1414,
+              "bottom": 1184.7454223632812,
+              "width": 568.9667358398438,
+              "height": 304.3043212890625
+            },
+            "charStart": 0,
+            "charEnd": 154
+          }
+        ],
+        "content": {
+          "text": "0.843 L\n938\n1.91\n915 { 0.859\n3.81\n931 } 0834\n1.22\n.942 | 0.857\n2\n1.931 { 0.824\nthe best prediction\nroduced\nindependently\nalone , then\nDr] TabNet (395k\nCal"
+        }
+      }
+    ]
+  },
+  "stage": "page_assembly",
+  "completedAt": "2025-09-30T18:02:55.5179124+00:00"
+}

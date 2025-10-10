@@ -1,0 +1,21 @@
+{
+  "documentId": "2305.03393v1-pg9-img",
+  "sourcePath": "/workspace/doclingnet/dataset/2305.03393v1-pg9-img.png",
+  "markdownPath": "docling.md",
+  "assets": [],
+  "properties": {},
+  "layoutDebugOverlays": [],
+  "imageDebugArtifacts": [],
+  "tableDebugImages": [],
+  "workflowDebugFiles": [
+    "debug/workflow/01_page_preprocessing.json",
+    "debug/workflow/02_layout_analysis.json",
+    "debug/workflow/03_table_structure.json",
+    "debug/workflow/04_ocr.json",
+    "debug/workflow/05_page_assembly.json",
+    "debug/workflow/06_image_export.json",
+    "debug/workflow/07_markdown_serialization.json"
+  ],
+  "exportedImageCount": 1,
+  "generatedAt": "2025-10-01T11:23:57.6553756+00:00"
+}
