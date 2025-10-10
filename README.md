@@ -6,6 +6,128 @@ This document dissects the Python Docling pipeline with a special focus on the i
 
 - [Stato attuale del porting](docs/progress.md)
 
+## Markdown parity snapshots
+
+La tabella seguente conserva i confronti puntuali fra il Markdown prodotto dal
+porting .NET e il riferimento stabile generato dal Docling Python CLI. Ogni
+iterazione salva un report timestampato sotto
+`dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/<run_id>/`.
+
+| Run ID | File .NET | File Python | Δ righe | Δ parole | Sequence ratio | Diff |
+| --- | --- | --- | ---: | ---: | ---: | --- |
+| 2025-10-02T120000Z | `dotnet-cli/2025-10-02T120000Z/docling.md` | `python-cli/docling.md` | +18 | -15 | 0.2547 | [report](dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/2025-10-02T120000Z/report.md) |
+| 2025-10-01T132039Z | `dotnet-cli/2025-10-01T132039Z/docling.md` | `python-cli/docling.md` | +2 | -369 | 0.0293 | [report](dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/2025-10-01T132039Z/report.md) |
+| 2025-10-02T090000Z | `dotnet-cli/2025-10-01T101841Z/docling.md` | `python-cli/docling.md` | +18 | -372 | 0.0164 | [report](dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/2025-10-02T090000Z/report.md) |
+| 2025-10-01T111016Z | `dotnet-cli/2025-10-01T101841Z/docling.md` | `python-cli/docling.md` | +18 | -372 | 0.0164 | [report](dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/2025-10-01T111016Z/report.md) |
+| 2025-10-01T101841Z | `dotnet-cli/2025-10-01T101841Z/docling.md` | `python-cli/docling.md` | +18 | -372 | 0.0164 | [report](dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/2025-10-01T101841Z/report.md) |
+| 2025-09-30T122535Z | `dotnet-cli/docling.md` | `python-cli/docling.md` | +22 | -50 | 0.1985 | [report](dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/2025-09-30T122535Z/report.md) |
+
+Osservazioni principali (run `2025-10-02T120000Z`):
+
+- Anche con la nuova normalizzazione il Markdown .NET resta distante: 39
+  righe e 424 parole contro le 21/439 del riferimento, con similarità di
+  sequenza `0.2547` e nessuna riga in comune.【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/2025-10-02T120000Z/report.md†L1-L16】
+- Persistono perdite massive di spazi (−271) e trattini (−123) insieme a
+  punteggiatura corrotta, mentre compaiono caratteri spurî (`L`, `;`,
+  newline) tipici dell'OCR a bassa qualità.【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/2025-10-02T120000Z/report.md†L21-L69】
+
+Osservazioni principali (run `2025-10-01T132039Z`):
+
+- Anche con il fallback ONNX attivo, il Markdown .NET contiene solo 70
+  parole (–369 rispetto al riferimento) e mantiene una similarità di
+  sequenza **0.0293**, quindi il recupero delle box layout non ha ancora
+  ristabilito il testo originale.【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/2025-10-01T132039Z/report.md†L6-L24】
+- I caratteri mancanti restano dominati da spazi (−608), vocali e trattini,
+  mentre compaiono solo tre newline spurî e pochi simboli aggiuntivi,
+  segno che l’OCR continua a produrre frammenti rumorosi anziché paragrafi
+  completi.【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/2025-10-01T132039Z/report.md†L27-L52】【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/2025-10-01T132039Z/report.md†L54-L63】
+
+Osservazioni principali (run `2025-10-02T090000Z`):
+
+- La ripetizione del confronto con il pacchetto .NET corrente restituisce
+  **gli stessi numeri** della run precedente: 39 righe contro 21, solo 67
+  parole e un delta di −2 494 caratteri, quindi nessun miglioramento è ancora
+  visibile nel Markdown .NET.【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/2025-10-02T090000Z/report.md†L4-L30】
+- Le principali perdite si concentrano su spazi, vocali e trattini (626 spazi,
+  205 "e", 128 "-"), mentre compaiono newline spurî e parentesi graffe
+  sintomo di ritagli OCR errati.【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/2025-10-02T090000Z/report.md†L32-L62】
+
+Osservazioni principali (run `2025-10-01T111016Z`):
+
+- Il nuovo confronto rigenera le stesse metriche delle iterazioni precedenti:
+  39 righe, 67 parole e −2 494 caratteri rispetto al riferimento Python, con
+  similarità `0.0164` e una sola riga condivisa.【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/2025-10-01T111016Z/report.md†L4-L26】
+- Il breakdown dei caratteri conferma perdite massive di spazi, vocali e
+  trattini, oltre all'inserimento di newline spurî che evidenziano ancora
+  ritagli OCR fuori registro.【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/2025-10-01T111016Z/report.md†L28-L58】
+
+Osservazioni principali (run `2025-10-01T101841Z`):
+
+- Il Markdown .NET resta fortemente corrotto: solo **67 parole** sopravvivono
+  rispetto alle 439 del riferimento, con una similarità di sequenza pari a
+  `0.0164` e appena **1 riga** condivisa su 52.【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/2025-10-01T101841Z/report.md†L3-L16】
+- Mancano 2 494 caratteri rispetto al baseline; spiccano 626 spazi, 205 "e" e 128
+  trattini, segno che l'OCR continua a perdere gran parte del testo utile.【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/2025-10-01T101841Z/report.md†L19-L44】
+- Le uniche aggiunte sono sequenze spurie (`\n`, `{`, `}`) che rivelano ancora
+  ritagli OCR errati nonostante la denormalizzazione delle box.【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/2025-10-01T101841Z/report.md†L46-L55】
+
+Osservazioni principali (run `2025-09-30T122535Z`):
+
+- Nessuna linea combacia tra i due file (Jaccard 0.0), segno che il Markdown
+  .NET è completamente corrotto rispetto al riferimento.【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/2025-09-30T122535Z/report.md†L1-L48】
+- Il renderer .NET perde 519 caratteri (di cui 310 spazi e 123 trattini) e
+  introduce sequenze spurie (`_`, `{`, `}` ecc.) sintomo di OCR degradato o
+  mancata normalizzazione Unicode.【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/2025-09-30T122535Z/report.md†L13-L76】
+- Il diff completo è archiviato nel report collegato e include sia la diff
+  `unified` sia un riepilogo JSON per l'analisi automatica.【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/python-vs-dotnet/2025-09-30T122535Z/report.md†L78-L140】
+
+## Layout parity snapshots
+
+La tabella seguente confronta le bounding box estratte dal modello Heron in
+Python (baseline stabile) e dalla pipeline .NET. Ogni iterazione salva un
+report sotto `dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/layout/python-vs-dotnet/<run_id>/`.
+
+| Run ID | Python boxes | .NET boxes | Match count | Mean IoU | Report |
+| --- | ---: | ---: | ---: | ---: | --- |
+| 2025-10-02T083000Z | 14 | 13 | 12 | 0.731 | [report](dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/layout/python-vs-dotnet/2025-10-02T083000Z/report.md) |
+| 2025-10-01T132234Z | 14 | 14 | 10 | 0.832 | [report](dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/layout/python-vs-dotnet/2025-10-01T132234Z/report.md) |
+| 2025-10-01T111022Z | 14 | 13 | 12 | 0.731 | [report](dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/layout/python-vs-dotnet/2025-10-01T111022Z/report.md) |
+| 2025-10-01T093101Z | 14 | 13 | 12 | 0.731 | [report](dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/layout/python-vs-dotnet/2025-10-01T093101Z/report.md) |
+
+Nel run `2025-10-02T083000Z`:
+
+- I conteggi, l'IoU medio e la distribuzione degli scarti restano identici al
+  confronto precedente: 12 box abbinate con IoU medio 0.731, ma con outlier al
+  0.010 dovuto alla mancata de-normalizzazione corretta delle coordinate
+  inferiori.【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/layout/python-vs-dotnet/2025-10-02T083000Z/report.md†L1-L26】
+
+Nel run `2025-10-01T111022Z`:
+
+- Le statistiche coincidono con la run precedente (12 match, IoU medio 0.731),
+  ma il riepilogo ribadisce la discrepanza sulle dimensioni pagina 1414×1755
+  riportate dal percorso .NET contro le 1275×1650 del baseline Python.【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/layout/python-vs-dotnet/2025-10-01T111022Z/summary.json†L1-L17】
+- Il report mette in evidenza lo stesso outlier con IoU ≈ 0.01 in basso a
+  destra, ulteriore conferma che la reproiezione delle box non è ancora
+  allineata.【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/layout/python-vs-dotnet/2025-10-01T111022Z/report.md†L1-L24】
+
+Nel run `2025-10-01T093101Z`:
+
+- Il layout Python opera sull'immagine `1275×1650`, mentre la pipeline .NET
+  ha preprocessato a `1414×1755`; per il confronto normalizziamo le coordinate
+  a `[0,1]` così da neutralizzare la differenza di DPI.【F:dataset/golden/v0.12.0/2305.03393v1-pg9/python-cli/layout/2025-10-01T093101Z/layout.json†L1-L75】【F:dataset/golden/v0.12.0/2305.03393v1-pg9/dotnet-cli/2025-09-30T180218Z/debug/workflow/02_layout_analysis.json†L1-L36】
+- Dodici box su tredici trovano un corrispondente con IoU medio `0.731`; gli
+  scostamenti più vistosi sono sui blocchi in basso a destra, dove la versione
+  .NET stringe il bounding box di circa `21%` in larghezza.【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/layout/python-vs-dotnet/2025-10-01T093101Z/report.md†L1-L22】
+- Il riepilogo JSON espone conteggi, IoU statistici e dimensioni di pagina per
+  futuri confronti automatici.【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/layout/python-vs-dotnet/2025-10-01T093101Z/summary.json†L1-L17】
+
+Nel run `2025-10-01T132234Z`:
+
+- La nuova iterazione allinea finalmente le dimensioni pagina (1275×1650
+  da entrambi i lati) e aumenta la media IoU a 0.832, ma solo 10 box
+  vengono abbinate e l’ultima conserva un outlier grave con IoU ≈ 0.012
+  dovuto a coordinate ancora errate.【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/layout/python-vs-dotnet/2025-10-01T132234Z/summary.json†L1-L14】【F:dataset/golden/v0.12.0/2305.03393v1-pg9/comparisons/layout/python-vs-dotnet/2025-10-01T132234Z/report.md†L1-L20】
+
 ## 1. Step-by-step: from input image to Markdown export
 
 The table below enumerates the key macro steps Docling executes when converting page images into Markdown artefacts. For each step we capture the Python implementation touchpoints and the required .NET work items.

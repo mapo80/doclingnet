@@ -1,0 +1,542 @@
+{
+  "data": {
+    "completed": true,
+    "blockCount": 14,
+    "blocks": [
+      {
+        "pageNumber": 1,
+        "kind": "LayoutBlock",
+        "region": {
+          "left": 1124.794677734375,
+          "top": 1499.9495849609375,
+          "right": 1275.0000457763672,
+          "bottom": 1649.9999542236328,
+          "width": 150.2053680419922,
+          "height": 150.0503692626953
+        },
+        "metadata": {
+          "docling:source": "layout_block",
+          "docling:layout_kind": "Text",
+          "docling:area_ratio": "0.010713"
+        },
+        "lineCount": 0,
+        "lines": []
+      },
+      {
+        "pageNumber": 1,
+        "kind": "LayoutBlock",
+        "region": {
+          "left": 897.217041015625,
+          "top": 1474.7576904296875,
+          "right": 1275,
+          "bottom": 1650.000015258789,
+          "width": 377.782958984375,
+          "height": 175.24232482910156
+        },
+        "metadata": {
+          "docling:source": "layout_block",
+          "docling:layout_kind": "Text",
+          "docling:area_ratio": "0.031469"
+        },
+        "lineCount": 0,
+        "lines": []
+      },
+      {
+        "pageNumber": 1,
+        "kind": "LayoutBlock",
+        "region": {
+          "left": 942.71728515625,
+          "top": 1506.4229736328125,
+          "right": 1274.9999694824219,
+          "bottom": 1650.000015258789,
+          "width": 332.2826843261719,
+          "height": 143.57704162597656
+        },
+        "metadata": {
+          "docling:source": "layout_block",
+          "docling:layout_kind": "Text",
+          "docling:area_ratio": "0.022678"
+        },
+        "lineCount": 0,
+        "lines": []
+      },
+      {
+        "pageNumber": 1,
+        "kind": "LayoutBlock",
+        "region": {
+          "left": 857.9776000976562,
+          "top": 1431.0281982421875,
+          "right": 1062.2835388183594,
+          "bottom": 1467.1477546691895,
+          "width": 204.30593872070312,
+          "height": 36.11955642700195
+        },
+        "metadata": {
+          "docling:source": "layout_block",
+          "docling:layout_kind": "Text",
+          "docling:area_ratio": "0.003508"
+        },
+        "lineCount": 0,
+        "lines": []
+      },
+      {
+        "pageNumber": 1,
+        "kind": "LayoutBlock",
+        "region": {
+          "left": 1095.6329345703125,
+          "top": 104.21280670166016,
+          "right": 1275.0000305175781,
+          "bottom": 366.74890899658203,
+          "width": 179.36709594726562,
+          "height": 262.5361022949219
+        },
+        "metadata": {
+          "docling:source": "layout_block",
+          "docling:layout_kind": "Text",
+          "docling:area_ratio": "0.022384"
+        },
+        "lineCount": 0,
+        "lines": []
+      },
+      {
+        "pageNumber": 1,
+        "kind": "LayoutBlock",
+        "region": {
+          "left": 881.83203125,
+          "top": 219.1826171875,
+          "right": 1275.0000305175781,
+          "bottom": 786.8771362304688,
+          "width": 393.1679992675781,
+          "height": 567.6945190429688
+        },
+        "metadata": {
+          "docling:source": "layout_block",
+          "docling:layout_kind": "Text",
+          "docling:area_ratio": "0.106096"
+        },
+        "lineCount": 15,
+        "lines": [
+          {
+            "text": "experiments",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 893.8050003051758,
+              "top": 250.76315879821777,
+              "right": 1000.1850051879883,
+              "bottom": 265.7105255126953,
+              "width": 106.3800048828125,
+              "height": 14.947366714477539
+            }
+          },
+          {
+            "text": "EPYC 7763",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 894.789999961853,
+              "top": 273.18421173095703,
+              "right": 1000.185004234314,
+              "bottom": 288.13157653808594,
+              "width": 105.39500427246094,
+              "height": 14.947364807128906
+            }
+          },
+          {
+            "text": "it includes a",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 886.9099998474121,
+              "top": 389.0263214111328,
+              "right": 999.200008392334,
+              "bottom": 402.1052703857422,
+              "width": 112.29000854492188,
+              "height": 13.078948974609375
+            }
+          },
+          {
+            "text": "or simple and",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 881,
+              "top": 413.3157958984375,
+              "right": 999.2000045776367,
+              "bottom": 428.2631530761719,
+              "width": 118.20000457763672,
+              "height": 14.947357177734375
+            }
+          },
+          {
+            "text": "Table: /l/ It is",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 881,
+              "top": 437.6052703857422,
+              "right": 1000.1850051879883,
+              "bottom": 452.55262756347656,
+              "width": 119.18500518798828,
+              "height": 14.947357177734375
+            }
+          },
+          {
+            "text": "and slightly",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 881,
+              "top": 463.76316833496094,
+              "right": 999.2000045776367,
+              "bottom": 480.5789489746094,
+              "width": 118.20000457763672,
+              "height": 16.815780639648438
+            }
+          },
+          {
+            "text": "ds a 21 speed",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 881,
+              "top": 488.0526428222656,
+              "right": 1002.1549987792969,
+              "bottom": 504.8684387207031,
+              "width": 121.15499877929688,
+              "height": 16.8157958984375
+            }
+          },
+          {
+            "text": "on the same",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 887.8949999809265,
+              "top": 574,
+              "right": 1000.1850085258484,
+              "bottom": 587.0789489746094,
+              "width": 112.29000854492188,
+              "height": 13.078948974609375
+            }
+          },
+          {
+            "text": "bNet |22/. Ef-",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 881,
+              "top": 596.4210510253906,
+              "right": 999.2000045776367,
+              "bottom": 611.3684387207031,
+              "width": 118.20000457763672,
+              "height": 14.9473876953125
+            }
+          },
+          {
+            "text": ")del show that",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 881,
+              "top": 620.7105407714844,
+              "right": 1000.1850051879883,
+              "bottom": 631.9210510253906,
+              "width": 119.18500518798828,
+              "height": 11.21051025390625
+            }
+          },
+          {
+            "text": "izing complex",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 881,
+              "top": 643.131591796875,
+              "right": 1001.1699981689453,
+              "bottom": 659.9473876953125,
+              "width": 120.16999816894531,
+              "height": 16.8157958984375
+            }
+          },
+          {
+            "text": "L counterpart_",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 881,
+              "top": 665.5526428222656,
+              "right": 996.245002746582,
+              "bottom": 680.5,
+              "width": 115.24500274658203,
+              "height": 14.947357177734375
+            }
+          },
+          {
+            "text": "Inference",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 897.7450008392334,
+              "top": 714.131591796875,
+              "right": 972.605001449585,
+              "bottom": 725.3421020507812,
+              "width": 74.86000061035156,
+              "height": 11.21051025390625
+            }
+          },
+          {
+            "text": "time (secs",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 890.8500003814697,
+              "top": 736.5526123046875,
+              "right": 972.6050052642822,
+              "bottom": 751.5,
+              "width": 81.7550048828125,
+              "height": 14.9473876953125
+            }
+          },
+          {
+            "text": "2.73",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 917.4449996948242,
+              "top": 768.3157958984375,
+              "right": 952.9049987792969,
+              "bottom": 781.3947143554688,
+              "width": 35.459999084472656,
+              "height": 13.07891845703125
+            }
+          }
+        ]
+      },
+      {
+        "pageNumber": 1,
+        "kind": "LayoutBlock",
+        "region": {
+          "left": 1190.2841796875,
+          "top": 1428.52001953125,
+          "right": 1274.999984741211,
+          "bottom": 1465.1676635742188,
+          "width": 84.71580505371094,
+          "height": 36.64764404296875
+        },
+        "metadata": {
+          "docling:source": "layout_block",
+          "docling:layout_kind": "Text",
+          "docling:area_ratio": "0.001476"
+        },
+        "lineCount": 0,
+        "lines": []
+      },
+      {
+        "pageNumber": 1,
+        "kind": "LayoutBlock",
+        "region": {
+          "left": 1132.0836181640625,
+          "top": 1246.378173828125,
+          "right": 1275,
+          "bottom": 1537.7760925292969,
+          "width": 142.9163818359375,
+          "height": 291.3979187011719
+        },
+        "metadata": {
+          "docling:source": "layout_block",
+          "docling:layout_kind": "Text",
+          "docling:area_ratio": "0.019796"
+        },
+        "lineCount": 0,
+        "lines": []
+      },
+      {
+        "pageNumber": 1,
+        "kind": "LayoutBlock",
+        "region": {
+          "left": 791.1851806640625,
+          "top": 799.5169677734375,
+          "right": 1274.9999694824219,
+          "bottom": 1097.54736328125,
+          "width": 483.8147888183594,
+          "height": 298.0303955078125
+        },
+        "metadata": {
+          "docling:source": "layout_block",
+          "docling:layout_kind": "Text",
+          "docling:area_ratio": "0.068540"
+        },
+        "lineCount": 7,
+        "lines": [
+          {
+            "text": "0 | U.oo (| 0.05",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 791,
+              "top": 799,
+              "right": 951.9300079345703,
+              "bottom": 807.8519735336304,
+              "width": 160.9300079345703,
+              "height": 8.851973533630371
+            }
+          },
+          {
+            "text": "7 | 0.853 | 1.97",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 791,
+              "top": 823.5888156890869,
+              "right": 953.1399993896484,
+              "bottom": 835.3914489746094,
+              "width": 162.13999938964844,
+              "height": 11.802633285522461
+            }
+          },
+          {
+            "text": "8 | 0.843 | 3.77",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 791,
+              "top": 850.1447372436523,
+              "right": 951.9300079345703,
+              "bottom": 861.9473686218262,
+              "width": 160.9300079345703,
+              "height": 11.802631378173828
+            }
+          },
+          {
+            "text": "5 | 0.859 | 1.91",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 791,
+              "top": 877.684211730957,
+              "right": 951.9300079345703,
+              "bottom": 890.4703979492188,
+              "width": 160.9300079345703,
+              "height": 12.786186218261719
+            }
+          },
+          {
+            "text": "| 0.834 | 3.81",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 791,
+              "top": 905.2236862182617,
+              "right": 949.510009765625,
+              "bottom": 917.0263137817383,
+              "width": 158.510009765625,
+              "height": 11.802627563476562
+            }
+          },
+          {
+            "text": "2 | 0.857 | 1.22",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 791,
+              "top": 932.7631530761719,
+              "right": 953.1399993896484,
+              "bottom": 943.5822448730469,
+              "width": 162.13999938964844,
+              "height": 10.819091796875
+            }
+          },
+          {
+            "text": "1 | 0.824 | 2",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 791,
+              "top": 959.3190765380859,
+              "right": 938.6200103759766,
+              "bottom": 971.1217041015625,
+              "width": 147.62001037597656,
+              "height": 11.802627563476562
+            }
+          }
+        ]
+      },
+      {
+        "pageNumber": 1,
+        "kind": "LayoutBlock",
+        "region": {
+          "left": 1134.27783203125,
+          "top": 338.1095886230469,
+          "right": 1275.0000457763672,
+          "bottom": 735.5116577148438,
+          "width": 140.7222137451172,
+          "height": 397.4020690917969
+        },
+        "metadata": {
+          "docling:source": "layout_block",
+          "docling:layout_kind": "Text",
+          "docling:area_ratio": "0.026583"
+        },
+        "lineCount": 0,
+        "lines": []
+      },
+      {
+        "pageNumber": 1,
+        "kind": "LayoutBlock",
+        "region": {
+          "left": 335.0198669433594,
+          "top": 1493.1470947265625,
+          "right": 436.94864654541016,
+          "bottom": 1534.3648376464844,
+          "width": 101.92877960205078,
+          "height": 41.217742919921875
+        },
+        "metadata": {
+          "docling:source": "layout_block",
+          "docling:layout_kind": "Text",
+          "docling:area_ratio": "0.001997"
+        },
+        "lineCount": 0,
+        "lines": []
+      },
+      {
+        "pageNumber": 1,
+        "kind": "LayoutBlock",
+        "region": {
+          "left": 1199.442626953125,
+          "top": 1426.64208984375,
+          "right": 1274.999984741211,
+          "bottom": 1474.0577812194824,
+          "width": 75.55735778808594,
+          "height": 47.41569137573242
+        },
+        "metadata": {
+          "docling:source": "layout_block",
+          "docling:layout_kind": "Text",
+          "docling:area_ratio": "0.001703"
+        },
+        "lineCount": 0,
+        "lines": []
+      },
+      {
+        "pageNumber": 1,
+        "kind": "LayoutBlock",
+        "region": {
+          "left": 1189.5123291015625,
+          "top": 1428.54541015625,
+          "right": 1274.9999694824219,
+          "bottom": 1466.3076095581055,
+          "width": 85.48764038085938,
+          "height": 37.76219940185547
+        },
+        "metadata": {
+          "docling:source": "layout_block",
+          "docling:layout_kind": "Text",
+          "docling:area_ratio": "0.001534"
+        },
+        "lineCount": 0,
+        "lines": []
+      },
+      {
+        "pageNumber": 1,
+        "kind": "LayoutBlock",
+        "region": {
+          "left": 1112.7249755859375,
+          "top": 1434.4483642578125,
+          "right": 1267.9088592529297,
+          "bottom": 1474.0786972045898,
+          "width": 155.1838836669922,
+          "height": 39.630332946777344
+        },
+        "metadata": {
+          "docling:source": "layout_block",
+          "docling:layout_kind": "Text",
+          "docling:area_ratio": "0.002923"
+        },
+        "lineCount": 0,
+        "lines": []
+      }
+    ]
+  },
+  "stage": "ocr",
+  "completedAt": "2025-10-01T13:22:21.1917831+00:00"
+}

@@ -153,7 +153,11 @@ public sealed class OcrStageTests
             },
         };
 
-        var factory = new RecordingOcrServiceFactory(_ => new List<OcrLine>());
+        var factory = new RecordingOcrServiceFactory(request =>
+        {
+            request.Metadata.Should().ContainKey("docling:fallback_reason").WhoseValue.Should().Be("regions_filtered");
+            return new List<OcrLine>();
+        });
         var stage = new OcrStage(factory, options, NullLogger<OcrStage>.Instance);
         var context = new PipelineContext(new ServiceCollection().BuildServiceProvider());
         context.Set(PipelineContextKeys.PageImageStore, store);
@@ -162,9 +166,9 @@ public sealed class OcrStageTests
 
         await stage.ExecuteAsync(context, CancellationToken.None);
 
-        factory.Service.Requests.Should().BeEmpty();
+        factory.Service.Requests.Should().HaveCount(1);
         var result = context.GetRequired<OcrDocumentResult>(PipelineContextKeys.OcrResults);
-        result.Blocks.Should().BeEmpty();
+        result.Blocks.Should().ContainSingle(block => block.Kind == OcrRegionKind.FullPage);
         context.GetRequired<bool>(PipelineContextKeys.OcrCompleted).Should().BeTrue();
     }
 
@@ -201,7 +205,11 @@ public sealed class OcrStageTests
             },
         };
 
-        var factory = new RecordingOcrServiceFactory(_ => new List<OcrLine>());
+        var factory = new RecordingOcrServiceFactory(request =>
+        {
+            request.Metadata.Should().ContainKey("docling:fallback_reason").WhoseValue.Should().Be("regions_filtered");
+            return new List<OcrLine>();
+        });
         var stage = new OcrStage(factory, options, NullLogger<OcrStage>.Instance);
         var context = new PipelineContext(new ServiceCollection().BuildServiceProvider());
         context.Set(PipelineContextKeys.PageImageStore, store);
@@ -210,9 +218,9 @@ public sealed class OcrStageTests
 
         await stage.ExecuteAsync(context, CancellationToken.None);
 
-        factory.Service.Requests.Should().BeEmpty();
+        factory.Service.Requests.Should().HaveCount(1);
         var result = context.GetRequired<OcrDocumentResult>(PipelineContextKeys.OcrResults);
-        result.Blocks.Should().BeEmpty();
+        result.Blocks.Should().ContainSingle(block => block.Kind == OcrRegionKind.FullPage);
     }
 
     [Fact]
@@ -236,6 +244,7 @@ public sealed class OcrStageTests
         var factory = new RecordingOcrServiceFactory(request =>
         {
             request.Region.Should().Be(BoundingBox.FromSize(0, 0, 120, 160));
+            request.Metadata.Should().ContainKey("docling:fallback_reason").WhoseValue.Should().Be("force_due_to_empty_regions");
             return new List<OcrLine> { new("page", request.Region, 1.0) };
         });
 

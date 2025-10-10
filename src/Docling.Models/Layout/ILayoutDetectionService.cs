@@ -17,6 +17,19 @@ public interface ILayoutDetectionService
 }
 
 /// <summary>
+/// Provides access to normalization metadata captured during layout inference.
+/// </summary>
+public interface ILayoutNormalizationMetadataSource
+{
+    IReadOnlyList<LayoutNormalizationTelemetry> ConsumeNormalizationMetadata();
+}
+
+/// <summary>
+/// Represents the normalization parameters applied to a specific page before invoking the layout model.
+/// </summary>
+public sealed record LayoutNormalizationTelemetry(PageReference Page, LayoutSdkNormalisationMetadata Metadata);
+
+/// <summary>
 /// Defines the input payload for layout detection.
 /// </summary>
 public sealed class LayoutRequest

@@ -81,6 +81,9 @@ public sealed partial class OcrStage : IPipelineStage
             using var pageImage = store.Rent(page);
             var pageArea = pageImage.BoundingBox.Area;
             var pageItems = layoutItems.Where(item => item.Page.PageNumber == page.PageNumber).ToList();
+            var pageTables = tableStructures.Count > 0
+                ? SelectTablesForPage(tableStructures, page.PageNumber)
+                : Array.Empty<TableStructure>();
             var processedRegions = 0;
 
             foreach (var item in pageItems)
@@ -117,26 +120,28 @@ public sealed partial class OcrStage : IPipelineStage
                     stopwatch.ElapsedMilliseconds);
             }
 
-            if (tableStructures.Count > 0)
+            if (pageTables.Count > 0)
             {
-                var pageTables = SelectTablesForPage(tableStructures, page.PageNumber);
-                if (pageTables.Count > 0)
-                {
-                    processedRegions += await RecognizeTableCellsAsync(
-                        service,
-                        page,
-                        pageImage,
-                        pageTables,
-                        pageArea,
-                        blocks,
-                        cancellationToken).ConfigureAwait(false);
-                }
+                processedRegions += await RecognizeTableCellsAsync(
+                    service,
+                    page,
+                    pageImage,
+                    pageTables,
+                    pageArea,
+                    blocks,
+                    cancellationToken).ConfigureAwait(false);
             }
 
-            if (processedRegions == 0 && _options.Ocr.ForceFullPageOcr)
+            var fallbackReason = DetermineFullPageFallbackReason(
+                _options.Ocr.ForceFullPageOcr,
+                pageItems,
+                pageTables,
+                processedRegions);
+
+            if (fallbackReason is not null)
             {
-                StageLogger.FullPageFallback(_logger, page.PageNumber);
-                var metadata = CreateFullPageMetadata(page);
+                StageLogger.FullPageFallback(_logger, page.PageNumber, fallbackReason);
+                var metadata = CreateFullPageMetadata(page, fallbackReason);
                 var request = new OcrRequest(page, pageImage.Bitmap, pageImage.BoundingBox, metadata);
                 var stopwatch = Stopwatch.StartNew();
                 var lines = await CollectAsync(service, request, cancellationToken).ConfigureAwait(false);
@@ -154,6 +159,30 @@ public sealed partial class OcrStage : IPipelineStage
 
         context.Set(PipelineContextKeys.OcrResults, new OcrDocumentResult(blocks));
         context.Set(PipelineContextKeys.OcrCompleted, true);
+    }
+
+    private static string? DetermineFullPageFallbackReason(
+        bool forceFullPageOcr,
+        List<LayoutItem> layoutItems,
+        IReadOnlyList<TableStructure> tableStructures,
+        int processedRegions)
+    {
+        if (processedRegions > 0)
+        {
+            return forceFullPageOcr ? "force_full_page_ocr" : null;
+        }
+
+        if (forceFullPageOcr)
+        {
+            return "force_due_to_empty_regions";
+        }
+
+        if (layoutItems.Count == 0 && tableStructures.Count == 0)
+        {
+            return "no_regions_detected";
+        }
+
+        return "regions_filtered";
     }
 
     private static bool RequiresOcr(LayoutItem item)
@@ -402,12 +431,13 @@ public sealed partial class OcrStage : IPipelineStage
         return new ReadOnlyDictionary<string, string>(dictionary);
     }
 
-    private static ReadOnlyDictionary<string, string> CreateFullPageMetadata(PageReference page)
+    private static ReadOnlyDictionary<string, string> CreateFullPageMetadata(PageReference page, string reason)
     {
         var dictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["docling:source"] = "full_page",
             ["docling:page_number"] = page.PageNumber.ToString(CultureInfo.InvariantCulture),
+            ["docling:fallback_reason"] = reason,
         };
 
         return new ReadOnlyDictionary<string, string>(dictionary);
@@ -427,7 +457,7 @@ public sealed partial class OcrStage : IPipelineStage
         [LoggerMessage(EventId = 4003, Level = LogLevel.Information, Message = "Recognised {LineCount} lines on page {PageNumber} ({Source}) in {ElapsedMs} ms.")]
         public static partial void RegionRecognised(ILogger logger, int LineCount, int PageNumber, string Source, long ElapsedMs);
 
-        [LoggerMessage(EventId = 4004, Level = LogLevel.Information, Message = "Executing full-page OCR fallback on page {PageNumber}.")]
-        public static partial void FullPageFallback(ILogger logger, int PageNumber);
+        [LoggerMessage(EventId = 4004, Level = LogLevel.Information, Message = "Executing full-page OCR fallback on page {PageNumber} (reason: {Reason}).")]
+        public static partial void FullPageFallback(ILogger logger, int PageNumber, string Reason);
     }
 }

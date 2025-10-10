@@ -12,11 +12,13 @@ namespace Docling.Models.Layout;
 /// <summary>
 /// Implementation of <see cref="ILayoutDetectionService"/> backed by the Docling Layout SDK (Heron ONNX models).
 /// </summary>
-public sealed partial class LayoutSdkDetectionService : ILayoutDetectionService, IDisposable
+public sealed partial class LayoutSdkDetectionService : ILayoutDetectionService, ILayoutNormalizationMetadataSource, IDisposable
 {
     private readonly ILogger<LayoutSdkDetectionService> _logger;
     private readonly ILayoutSdkRunner _runner;
     private bool _disposed;
+    private readonly object _telemetrySync = new();
+    private readonly List<LayoutNormalizationTelemetry> _normalisations = new();
 
     public LayoutSdkDetectionService(LayoutSdkDetectionOptions options, ILogger<LayoutSdkDetectionService> logger)
         : this(options, logger, LayoutSdkRunner.Create(options, logger))
@@ -40,14 +42,19 @@ public sealed partial class LayoutSdkDetectionService : ILayoutDetectionService,
             return Array.Empty<LayoutItem>();
         }
 
+        lock (_telemetrySync)
+        {
+            _normalisations.Clear();
+        }
+
         var items = new List<LayoutItem>();
         foreach (var page in request.Pages)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            IReadOnlyList<LayoutSdk.BoundingBox> boxes;
+            LayoutSdkInferenceResult inferenceResult;
             try
             {
-                boxes = await _runner.InferAsync(page.ImageContent, cancellationToken).ConfigureAwait(false);
+                inferenceResult = await _runner.InferAsync(page.ImageContent, cancellationToken).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -62,6 +69,30 @@ public sealed partial class LayoutSdkDetectionService : ILayoutDetectionService,
                 throw new LayoutServiceException($"Layout inference failed for page {page.Page.PageNumber}.", ex);
             }
 
+            if (inferenceResult.Normalisation is LayoutSdkNormalisationMetadata metadata)
+            {
+                lock (_telemetrySync)
+                {
+                    _normalisations.Add(new LayoutNormalizationTelemetry(page.Page, metadata));
+                }
+
+                ServiceLogger.NormalisationApplied(
+                    _logger,
+                    page.Page.PageNumber,
+                    metadata.OriginalWidth,
+                    metadata.OriginalHeight,
+                    metadata.ScaledWidth,
+                    metadata.ScaledHeight,
+                    metadata.Scale,
+                    metadata.OffsetX,
+                    metadata.OffsetY);
+            }
+            else
+            {
+                ServiceLogger.NormalisationMissing(_logger, page.Page.PageNumber);
+            }
+
+            var boxes = inferenceResult.Boxes;
             if (boxes.Count == 0)
             {
                 continue;
@@ -78,6 +109,21 @@ public sealed partial class LayoutSdkDetectionService : ILayoutDetectionService,
 
         ServiceLogger.DetectionCompleted(_logger, request.Pages.Count, items.Count);
         return items;
+    }
+
+    public IReadOnlyList<LayoutNormalizationTelemetry> ConsumeNormalizationMetadata()
+    {
+        lock (_telemetrySync)
+        {
+            if (_normalisations.Count == 0)
+            {
+                return Array.Empty<LayoutNormalizationTelemetry>();
+            }
+
+            var snapshot = _normalisations.ToArray();
+            _normalisations.Clear();
+            return snapshot;
+        }
     }
 
     public void Dispose()
@@ -159,5 +205,20 @@ public sealed partial class LayoutSdkDetectionService : ILayoutDetectionService,
 
         [LoggerMessage(EventId = 4002, Level = LogLevel.Warning, Message = "Encountered unknown layout label '{Label}'. Falling back to text kind.")]
         public static partial void UnknownLabel(ILogger logger, string label);
+
+        [LoggerMessage(EventId = 4003, Level = LogLevel.Debug, Message = "Page {PageNumber} applied layout normalisation (original {OriginalWidth}x{OriginalHeight}, scaled {ScaledWidth}x{ScaledHeight}, scale {Scale:F3}, offsets {OffsetX:F2},{OffsetY:F2}).")]
+        public static partial void NormalisationApplied(
+            ILogger logger,
+            int pageNumber,
+            int originalWidth,
+            int originalHeight,
+            int scaledWidth,
+            int scaledHeight,
+            double scale,
+            double offsetX,
+            double offsetY);
+
+        [LoggerMessage(EventId = 4004, Level = LogLevel.Debug, Message = "Page {PageNumber} processed without layout normalisation metadata.")]
+        public static partial void NormalisationMissing(ILogger logger, int pageNumber);
     }
 }

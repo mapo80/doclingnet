@@ -50,6 +50,8 @@ public sealed partial class LayoutAnalysisStage : IPipelineStage
             throw new InvalidOperationException("Pipeline context does not contain a page image store.");
         }
 
+        context.Set(PipelineContextKeys.LayoutNormalisationMetadata, Array.Empty<LayoutNormalizationTelemetry>());
+
         var pages = context.GetRequired<IReadOnlyList<PageReference>>(PipelineContextKeys.PageSequence);
         if (pages.Count == 0)
         {
@@ -89,6 +91,15 @@ public sealed partial class LayoutAnalysisStage : IPipelineStage
         try
         {
             layoutItems = await _layoutDetectionService.DetectAsync(request, cancellationToken).ConfigureAwait(false);
+            context.Set(PipelineContextKeys.LayoutAnalysisError, string.Empty);
+        }
+        catch (LayoutServiceException ex)
+        {
+            StageLogger.RequestFailed(_logger, ex);
+            context.Set(PipelineContextKeys.LayoutItems, Array.Empty<LayoutItem>());
+            context.Set(PipelineContextKeys.LayoutAnalysisCompleted, false);
+            context.Set(PipelineContextKeys.LayoutAnalysisError, ex.ToString());
+            return;
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -104,6 +115,12 @@ public sealed partial class LayoutAnalysisStage : IPipelineStage
 
         context.Set(PipelineContextKeys.LayoutItems, layoutItems);
         context.Set(PipelineContextKeys.LayoutAnalysisCompleted, true);
+
+        if (_layoutDetectionService is ILayoutNormalizationMetadataSource normalizationSource)
+        {
+            var traces = normalizationSource.ConsumeNormalizationMetadata();
+            context.Set(PipelineContextKeys.LayoutNormalisationMetadata, traces);
+        }
 
         if (_options.GenerateDebugArtifacts && layoutItems.Count > 0 && _debugOverlayRenderer is not null)
         {

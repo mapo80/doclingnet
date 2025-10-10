@@ -1,0 +1,546 @@
+{
+  "data": {
+    "completed": true,
+    "blockCount": 1,
+    "blocks": [
+      {
+        "pageNumber": 1,
+        "kind": "FullPage",
+        "region": {
+          "left": 0,
+          "top": 0,
+          "right": 1414,
+          "bottom": 1755,
+          "width": 1414,
+          "height": 1755
+        },
+        "metadata": {
+          "docling:source": "full_page",
+          "docling:page_number": "1",
+          "docling:fallback_reason": "no_regions_detected"
+        },
+        "lineCount": 43,
+        "lines": [
+          {
+            "text": "for Table Structure Recognit",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 682.2550048828125,
+              "top": 230.92105102539062,
+              "right": 919.1000366210938,
+              "bottom": 259.78619384765625,
+              "width": 236.84503173828125,
+              "height": 28.865142822265625
+            }
+          },
+          {
+            "text": "Optimized Table Tokenizatio",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 424.20001220703125,
+              "top": 254.01316833496094,
+              "right": 664.5800170898438,
+              "bottom": 288.6513366699219,
+              "width": 240.3800048828125,
+              "height": 34.63816833496094
+            }
+          },
+          {
+            "text": "ce timing resulte fot MD EPedze73",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 689.3250122070312,
+              "top": 277.10528564453125,
+              "right": 1021.6150512695312,
+              "bottom": 323.28948974609375,
+              "width": 332.2900390625,
+              "height": 46.1842041015625
+            }
+          },
+          {
+            "text": "compute tbe TED score: Inference single core with",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 388.8500061035156,
+              "top": 305.97039794921875,
+              "right": 848.4000244140625,
+              "bottom": 340.6085510253906,
+              "width": 459.5500183105469,
+              "height": 34.638153076171875
+            }
+          },
+          {
+            "text": "orcle obtained from the same machie",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 304.010009765625,
+              "top": 334.8355407714844,
+              "right": 650.4400024414062,
+              "bottom": 369.47369384765625,
+              "width": 346.42999267578125,
+              "height": 34.638153076171875
+            }
+          },
+          {
+            "text": "CPTI @2.45 GHz",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 307.5450134277344,
+              "top": 363.7006530761719,
+              "right": 463.08502197265625,
+              "bottom": 398.3388366699219,
+              "width": 155.54000854492188,
+              "height": 34.63818359375
+            }
+          },
+          {
+            "text": "1 Eyper Parameter Optimization to perform HPO, since it includend",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 332.2900085449219,
+              "top": 409.8848876953125,
+              "right": 1032.2199401855469,
+              "bottom": 450.2960510253906,
+              "width": 699.929931640625,
+              "height": 40.411163330078125
+            }
+          },
+          {
+            "text": "Ue have chosen the PubTabNet datanat TED scores separately for blehl It is",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 314.6150207519531,
+              "top": 444.5230407714844,
+              "right": 1035.7550354003906,
+              "bottom": 479.16119384765625,
+              "width": 721.1400146484375,
+              "height": 34.638153076171875
+            }
+          },
+          {
+            "text": "We have veroe set of tables. Alsc we reporResults are presented in Table s",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 318.1499938964844,
+              "top": 467.6151428222656,
+              "right": 989.8000183105469,
+              "bottom": 502.2532958984375,
+              "width": 671.6500244140625,
+              "height": 34.638153076171875
+            }
+          },
+          {
+            "text": "highly diverbese(tables with cell spans) Regs the same TED score and gligteed",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 318.1499938964844,
+              "top": 490.7072448730469,
+              "right": 1039.2900085449219,
+              "bottom": 525.3453979492188,
+              "width": 721.1400146484375,
+              "height": 34.638153076171875
+            }
+          },
+          {
+            "text": "complex tablesitha OTSL; Our model achieves {owever OTSL yields \u0026 ? speea",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 321.68499755859375,
+              "top": 513.7993774414062,
+              "right": 1042.8250732421875,
+              "bottom": 548.4375,
+              "width": 721.1400756835938,
+              "height": 34.63812255859375
+            }
+          },
+          {
+            "text": "evident that witres in comparison to HTML",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 321.68499755859375,
+              "top": 536.8914794921875,
+              "right": 728.2100219726562,
+              "bottom": 571.5296020507812,
+              "width": 406.5250244140625,
+              "height": 34.63812255859375
+            }
+          },
+          {
+            "text": "better mAP score8 runtime over HTMI",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 325.2200012207031,
+              "top": 559.9835815429688,
+              "right": 678.7200317382812,
+              "bottom": 594.6217041015625,
+              "width": 353.5000305175781,
+              "height": 34.63812255859375
+            }
+          },
+          {
+            "text": "up in the inference Lutation On the",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 328.7550048828125,
+              "top": 588.8486938476562,
+              "right": 993.3350219726562,
+              "bottom": 617.7138061523438,
+              "width": 664.5800170898438,
+              "height": 28.8651123046875
+            }
+          },
+          {
+            "text": "OTSL and HTML representPubTabNet |22}; Ef-",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 625.6950073242188,
+              "top": 611.9407958984375,
+              "right": 1049.89501953125,
+              "bottom": 646.5789794921875,
+              "width": 424.20001220703125,
+              "height": 34.63818359375
+            }
+          },
+          {
+            "text": "Iable 1 HPQ perfeForener |9} architecture trainer sbnges of the model show that",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 335.82501220703125,
+              "top": 640.805908203125,
+              "right": 1053.4300537109375,
+              "bottom": 675.444091796875,
+              "width": 717.6050415039062,
+              "height": 34.63818359375
+            }
+          },
+          {
+            "text": "Iablforter-based Tablofoaye; 9} ercbder and decodeteciallys 0f tbeogaiaing complex",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 335.82501220703125,
+              "top": 652.3519897460938,
+              "right": 1053.4300537109375,
+              "bottom": 698.5361938476562,
+              "width": 717.6050415039062,
+              "height": 46.1842041015625
+            }
+          },
+          {
+            "text": "fects of reducing tbe #On OTSL perform better; especthan the HTML counterpart",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 335.82501220703125,
+              "top": 686.9901733398438,
+              "right": 1053.4300537109375,
+              "bottom": 721.6282958984375,
+              "width": 717.6050415039062,
+              "height": 34.63812255859375
+            }
+          },
+          {
+            "text": "smaller models traineaaintain \u0026 much higher IAP score",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 335.82501220703125,
+              "top": 715.8552856445312,
+              "right": 809.5150146484375,
+              "bottom": 744.7203979492188,
+              "width": 473.69000244140625,
+              "height": 28.8651123046875
+            }
+          },
+          {
+            "text": "table structures;, and maintam \u0026 4TmAP T Iaterence",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 339.3600158691406,
+              "top": 733.1743774414062,
+              "right": 1032.2200012207031,
+              "bottom": 762.0394897460938,
+              "width": 692.8599853515625,
+              "height": 28.8651123046875
+            }
+          },
+          {
+            "text": "TEblexT al | (0.75) (time (secs)",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 738.8150024414062,
+              "top": 762.0394897460938,
+              "right": 1042.8250732421875,
+              "bottom": 796.6776733398438,
+              "width": 304.01007080078125,
+              "height": 34.63818359375
+            }
+          },
+          {
+            "text": "# |ec-#yers | Language [ simple [complex | 0 955 | 0.8s / \u0022 2.73",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 399.45501708984375,
+              "top": 785.131591796875,
+              "right": 1018.0800170898438,
+              "bottom": 819.769775390625,
+              "width": 618.625,
+              "height": 34.63818359375
+            }
+          },
+          {
+            "text": "c-layers ( dec-layers | oTsL | 0.965 | 0.934 | 0.955 | 0.857 |_6.39",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 385.31500244140625,
+              "top": 808.2236938476562,
+              "right": 1018.0800170898438,
+              "bottom": 842.8618774414062,
+              "width": 632.7650146484375,
+              "height": 34.63818359375
+            }
+          },
+          {
+            "text": "HTML | 0969 | 4927 | 0.927/ o.8s3 | \u0022 1.97",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 579.739990234375,
+              "top": 837.0888671875,
+              "right": 1021.6150512695312,
+              "bottom": 877.5,
+              "width": 441.87506103515625,
+              "height": 40.4111328125
+            }
+          },
+          {
+            "text": "OTSL | 0.938 | 0.909 | 0.938 | 0843 |_ 377",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 586.8099975585938,
+              "top": 871.7269897460938,
+              "right": 1025.1500244140625,
+              "bottom": 906.3651733398438,
+              "width": 438.34002685546875,
+              "height": 34.63818359375
+            }
+          },
+          {
+            "text": "FTML | 0952 | 0%09 | @.915 | 0.859 | \u0022 1.81",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 586.8099975585938,
+              "top": 894.819091796875,
+              "right": 1025.1500244140625,
+              "bottom": 935.2302856445312,
+              "width": 438.34002685546875,
+              "height": 40.41119384765625
+            }
+          },
+          {
+            "text": "OTSL | 0.923 | 0.897 | 0.931 | 0.834 | _ 8.81",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 590.3450317382812,
+              "top": 923.6842041015625,
+              "right": 1025.1500244140625,
+              "bottom": 958.3223876953125,
+              "width": 434.80499267578125,
+              "height": 34.63818359375
+            }
+          },
+          {
+            "text": "FTM_ | 0.945 | 09 40.942| 0.857 | \u0022 1.22",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 590.3450317382812,
+              "top": 952.5493774414062,
+              "right": 1032.219970703125,
+              "bottom": 987.1875,
+              "width": 441.87493896484375,
+              "height": 34.63812255859375
+            }
+          },
+          {
+            "text": "OTSL | 0.952 | 093 | 0.931 | D.824",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 597.4150390625,
+              "top": 981.4144897460938,
+              "right": 950.9150390625,
+              "bottom": 1016.0526733398438,
+              "width": 353.5,
+              "height": 34.63818359375
+            }
+          },
+          {
+            "text": "HTML_Lug44_L 0.903",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 597.4150390625,
+              "top": 1004.506591796875,
+              "right": 805.9800415039062,
+              "bottom": 1039.144775390625,
+              "width": 208.56500244140625,
+              "height": 34.63818359375
+            }
+          },
+          {
+            "text": "5.2 Quantitative Results caatation that produced the best preddenol",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 374.71002197265625,
+              "top": 1119.9671630859375,
+              "right": 1092.3150634765625,
+              "bottom": 1154.6053466796875,
+              "width": 717.6050415039062,
+              "height": 34.63818359375
+            }
+          },
+          {
+            "text": "We picked the model paracaetet Confith afThbNet aotetsheub dexeatdesgsk",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 378.2449951171875,
+              "top": 1143.0592041015625,
+              "right": 1099.385009765625,
+              "bottom": 1195.0164794921875,
+              "width": 721.1400146484375,
+              "height": 51.957275390625
+            }
+          },
+          {
+            "text": "quality (enc_6, detedft B chree publicly avaiableidat Me(about IM samples)",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 381.7799987792969,
+              "top": 1183.470458984375,
+              "right": 1092.3150329589844,
+              "bottom": 1223.881591796875,
+              "width": 710.5350341796875,
+              "height": 40.4111328125
+            }
+          },
+          {
+            "text": "trained and evaluatet {Ll3k samples) and Pub ablearly evident tbat the model",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 381.7799987792969,
+              "top": 1212.3355712890625,
+              "right": 1102.9200134277344,
+              "bottom": 1246.9737548828125,
+              "width": 721.1400146484375,
+              "height": 34.63818359375
+            }
+          },
+          {
+            "text": "samples) , FinTabNet re presented in Table p} It is clead Ykeeping high TEDs and",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 385.31500244140625,
+              "top": 1235.4276123046875,
+              "right": 1102.9200439453125,
+              "bottom": 1270.0657958984375,
+              "width": 717.6050415039062,
+              "height": 34.63818359375
+            }
+          },
+          {
+            "text": "Performance cesults trerombtHTML Acroes the bEadNeepihat contain sparse",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 385.31500244140625,
+              "top": 1252.7467041015625,
+              "right": 1106.455078125,
+              "bottom": 1298.930908203125,
+              "width": 721.1400756835938,
+              "height": 46.1842041015625
+            }
+          },
+          {
+            "text": "ned O OTSL OutpeiffOulf financial tables",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 420.6650085449219,
+              "top": 1281.61181640625,
+              "right": 798.9100341796875,
+              "bottom": 1322.0230712890625,
+              "width": 378.2450256347656,
+              "height": 40.4112548828125
+            }
+          },
+          {
+            "text": "mAP scores even 0L\u003C mot has AD advantage over HTML",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 388.8500061035156,
+              "top": 1316.25,
+              "right": 1109.9900207519531,
+              "bottom": 1345.1151123046875,
+              "width": 721.1400146484375,
+              "height": 28.8651123046875
+            }
+          },
+          {
+            "text": "and large bablly; the results show that Obable-JM and achieves signifcadtny",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 392.385009765625,
+              "top": 1339.3421630859375,
+              "right": 1109.989990234375,
+              "bottom": 1379.7532958984375,
+              "width": 717.60498046875,
+              "height": 40.4111328125
+            }
+          },
+          {
+            "text": "Additilied on \u0026 bigger data set likeve_faster inference due to fewer decodug",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 427.7350158691406,
+              "top": 1368.207275390625,
+              "right": 1117.0600891113281,
+              "bottom": 1408.618408203125,
+              "width": 689.3250732421875,
+              "height": 40.4111328125
+            }
+          },
+          {
+            "text": "when applied e Finaly OTSL achieves fastee representation:",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 399.45501708984375,
+              "top": 1391.2994384765625,
+              "right": 961.52001953125,
+              "bottom": 1425.9375,
+              "width": 562.0650024414062,
+              "height": 34.6380615234375
+            }
+          },
+          {
+            "text": "improved scores refult % the reduced sequence",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 399.45501708984375,
+              "top": 1408.618408203125,
+              "right": 820.1199951171875,
+              "bottom": 1449.0296630859375,
+              "width": 420.66497802734375,
+              "height": 40.4112548828125
+            }
+          },
+          {
+            "text": "steps which 18",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 402.9900207519531,
+              "top": 1443.256591796875,
+              "right": 526.7150268554688,
+              "bottom": 1466.3487548828125,
+              "width": 123.72500610351562,
+              "height": 23.0921630859375
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "stage": "ocr",
+  "completedAt": "2025-09-30T10:43:24.2368345+00:00"
+}

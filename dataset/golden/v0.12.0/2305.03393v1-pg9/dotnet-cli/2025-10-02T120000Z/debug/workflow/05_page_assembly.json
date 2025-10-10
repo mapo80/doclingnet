@@ -1,0 +1,53 @@
+{
+  "data": {
+    "completed": true,
+    "documentId": "2305.03393v1-pg9-img",
+    "sourceId": "2305.03393v1-pg9-img",
+    "createdAt": "2025-10-01T11:23:57.3799424+00:00",
+    "pageCount": 1,
+    "pages": [
+      {
+        "pageNumber": 1,
+        "dpi": 300
+      }
+    ],
+    "properties": {},
+    "itemCount": 1,
+    "items": [
+      {
+        "id": "PARAGRAPH-1-61d67cf2437448a491e5f3b14bc70a24",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 0,
+          "top": 0,
+          "right": 1275,
+          "bottom": 1650,
+          "width": 1275,
+          "height": 1650
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 0,
+              "top": 0,
+              "right": 1275,
+              "bottom": 1650,
+              "width": 1275,
+              "height": 1650
+            },
+            "charStart": 0,
+            "charEnd": 2416
+          }
+        ],
+        "content": {
+          "text": "Optimized Table Tokenization for Table Structure Recognit\norder to coxpute Uhe \u0027IEXD) score, IuFerence 6iling results FO1\u0027 all experiments\nwere Obtaized [ro11 the Sare machine O11 a Single core with AMD LlYC {63\nCPU @2.45 GHz.\n5.1 Hyper Parameter Optimization\nWe have chosen the Pub ZabNet data set to perform HPO , since it includes a\nhighly diversc sct oF tables, Also we repoxt \u0027IEL) scoros soparately Fi simple and\ncomplex tables (tables wIUh cell spans), Results are presented i \u0027Lable; || It is\nevident Uhak with OISL, Ouc modeL achieves the sane \u0027IED) score and slghely\nbetter Ial scores i1 coxparison1 to HZML; However (ZISL yields a Zc\u0027 speed\nup 1n the interence runtime over HTML\nLable 1, HPO perlormed^ iu (LSL ald HLML representatiou 011 Uhe same\ntranslortler:-based \u0027LableFormter |V architecbure; trained only ou PulZabNet [224, EL:\nLecUs OL recHCHHG Vhe # OL HaverS L# CucOdeL Ald dccOder Suages O1 Vhe HdeL Show Vhal\nSialel IOdek 6raled 01 (IS4 pelkoru bethel;, espocaHy I1 ICCOBHZLUL cUlplex\nkable sUrucUure8; Ald Iallai a Hch hgher IAL scure Uhan Uhe |LLML cutcrparg;,\nLanguage | TIEDs_Tx mAn | ,interence\nenc-layers | dec-layers | \u0026 zo | simple | complex | all | (U,/5) | Uime (secs)\nOTSL | 0.965 | 0.934 | 0.955 | 0.88 | 2.73\nHimL | 0,969 | 0,926 | 0.955 | 0,857 | 5,39\n01SL | 0,938 | 0,904 | 0,928 | 0,853 | 1,97\nHimL | 0,952 | U,9u9 | 0,938 | 0,843 | 3\nOISSL | 0,923 | 0.897 | 0,915 | 0,859 | 1,91\nHTML_| 0.945 L 0.901_|0.931 | 0.834 L_3.81\nOISSL | 0,952 | 0.92 |0,942 | 0,857 | 1,22\nHiML | 0,944 | 0.903 | 0,931 | 0.824 | \u00272\n5.2 Quantitative Results\nWe picked the model parameter conliguration that produccd the best predictiol\nqualty (cuc-b; dcc=6, hcads=8) wIth !ub Lab et aloxe; Ghenl Iudopendeutly\ntrained and evaluated I6 o1 thrce publcly available data scts; Lub Lab NVet (396k\nsalpks| !I LahNct (LLSk SalpLcs| axd ! uu lablcs:- LML (ahuut LML Salplcs|\nP\u0027ertormance results are presented in \u0027Iable |4 It is clearly evident that the model\ntrained O11 (1SL outperkoris HLML across the board; kcopig hgh 1 EDs and\nAP scores evcn O11 dificult fnancial tables (VinTabNet) that contain spa\nand large tables\nAdditioxally; the results Show that (15L has a11 advantage ovci\u0027 HiML\nwhen applicd 0u a bigger data Sct like Publables-IM and achieves siguifcantly\nIiproved Scores, [ Izaly; (1SL achieves Laster inLerezce due to Lewer\u0022 docoding\nCpS WHcIl 1S \u0026 icsuLg OE the rccuccc Scqucncc rcprescngat1o"
+        }
+      }
+    ]
+  },
+  "stage": "page_assembly",
+  "completedAt": "2025-10-01T11:23:57.398486+00:00"
+}

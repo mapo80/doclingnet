@@ -1,0 +1,498 @@
+{
+  "data": {
+    "completed": true,
+    "blockCount": 1,
+    "blocks": [
+      {
+        "pageNumber": 1,
+        "kind": "FullPage",
+        "region": {
+          "left": 0,
+          "top": 0,
+          "right": 1275,
+          "bottom": 1650,
+          "width": 1275,
+          "height": 1650
+        },
+        "metadata": {
+          "docling:source": "full_page",
+          "docling:page_number": "1",
+          "docling:fallback_reason": "no_regions_detected"
+        },
+        "lineCount": 39,
+        "lines": [
+          {
+            "text": "Optimized Table Tokenization for Table Structure Recognit",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 408,
+              "top": 195.3947296142578,
+              "right": 905.25,
+              "bottom": 211.67762756347656,
+              "width": 497.25,
+              "height": 16.28289794921875
+            }
+          },
+          {
+            "text": "order to coxpute Uhe \u0027IEXD) score, IuFerence 6iling results FO1\u0027 all experiments",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 249.67105102539062,
+              "right": 1000.875,
+              "bottom": 265.9539489746094,
+              "width": 717.1875,
+              "height": 16.28289794921875
+            }
+          },
+          {
+            "text": "were Obtaized [ro11 the Sare machine O11 a Single core with AMD LlYC {63",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 276.8092041015625,
+              "right": 1000.875,
+              "bottom": 293.09210205078125,
+              "width": 717.1875,
+              "height": 16.28289794921875
+            }
+          },
+          {
+            "text": "CPU @2.45 GHz.",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 298.51971435546875,
+              "right": 436.6875,
+              "bottom": 314.8026123046875,
+              "width": 153,
+              "height": 16.28289794921875
+            }
+          },
+          {
+            "text": "5.1 Hyper Parameter Optimization",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 352.7960510253906,
+              "right": 650.25,
+              "bottom": 374.5065612792969,
+              "width": 366.5625,
+              "height": 21.71051025390625
+            }
+          },
+          {
+            "text": "We have chosen the Pub ZabNet data set to perform HPO , since it includes a",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 385.36181640625,
+              "right": 1000.875,
+              "bottom": 407.0723571777344,
+              "width": 717.1875,
+              "height": 21.710540771484375
+            }
+          },
+          {
+            "text": "highly diversc sct oF tables, Also we repoxt \u0027IEL) scoros soparately Fi simple and",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 280.5,
+              "top": 412.5,
+              "right": 1000.875,
+              "bottom": 428.7828674316406,
+              "width": 720.375,
+              "height": 16.282867431640625
+            }
+          },
+          {
+            "text": "complex tables (tables wIUh cell spans), Results are presented i \u0027Lable; || It is",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 280.5,
+              "top": 439.6381530761719,
+              "right": 1000.875,
+              "bottom": 455.9210205078125,
+              "width": 720.375,
+              "height": 16.282867431640625
+            }
+          },
+          {
+            "text": "evident Uhak with OISL, Ouc modeL achieves the sane \u0027IED) score and slghely",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 461.3486633300781,
+              "right": 1000.875,
+              "bottom": 477.6315612792969,
+              "width": 717.1875,
+              "height": 16.28289794921875
+            }
+          },
+          {
+            "text": "better Ial scores i1 coxparison1 to HZML; However (ZISL yields a Zc\u0027 speed",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 488.48681640625,
+              "right": 1004.0625,
+              "bottom": 504.76971435546875,
+              "width": 720.375,
+              "height": 16.28289794921875
+            }
+          },
+          {
+            "text": "up 1n the interence runtime over HTML",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 515.625,
+              "right": 640.6875,
+              "bottom": 526.480224609375,
+              "width": 357,
+              "height": 10.855224609375
+            }
+          },
+          {
+            "text": "Lable 1, HPO perlormed^ iu (LSL ald HLML representatiou 011 Uhe same",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 575.3289184570312,
+              "right": 1000.875,
+              "bottom": 591.61181640625,
+              "width": 717.1875,
+              "height": 16.28289794921875
+            }
+          },
+          {
+            "text": "translortler:-based \u0027LableFormter |V architecbure; trained only ou PulZabNet [224, EL:",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 597.0394287109375,
+              "right": 1000.875,
+              "bottom": 613.3223266601562,
+              "width": 717.1875,
+              "height": 16.28289794921875
+            }
+          },
+          {
+            "text": "LecUs OL recHCHHG Vhe # OL HaverS L# CucOdeL Ald dccOder Suages O1 Vhe HdeL Show Vhal",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 624.1776123046875,
+              "right": 1000.875,
+              "bottom": 635.0328979492188,
+              "width": 717.1875,
+              "height": 10.85528564453125
+            }
+          },
+          {
+            "text": "Sialel IOdek 6raled 01 (IS4 pelkoru bethel;, espocaHy I1 ICCOBHZLUL cUlplex",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 645.8881225585938,
+              "right": 1000.875,
+              "bottom": 656.743408203125,
+              "width": 717.1875,
+              "height": 10.85528564453125
+            }
+          },
+          {
+            "text": "kable sUrucUure8; Ald Iallai a Hch hgher IAL scure Uhan Uhe |LLML cutcrparg;,",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 667.5986328125,
+              "right": 1000.875,
+              "bottom": 678.4539184570312,
+              "width": 717.1875,
+              "height": 10.85528564453125
+            }
+          },
+          {
+            "text": "Language | TIEDs_Tx mAn | ,interence",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 503.625,
+              "top": 716.4473266601562,
+              "right": 972.1875,
+              "bottom": 743.5855102539062,
+              "width": 468.5625,
+              "height": 27.13818359375
+            }
+          },
+          {
+            "text": "enc-layers | dec-layers | \u0026 zo | simple | complex | all | (U,/5) | Uime (secs)",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 302.8125,
+              "top": 738.1578369140625,
+              "right": 978.5625,
+              "bottom": 754.4407348632812,
+              "width": 675.75,
+              "height": 16.28289794921875
+            }
+          },
+          {
+            "text": "OTSL | 0.965 | 0.934 | 0.955 | 0.88 | 2.73",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 516.375,
+              "top": 765.2960205078125,
+              "right": 956.25,
+              "bottom": 781.5789184570312,
+              "width": 439.875,
+              "height": 16.28289794921875
+            }
+          },
+          {
+            "text": "HimL | 0,969 | 0,926 | 0.955 | 0,857 | 5,39",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 513.1875,
+              "top": 797.86181640625,
+              "right": 953.0625,
+              "bottom": 808.7171020507812,
+              "width": 439.875,
+              "height": 10.85528564453125
+            }
+          },
+          {
+            "text": "01SL | 0,938 | 0,904 | 0,928 | 0,853 | 1,97",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 516.375,
+              "top": 825,
+              "right": 953.0625,
+              "bottom": 835.855224609375,
+              "width": 436.6875,
+              "height": 10.855224609375
+            }
+          },
+          {
+            "text": "HimL | 0,952 | U,9u9 | 0,938 | 0,843 | 3",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 513.1875,
+              "top": 852.1381225585938,
+              "right": 953.0625,
+              "bottom": 862.993408203125,
+              "width": 439.875,
+              "height": 10.85528564453125
+            }
+          },
+          {
+            "text": "OISSL | 0,923 | 0.897 | 0,915 | 0,859 | 1,91",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 516.375,
+              "top": 879.2763061523438,
+              "right": 953.0625,
+              "bottom": 890.1315307617188,
+              "width": 436.6875,
+              "height": 10.855224609375
+            }
+          },
+          {
+            "text": "HTML_| 0.945 L 0.901_|0.931 | 0.834 L_3.81",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 513.1875,
+              "top": 906.4144287109375,
+              "right": 949.875,
+              "bottom": 922.6973266601562,
+              "width": 436.6875,
+              "height": 16.28289794921875
+            }
+          },
+          {
+            "text": "OISSL | 0,952 | 0.92 |0,942 | 0,857 | 1,22",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 516.375,
+              "top": 933.5526123046875,
+              "right": 953.0625,
+              "bottom": 944.4078369140625,
+              "width": 436.6875,
+              "height": 10.855224609375
+            }
+          },
+          {
+            "text": "HiML | 0,944 | 0.903 | 0,931 | 0.824 | \u00272",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 513.1875,
+              "top": 960.6907348632812,
+              "right": 940.3125,
+              "bottom": 971.5460205078125,
+              "width": 427.125,
+              "height": 10.85528564453125
+            }
+          },
+          {
+            "text": "5.2 Quantitative Results",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 1058.3880615234375,
+              "right": 551.4375,
+              "bottom": 1074.6710205078125,
+              "width": 267.75,
+              "height": 16.282958984375
+            }
+          },
+          {
+            "text": "We picked the model parameter conliguration that produccd the best predictiol",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 1096.381591796875,
+              "right": 1000.875,
+              "bottom": 1112.6644287109375,
+              "width": 717.1875,
+              "height": 16.2828369140625
+            }
+          },
+          {
+            "text": "qualty (cuc-b; dcc=6, hcads=8) wIth !ub Lab et aloxe; Ghenl Iudopendeutly",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 1123.5196533203125,
+              "right": 1000.875,
+              "bottom": 1139.8026123046875,
+              "width": 717.1875,
+              "height": 16.282958984375
+            }
+          },
+          {
+            "text": "trained and evaluated I6 o1 thrce publcly available data scts; Lub Lab NVet (396k",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 1145.230224609375,
+              "right": 1000.875,
+              "bottom": 1161.5130615234375,
+              "width": 717.1875,
+              "height": 16.2828369140625
+            }
+          },
+          {
+            "text": "salpks| !I LahNct (LLSk SalpLcs| axd ! uu lablcs:- LML (ahuut LML Salplcs|",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 1172.368408203125,
+              "right": 1000.875,
+              "bottom": 1183.2236328125,
+              "width": 717.1875,
+              "height": 10.855224609375
+            }
+          },
+          {
+            "text": "P\u0027ertormance results are presented in \u0027Iable |4 It is clearly evident that the model",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 1194.078857421875,
+              "right": 1000.875,
+              "bottom": 1215.7894287109375,
+              "width": 717.1875,
+              "height": 21.7105712890625
+            }
+          },
+          {
+            "text": "trained O11 (1SL outperkoris HLML across the board; kcopig hgh 1 EDs and",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 1221.217041015625,
+              "right": 1000.875,
+              "bottom": 1237.5,
+              "width": 717.1875,
+              "height": 16.282958984375
+            }
+          },
+          {
+            "text": "AP scores evcn O11 dificult fnancial tables (VinTabNet) that contain spa",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 302.8125,
+              "top": 1242.9276123046875,
+              "right": 975.375,
+              "bottom": 1259.21044921875,
+              "width": 672.5625,
+              "height": 16.2828369140625
+            }
+          },
+          {
+            "text": "and large tables",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 1270.0657958984375,
+              "right": 423.9375,
+              "bottom": 1286.3486328125,
+              "width": 140.25,
+              "height": 16.2828369140625
+            }
+          },
+          {
+            "text": "Additioxally; the results Show that (15L has a11 advantage ovci\u0027 HiML",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 315.5625,
+              "top": 1297.203857421875,
+              "right": 1000.875,
+              "bottom": 1313.48681640625,
+              "width": 685.3125,
+              "height": 16.282958984375
+            }
+          },
+          {
+            "text": "when applicd 0u a bigger data Sct like Publables-IM and achieves siguifcantly",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 1318.9144287109375,
+              "right": 1000.875,
+              "bottom": 1335.197265625,
+              "width": 717.1875,
+              "height": 16.2828369140625
+            }
+          },
+          {
+            "text": "Iiproved Scores, [ Izaly; (1SL achieves Laster inLerezce due to Lewer\u0022 docoding",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 283.6875,
+              "top": 1346.0526123046875,
+              "right": 1000.875,
+              "bottom": 1362.33544921875,
+              "width": 717.1875,
+              "height": 16.2828369140625
+            }
+          },
+          {
+            "text": "CpS WHcIl 1S \u0026 icsuLg OE the rccuccc Scqucncc rcprescngat1o",
+            "confidence": 1,
+            "boundingBox": {
+              "left": 299.625,
+              "top": 1373.1907958984375,
+              "right": 828.75,
+              "bottom": 1384.0460205078125,
+              "width": 529.125,
+              "height": 10.855224609375
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "stage": "ocr",
+  "completedAt": "2025-10-01T11:23:57.3514234+00:00"
+}

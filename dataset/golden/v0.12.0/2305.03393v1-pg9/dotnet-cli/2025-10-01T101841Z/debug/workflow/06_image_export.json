@@ -1,0 +1,34 @@
+{
+  "data": {
+    "completed": true,
+    "exportCount": 1,
+    "exports": [
+      {
+        "kind": "Page",
+        "imageId": "2305.03393v1-pg9-img-page-001",
+        "image": {
+          "id": "2305.03393v1-pg9-img-page-001",
+          "mediaType": "image/png",
+          "width": 1414,
+          "height": 1755,
+          "dpi": 300,
+          "checksum": "AF444006FCE4DA2221B2DFACA72C04E1A926F885AD11970F9DF90578FAE815E6",
+          "pageNumber": 1,
+          "pageDpi": 300,
+          "sourceRegion": {
+            "left": 0,
+            "top": 0,
+            "right": 1414,
+            "bottom": 1755,
+            "width": 1414,
+            "height": 1755
+          }
+        }
+      }
+    ],
+    "debugArtifactCount": 0,
+    "debugArtifacts": []
+  },
+  "stage": "image_export",
+  "completedAt": "2025-10-01T10:20:32.4263874+00:00"
+}

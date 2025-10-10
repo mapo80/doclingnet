@@ -56,7 +56,7 @@ public sealed class PdfToImageRenderer : IPdfPageRenderer
         var pageIndex = 0;
         await foreach (var bitmap in Conversion.ToImagesAsync(buffer, orderedPages, settings.Password, renderOptions, cancellationToken).ConfigureAwait(false))
         {
-            yield return new PageImage(new PageReference(orderedPages[pageIndex++], settings.Dpi), bitmap);
+            yield return new PageImage(new PageReference(orderedPages[pageIndex++] + 1, settings.Dpi), bitmap);
         }
     }
 }
