@@ -284,60 +284,16 @@ def getDetBoxes_core(textmap, linkmap, text_threshold, link_threshold, low_text)
 
 **Test Suite Completa ImageProcessing**: **40/40 PASSED** ✅
 
-##### **2.4.4: Implementare GetAllBboxesFromDetector**
-- [ ] Modificare `EasyOcr.cs` con nuovo metodo:
-  ```csharp
-  private static List<SKRect> GetAllBboxesFromDetector(
-      ModelOutput output,
-      int width,
-      int height)
-  {
-      // Estrai i due canali
-      float[,] textmap = ExtractChannel(output, 0);
-      float[,] linkmap = ExtractChannel(output, 1);
+##### **2.4.4: Implementare GetAllBboxesFromDetector** ✅ COMPLETATO
+- [x] Modificare `DetectionPostProcessor` per generare tutte le bbox (text+link map).
+- [x] Usare ConnectedComponents/Morphology/GeometryUtils per min-area rect e rettangoli scalati.
+- [x] Collegare `TextDetector` alla nuova pipeline (fallback già presente).
+- [ ] Eseguire test EasyOcrNet (Richiede modelli: non eseguiti, vedere note).
 
-      // Binarizzazione
-      bool[,] textScore = Threshold(textmap, lowText: 0.4f);
-      bool[,] linkScore = Threshold(linkmap, linkThreshold: 0.4f);
-
-      // Combinazione
-      bool[,] combined = Combine(textScore, linkScore);
-
-      // Connected Components
-      var components = ConnectedComponentsAnalyzer.Analyze(combined);
-
-      // Per ogni componente
-      var boxes = new List<SKRect>();
-      foreach (var comp in components)
-      {
-          // Filtra per size
-          if (comp.Area < 10) continue;
-
-          // Filtra per text threshold
-          if (MaxScore(textmap, comp) < 0.7f) continue;
-
-          // Crea segmentation mask
-          bool[,] mask = CreateMask(comp);
-
-          // Rimuovi link areas
-          RemoveLinkAreas(mask, textScore, linkScore);
-
-          // Dilatazione
-          int niter = CalcDilationIterations(comp);
-          mask = MorphologyOps.Dilate(mask, 1 + niter, 1 + niter);
-
-          // Min area rect
-          var contour = GeometryUtils.ExtractContour(mask);
-          var rect = GeometryUtils.MinAreaRect(contour);
-
-          // Scala a dimensioni originali
-          var scaledRect = ScaleRect(rect, width, height, detW, detH);
-          boxes.Add(scaledRect);
-      }
-
-      return boxes;
-  }
-  ```
+**Note**:
+- Il nuovo `DetectionPostProcessor` applica soglie (0.7/0.4/0.4), connected components, dilatazione adattiva e `GeometryUtils.MinAreaRect` per ottenere bounding box multiple.
+- Output finale in coordinate ridimensionate, ancora raggruppato in linee dal `TextComponentGrouper`.
+- Test di integrazione non eseguiti perché `EnsureReleaseModels` richiede modelli reali; occorre idratarli prima del run.
 
 ##### **2.4.5: Modificare Read() per usare multiple boxes**
 - [ ] Aggiornare `EasyOcr.Read()`:
