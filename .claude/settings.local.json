@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet restore:*)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet test:*)",
+      "Bash(curl:*)",
+      "Bash(dotnet:*)",
+      "Bash(tee:*)",
+      "Read(//private/tmp/docling-output/**)",
+      "Bash(cat:*)",
+      "Bash(python3:*)",
+      "Bash(mkdir:*)",
+      "Read(//tmp/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

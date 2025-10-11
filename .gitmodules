@@ -1,0 +1,9 @@
+[submodule "src/submodules/ds4sd-docling-layout-heron-onnx"]
+	path = src/submodules/ds4sd-docling-layout-heron-onnx
+	url = /Users/politom/Documents/Workspace/personal/ds4sd-docling-layout-heron-onnx
+[submodule "src/submodules/ds4sd-docling-tableformer-onnx"]
+	path = src/submodules/ds4sd-docling-tableformer-onnx
+	url = /Users/politom/Documents/Workspace/personal/ds4sd-docling-tableformer-onnx
+[submodule "src/submodules/easyocrnet"]
+	path = src/submodules/easyocrnet
+	url = /Users/politom/Documents/Workspace/personal/easyocrnet
