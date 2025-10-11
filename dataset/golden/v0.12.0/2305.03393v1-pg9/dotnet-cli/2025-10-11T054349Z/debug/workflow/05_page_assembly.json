@@ -1,0 +1,5813 @@
+{
+  "data": {
+    "completed": true,
+    "documentId": "2305.03393v1-pg9-img",
+    "sourceId": "2305.03393v1-pg9-img",
+    "createdAt": "2025-10-11T05:47:11.572835+00:00",
+    "pageCount": 1,
+    "pages": [
+      {
+        "pageNumber": 1,
+        "dpi": 300
+      }
+    ],
+    "properties": {},
+    "itemCount": 181,
+    "items": [
+      {
+        "id": "PARAGRAPH-1-3cac2ef4cc424f0d9559a0b52e4950bb",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 756.654541015625,
+          "top": 194.45333862304688,
+          "right": 936.0804138183594,
+          "bottom": 212.93528366088867,
+          "width": 179.42587280273438,
+          "height": 18.481945037841797
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 756.654541015625,
+              "top": 194.45333862304688,
+              "right": 936.0804138183594,
+              "bottom": 212.93528366088867,
+              "width": 179.42587280273438,
+              "height": 18.481945037841797
+            },
+            "charStart": 0,
+            "charEnd": 20
+          }
+        ],
+        "content": {
+          "text": "tructure Recognition"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-5208cdda15f24391af3fd3bd8ca2897c",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 800.1211547851562,
+          "top": 194.51834106445312,
+          "right": 935.2325897216797,
+          "bottom": 212.98970413208008,
+          "width": 135.11143493652344,
+          "height": 18.471363067626953
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 800.1211547851562,
+              "top": 194.51834106445312,
+              "right": 935.2325897216797,
+              "bottom": 212.98970413208008,
+              "width": 135.11143493652344,
+              "height": 18.471363067626953
+            },
+            "charStart": 0,
+            "charEnd": 15
+          }
+        ],
+        "content": {
+          "text": "ure Recognition"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-8101f4ae5eed4db79de91234dbe612fd",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 770.510498046875,
+          "top": 194.55235290527344,
+          "right": 931.0653381347656,
+          "bottom": 212.51738357543945,
+          "width": 160.55484008789062,
+          "height": 17.965030670166016
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 770.510498046875,
+              "top": 194.55235290527344,
+              "right": 931.0653381347656,
+              "bottom": 212.51738357543945,
+              "width": 160.55484008789062,
+              "height": 17.965030670166016
+            },
+            "charStart": 0,
+            "charEnd": 18
+          }
+        ],
+        "content": {
+          "text": "ucture Recognition"
+        }
+      },
+      {
+        "id": "CAPTION-1-04f1176659b944a393719fd76a5c0cf9",
+        "kind": "Caption",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 694.3057250976562,
+          "top": 194.59019470214844,
+          "right": 930.2074737548828,
+          "bottom": 212.81323051452637,
+          "width": 235.90174865722656,
+          "height": 18.22303581237793
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 694.3057250976562,
+              "top": 194.59019470214844,
+              "right": 930.2074737548828,
+              "bottom": 212.81323051452637,
+              "width": 235.90174865722656,
+              "height": 18.22303581237793
+            },
+            "charStart": 0,
+            "charEnd": 28
+          }
+        ],
+        "content": {
+          "text": "Table Structure Recognition_"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-f2eb2cfb018e4fbfb383c32f2d7735b1",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 770.0929565429688,
+          "top": 194.6876220703125,
+          "right": 930.4264831542969,
+          "bottom": 213.35272979736328,
+          "width": 160.33352661132812,
+          "height": 18.66510772705078
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 770.0929565429688,
+              "top": 194.6876220703125,
+              "right": 930.4264831542969,
+              "bottom": 213.35272979736328,
+              "width": 160.33352661132812,
+              "height": 18.66510772705078
+            },
+            "charStart": 0,
+            "charEnd": 18
+          }
+        ],
+        "content": {
+          "text": "ucture Recognition"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-4aadaa4210fa44e2bca269e57bfc7b6e",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 764.810302734375,
+          "top": 194.74098205566406,
+          "right": 930.7812652587891,
+          "bottom": 213.25821495056152,
+          "width": 165.97096252441406,
+          "height": 18.51723289489746
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 764.810302734375,
+              "top": 194.74098205566406,
+              "right": 930.7812652587891,
+              "bottom": 213.25821495056152,
+              "width": 165.97096252441406,
+              "height": 18.51723289489746
+            },
+            "charStart": 0,
+            "charEnd": 19
+          }
+        ],
+        "content": {
+          "text": "ructure Recognition"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-4d148cb8eaab4651b03a8fcbe58a0172",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 837.7901000976562,
+          "top": 194.7429962158203,
+          "right": 935.246337890625,
+          "bottom": 212.47881698608398,
+          "width": 97.45623779296875,
+          "height": 17.735820770263672
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 837.7901000976562,
+              "top": 194.7429962158203,
+              "right": 935.246337890625,
+              "bottom": 212.47881698608398,
+              "width": 97.45623779296875,
+              "height": 17.735820770263672
+            },
+            "charStart": 0,
+            "charEnd": 11
+          }
+        ],
+        "content": {
+          "text": "Recognition"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-62d248b635794fa48f34da47d1c05a7c",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 403.95025634765625,
+          "top": 194.75735473632812,
+          "right": 930.6923217773438,
+          "bottom": 213.07696723937988,
+          "width": 526.7420654296875,
+          "height": 18.319612503051758
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 403.95025634765625,
+              "top": 194.75735473632812,
+              "right": 930.6923217773438,
+              "bottom": 213.07696723937988,
+              "width": 526.7420654296875,
+              "height": 18.319612503051758
+            },
+            "charStart": 0,
+            "charEnd": 61
+          }
+        ],
+        "content": {
+          "text": "Opbimized Table Tokenizabionl For Table Structure Recognition"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-e73b2f2d3afe4288bfd4630c5e7d24f4",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 840.7225952148438,
+          "top": 194.7871856689453,
+          "right": 925.6097717285156,
+          "bottom": 212.43626403808594,
+          "width": 84.88717651367188,
+          "height": 17.649078369140625
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 840.7225952148438,
+              "top": 194.7871856689453,
+              "right": 925.6097717285156,
+              "bottom": 212.43626403808594,
+              "width": 84.88717651367188,
+              "height": 17.649078369140625
+            },
+            "charStart": 0,
+            "charEnd": 11
+          }
+        ],
+        "content": {
+          "text": "{ecognitiol"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-9652a3ac64224dbcb3799527698c35b9",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 403.9820251464844,
+          "top": 194.81101989746094,
+          "right": 930.4905700683594,
+          "bottom": 213.22711181640625,
+          "width": 526.508544921875,
+          "height": 18.416091918945312
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 403.9820251464844,
+              "top": 194.81101989746094,
+              "right": 930.4905700683594,
+              "bottom": 213.22711181640625,
+              "width": 526.508544921875,
+              "height": 18.416091918945312
+            },
+            "charStart": 0,
+            "charEnd": 61
+          }
+        ],
+        "content": {
+          "text": "Opbimized Table Tokenizabionl For Table Structure Recognition"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-a39293ad30894bc198b6fccea904b6a7",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 405.8157043457031,
+          "top": 194.85401916503906,
+          "right": 931.2049865722656,
+          "bottom": 212.89658737182617,
+          "width": 525.3892822265625,
+          "height": 18.04256820678711
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 405.8157043457031,
+              "top": 194.85401916503906,
+              "right": 931.2049865722656,
+              "bottom": 212.89658737182617,
+              "width": 525.3892822265625,
+              "height": 18.04256820678711
+            },
+            "charStart": 0,
+            "charEnd": 60
+          }
+        ],
+        "content": {
+          "text": "Jpbizized Table Tokelizabion Foc Table Struckure Recognitiol"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-7eb4c08ea3324a9b9b2bca9f9a048df0",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 840.3587036132812,
+          "top": 194.95809936523438,
+          "right": 933.5837097167969,
+          "bottom": 212.7278118133545,
+          "width": 93.22500610351562,
+          "height": 17.769712448120117
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 840.3587036132812,
+              "top": 194.95809936523438,
+              "right": 933.5837097167969,
+              "bottom": 212.7278118133545,
+              "width": 93.22500610351562,
+              "height": 17.769712448120117
+            },
+            "charStart": 0,
+            "charEnd": 11
+          }
+        ],
+        "content": {
+          "text": "{ecognition"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-1e83ec9c76524f14ad2cbc5efba2c284",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 404.3676452636719,
+          "top": 194.9696807861328,
+          "right": 930.8360900878906,
+          "bottom": 212.96464729309082,
+          "width": 526.4684448242188,
+          "height": 17.994966506958008
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 404.3676452636719,
+              "top": 194.9696807861328,
+              "right": 930.8360900878906,
+              "bottom": 212.96464729309082,
+              "width": 526.4684448242188,
+              "height": 17.994966506958008
+            },
+            "charStart": 0,
+            "charEnd": 59
+          }
+        ],
+        "content": {
+          "text": "pLizized Table Tokenizabion Lor Table Struckure Recognitiol"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-01d2a9efa18842ccb83c8082b1b160d4",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 404.28143310546875,
+          "top": 195.1107635498047,
+          "right": 492.4805221557617,
+          "bottom": 213.58248138427734,
+          "width": 88.19908905029297,
+          "height": 18.471717834472656
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 404.28143310546875,
+              "top": 195.1107635498047,
+              "right": 492.4805221557617,
+              "bottom": 213.58248138427734,
+              "width": 88.19908905029297,
+              "height": 18.471717834472656
+            },
+            "charStart": 0,
+            "charEnd": 9
+          }
+        ],
+        "content": {
+          "text": "Optimized"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-910397e00231448fa0b7ba45be8a6906",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 404.1825866699219,
+          "top": 195.14596557617188,
+          "right": 450.268497467041,
+          "bottom": 213.21518516540527,
+          "width": 46.08591079711914,
+          "height": 18.0692195892334
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 404.1825866699219,
+              "top": 195.14596557617188,
+              "right": 450.268497467041,
+              "bottom": 213.21518516540527,
+              "width": 46.08591079711914,
+              "height": 18.0692195892334
+            },
+            "charStart": 0,
+            "charEnd": 9
+          }
+        ],
+        "content": {
+          "text": "Optimized"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-c8e8ee96f26f4435b0c61428f9a88363",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 713.1762084960938,
+          "top": 195.21109008789062,
+          "right": 940.6642761230469,
+          "bottom": 212.74260330200195,
+          "width": 227.48806762695312,
+          "height": 17.531513214111328
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 713.1762084960938,
+              "top": 195.21109008789062,
+              "right": 940.6642761230469,
+              "bottom": 212.74260330200195,
+              "width": 227.48806762695312,
+              "height": 17.531513214111328
+            },
+            "charStart": 0,
+            "charEnd": 25
+          }
+        ],
+        "content": {
+          "text": "ble Structure Recognition"
+        }
+      },
+      {
+        "id": "CAPTION-1-7928ab27961a49278f098234da392d9d",
+        "kind": "Caption",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 699.095458984375,
+          "top": 195.2698974609375,
+          "right": 772.6008148193359,
+          "bottom": 211.18378829956055,
+          "width": 73.50535583496094,
+          "height": 15.913890838623047
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 699.095458984375,
+              "top": 195.2698974609375,
+              "right": 772.6008148193359,
+              "bottom": 211.18378829956055,
+              "width": 73.50535583496094,
+              "height": 15.913890838623047
+            },
+            "charStart": 0,
+            "charEnd": 9
+          }
+        ],
+        "content": {
+          "text": "Table Str"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-2d14a8ed81bb452eb2bc419873e8dc5d",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.6622314453125,
+          "top": 246.75201416015625,
+          "right": 444.2296600341797,
+          "bottom": 275.5687065124512,
+          "width": 164.5674285888672,
+          "height": 28.816692352294922
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.6622314453125,
+              "top": 246.75201416015625,
+              "right": 444.2296600341797,
+              "bottom": 275.5687065124512,
+              "width": 164.5674285888672,
+              "height": 28.816692352294922
+            },
+            "charStart": 0,
+            "charEnd": 16
+          }
+        ],
+        "content": {
+          "text": "order to compute"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-866a76df849b4997a3b963ddbf1b89c0",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.9029541015625,
+          "top": 246.9586181640625,
+          "right": 446.98631286621094,
+          "bottom": 266.38346099853516,
+          "width": 167.08335876464844,
+          "height": 19.424842834472656
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.9029541015625,
+              "top": 246.9586181640625,
+              "right": 446.98631286621094,
+              "bottom": 266.38346099853516,
+              "width": 167.08335876464844,
+              "height": 19.424842834472656
+            },
+            "charStart": 0,
+            "charEnd": 16
+          }
+        ],
+        "content": {
+          "text": "order to compute"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-5e5cdc53b74b4fddb2270006a13afc6e",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 280.07708740234375,
+          "top": 247.04302978515625,
+          "right": 321.730037689209,
+          "bottom": 264.09435081481934,
+          "width": 41.652950286865234,
+          "height": 17.051321029663086
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 280.07708740234375,
+              "top": 247.04302978515625,
+              "right": 321.730037689209,
+              "bottom": 264.09435081481934,
+              "width": 41.652950286865234,
+              "height": 17.051321029663086
+            },
+            "charStart": 0,
+            "charEnd": 16
+          }
+        ],
+        "content": {
+          "text": "order to compute"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-1f51e5bc18584f2da5f0f61767ef338e",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.9855041503906,
+          "top": 247.12985229492188,
+          "right": 1002.5898132324219,
+          "bottom": 278.0673122406006,
+          "width": 722.6043090820312,
+          "height": 30.93745994567871
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.9855041503906,
+              "top": 247.12985229492188,
+              "right": 1002.5898132324219,
+              "bottom": 278.0673122406006,
+              "width": 722.6043090820312,
+              "height": 30.93745994567871
+            },
+            "charStart": 0,
+            "charEnd": 85
+          }
+        ],
+        "content": {
+          "text": "UrdOr Fo (lputc Hhe \u0027LLV scxc, Inorclcc 6Ig rusults JOr\u0027 all experiIKs\nLal HJITA 7aCo"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-1df5fcb010a946e591853f99257d1c04",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.7788391113281,
+          "top": 247.14352416992188,
+          "right": 1002.8590393066406,
+          "bottom": 312.9169235229492,
+          "width": 723.0802001953125,
+          "height": 65.77339935302734
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.7788391113281,
+              "top": 247.14352416992188,
+              "right": 1002.8590393066406,
+              "bottom": 312.9169235229492,
+              "width": 723.0802001953125,
+              "height": 65.77339935302734
+            },
+            "charStart": 0,
+            "charEnd": 163
+          }
+        ],
+        "content": {
+          "text": "Order to cipute Hhe \u0027ILD scoxe Infcrcucc (ilg results For\u0027 all experimcuks\nwere obtained Froul Hhe same machize 011 a Single core with AMD EPYC 7763\nCPU @2.45 GHz."
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-0a2733cfa3ed40c1b028f674d4d90286",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 333.25927734375,
+          "top": 247.40176391601562,
+          "right": 446.19500732421875,
+          "bottom": 265.74940490722656,
+          "width": 112.93572998046875,
+          "height": 18.347640991210938
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 333.25927734375,
+              "top": 247.40176391601562,
+              "right": 446.19500732421875,
+              "bottom": 265.74940490722656,
+              "width": 112.93572998046875,
+              "height": 18.347640991210938
+            },
+            "charStart": 0,
+            "charEnd": 10
+          }
+        ],
+        "content": {
+          "text": "to compute"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-adf9a65777ac461b98316d4b6c02476e",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 393.5402526855469,
+          "top": 295.2611389160156,
+          "right": 436.8795509338379,
+          "bottom": 311.4751281738281,
+          "width": 43.339298248291016,
+          "height": 16.2139892578125
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 393.5402526855469,
+              "top": 295.2611389160156,
+              "right": 436.8795509338379,
+              "bottom": 311.4751281738281,
+              "width": 43.339298248291016,
+              "height": 16.2139892578125
+            },
+            "charStart": 0,
+            "charEnd": 25
+          }
+        ],
+        "content": {
+          "text": "@2.45 GHz\nUr U @@L.40 UnL"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-93e38cef60294aa483fa6fb14e662566",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 280.95611572265625,
+          "top": 295.71087646484375,
+          "right": 436.22764587402344,
+          "bottom": 313.0267524719238,
+          "width": 155.2715301513672,
+          "height": 17.315876007080078
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 280.95611572265625,
+              "top": 295.71087646484375,
+              "right": 436.22764587402344,
+              "bottom": 313.0267524719238,
+              "width": 155.2715301513672,
+              "height": 17.315876007080078
+            },
+            "charStart": 0,
+            "charEnd": 14
+          }
+        ],
+        "content": {
+          "text": "CPU @2.45 GHz_"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-4063f69e1bf14b9892128c99a339ef57",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 280.1103820800781,
+          "top": 295.7609558105469,
+          "right": 436.7691955566406,
+          "bottom": 312.8758087158203,
+          "width": 156.6588134765625,
+          "height": 17.114852905273438
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 280.1103820800781,
+              "top": 295.7609558105469,
+              "right": 436.7691955566406,
+              "bottom": 312.8758087158203,
+              "width": 156.6588134765625,
+              "height": 17.114852905273438
+            },
+            "charStart": 0,
+            "charEnd": 20
+          }
+        ],
+        "content": {
+          "text": "PU @2.45 GHz\n44\nUr U"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-272c28f6f8424b738117118f0e7b90d1",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 391.28717041015625,
+          "top": 295.8131408691406,
+          "right": 436.6617126464844,
+          "bottom": 312.6283874511719,
+          "width": 45.374542236328125,
+          "height": 16.81524658203125
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 391.28717041015625,
+              "top": 295.8131408691406,
+              "right": 436.6617126464844,
+              "bottom": 312.6283874511719,
+              "width": 45.374542236328125,
+              "height": 16.81524658203125
+            },
+            "charStart": 0,
+            "charEnd": 25
+          }
+        ],
+        "content": {
+          "text": "@2.45 GHz\nUr U @@L.40 UnL"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-06c21fa788694ad1b4aa3e647d57e211",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.8031921386719,
+          "top": 295.8496398925781,
+          "right": 435.876220703125,
+          "bottom": 312.96813201904297,
+          "width": 156.07302856445312,
+          "height": 17.118492126464844
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.8031921386719,
+              "top": 295.8496398925781,
+              "right": 435.876220703125,
+              "bottom": 312.96813201904297,
+              "width": 156.07302856445312,
+              "height": 17.118492126464844
+            },
+            "charStart": 0,
+            "charEnd": 14
+          }
+        ],
+        "content": {
+          "text": "U @2.45 GHz\nUI"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-0cbf649e3b1048b385fd03c2ebd5589e",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 280.04437255859375,
+          "top": 296.0822448730469,
+          "right": 388.9841613769531,
+          "bottom": 312.40107345581055,
+          "width": 108.93978881835938,
+          "height": 16.318828582763672
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 280.04437255859375,
+              "top": 296.0822448730469,
+              "right": 388.9841613769531,
+              "bottom": 312.40107345581055,
+              "width": 108.93978881835938,
+              "height": 16.318828582763672
+            },
+            "charStart": 0,
+            "charEnd": 9
+          }
+        ],
+        "content": {
+          "text": "CPU @2.45"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-7575adccec5a4e35b1313d43a8eb3c9f",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 283.1423645019531,
+          "top": 296.2278137207031,
+          "right": 436.71495056152344,
+          "bottom": 312.8338565826416,
+          "width": 153.5725860595703,
+          "height": 16.606042861938477
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 283.1423645019531,
+              "top": 296.2278137207031,
+              "right": 436.71495056152344,
+              "bottom": 312.8338565826416,
+              "width": 153.5725860595703,
+              "height": 16.606042861938477
+            },
+            "charStart": 0,
+            "charEnd": 25
+          }
+        ],
+        "content": {
+          "text": "@2.45 GHz\nUr U @@L.40 UnL"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-58473a9595f44c4daa179ad0dd359ade",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 340.6494445800781,
+          "top": 296.2534484863281,
+          "right": 389.9910202026367,
+          "bottom": 312.4131507873535,
+          "width": 49.341575622558594,
+          "height": 16.15970230102539
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 340.6494445800781,
+              "top": 296.2534484863281,
+              "right": 389.9910202026367,
+              "bottom": 312.4131507873535,
+              "width": 49.341575622558594,
+              "height": 16.15970230102539
+            },
+            "charStart": 0,
+            "charEnd": 9
+          }
+        ],
+        "content": {
+          "text": "CPU @2.45"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-295b3cc0ff05400eb2ee122c4a9f8c83",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 280.27899169921875,
+          "top": 296.3594665527344,
+          "right": 324.85271072387695,
+          "bottom": 312.2555961608887,
+          "width": 44.5737190246582,
+          "height": 15.896129608154297
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 280.27899169921875,
+              "top": 296.3594665527344,
+              "right": 324.85271072387695,
+              "bottom": 312.2555961608887,
+              "width": 44.5737190246582,
+              "height": 15.896129608154297
+            },
+            "charStart": 0,
+            "charEnd": 9
+          }
+        ],
+        "content": {
+          "text": "CPU @2.45"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-97258a9040684e179411da5fadd03d32",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 391.9773254394531,
+          "top": 296.4747009277344,
+          "right": 436.4991149902344,
+          "bottom": 312.5886707305908,
+          "width": 44.52178955078125,
+          "height": 16.113969802856445
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 391.9773254394531,
+              "top": 296.4747009277344,
+              "right": 436.4991149902344,
+              "bottom": 312.5886707305908,
+              "width": 44.52178955078125,
+              "height": 16.113969802856445
+            },
+            "charStart": 0,
+            "charEnd": 25
+          }
+        ],
+        "content": {
+          "text": "@2.45 GHz\nUr U @@L.40 UnL"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-b94b1ec63eec43a78f7a07f04e781352",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 281.8258056640625,
+          "top": 296.8825988769531,
+          "right": 325.3495635986328,
+          "bottom": 311.94867420196533,
+          "width": 43.52375793457031,
+          "height": 15.066075325012207
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 281.8258056640625,
+              "top": 296.8825988769531,
+              "right": 325.3495635986328,
+              "bottom": 311.94867420196533,
+              "width": 43.52375793457031,
+              "height": 15.066075325012207
+            },
+            "charStart": 0,
+            "charEnd": 9
+          }
+        ],
+        "content": {
+          "text": "CPU @2.45"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-07686516012343ce863cdc4c6cc2d6a2",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.91912841796875,
+          "top": 350.9735412597656,
+          "right": 403.56727600097656,
+          "bottom": 370.8437042236328,
+          "width": 123.64814758300781,
+          "height": 19.870162963867188
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.91912841796875,
+              "top": 350.9735412597656,
+              "right": 403.56727600097656,
+              "bottom": 370.8437042236328,
+              "width": 123.64814758300781,
+              "height": 19.870162963867188
+            },
+            "charStart": 0,
+            "charEnd": 9
+          }
+        ],
+        "content": {
+          "text": "5.1 Hyper"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-add45708d170488a8d27e7a6d07dcdb8",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 278.3166198730469,
+          "top": 351.3220520019531,
+          "right": 400.1553726196289,
+          "bottom": 370.71939849853516,
+          "width": 121.83875274658203,
+          "height": 19.39734649658203
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 278.3166198730469,
+              "top": 351.3220520019531,
+              "right": 400.1553726196289,
+              "bottom": 370.71939849853516,
+              "width": 121.83875274658203,
+              "height": 19.39734649658203
+            },
+            "charStart": 0,
+            "charEnd": 9
+          }
+        ],
+        "content": {
+          "text": "5.1 Hyper"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-d190bb221b3243af876237ca1e1668dc",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 541.9259033203125,
+          "top": 351.46112060546875,
+          "right": 665.0331039428711,
+          "bottom": 370.2124786376953,
+          "width": 123.1072006225586,
+          "height": 18.751358032226562
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 541.9259033203125,
+              "top": 351.46112060546875,
+              "right": 665.0331039428711,
+              "bottom": 370.2124786376953,
+              "width": 123.1072006225586,
+              "height": 18.751358032226562
+            },
+            "charStart": 0,
+            "charEnd": 13
+          }
+        ],
+        "content": {
+          "text": "ppptimization"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-b89c64f520f84d1c9b68fbbac0442e61",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 280.0534362792969,
+          "top": 351.6457214355469,
+          "right": 663.5144348144531,
+          "bottom": 371.285120010376,
+          "width": 383.46099853515625,
+          "height": 19.6393985748291
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 280.0534362792969,
+              "top": 351.6457214355469,
+              "right": 663.5144348144531,
+              "bottom": 371.285120010376,
+              "width": 383.46099853515625,
+              "height": 19.6393985748291
+            },
+            "charStart": 0,
+            "charEnd": 32
+          }
+        ],
+        "content": {
+          "text": "5.1 Hvper Parameter Optimization"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-a6f702c9922f44049e6c57935be2a04f",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 528.3164672851562,
+          "top": 351.770751953125,
+          "right": 663.8224792480469,
+          "bottom": 371.0298595428467,
+          "width": 135.50601196289062,
+          "height": 19.25910758972168
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 528.3164672851562,
+              "top": 351.770751953125,
+              "right": 663.8224792480469,
+              "bottom": 371.0298595428467,
+              "width": 135.50601196289062,
+              "height": 19.25910758972168
+            },
+            "charStart": 0,
+            "charEnd": 12
+          }
+        ],
+        "content": {
+          "text": "Optimization"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-e76fd99f6d4a4ba1a08c9bbdb6f3f197",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 280.14691162109375,
+          "top": 352.03564453125,
+          "right": 663.2123107910156,
+          "bottom": 371.3313388824463,
+          "width": 383.0653991699219,
+          "height": 19.29569435119629
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 280.14691162109375,
+              "top": 352.03564453125,
+              "right": 663.2123107910156,
+              "bottom": 371.3313388824463,
+              "width": 383.0653991699219,
+              "height": 19.29569435119629
+            },
+            "charStart": 0,
+            "charEnd": 32
+          }
+        ],
+        "content": {
+          "text": "5.1 Hvper Parameter Uptimization"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-ac335bb66f734824b1919f1e334ddd20",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 278.3310241699219,
+          "top": 382.8307800292969,
+          "right": 533.9227600097656,
+          "bottom": 437.402286529541,
+          "width": 255.59173583984375,
+          "height": 54.57150650024414
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 278.3310241699219,
+              "top": 382.8307800292969,
+              "right": 533.9227600097656,
+              "bottom": 437.402286529541,
+              "width": 255.59173583984375,
+              "height": 54.57150650024414
+            },
+            "charStart": 0,
+            "charEnd": 53
+          }
+        ],
+        "content": {
+          "text": "We have chosen the PubTa\nhighly diverse set of tables"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-e30f5afbb55d48a1af308ae01e4a2c7c",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 833.898681640625,
+          "top": 383.594482421875,
+          "right": 1001.8574523925781,
+          "bottom": 417.22580337524414,
+          "width": 167.95877075195312,
+          "height": 33.63132095336914
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 833.898681640625,
+              "top": 383.594482421875,
+              "right": 1001.8574523925781,
+              "bottom": 417.22580337524414,
+              "width": 167.95877075195312,
+              "height": 33.63132095336914
+            },
+            "charStart": 0,
+            "charEnd": 25
+          }
+        ],
+        "content": {
+          "text": "since it includes a\nL ( :"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-640ee776d084471e9a97c0fa4562a4d5",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 833.5025634765625,
+          "top": 383.6867370605469,
+          "right": 1001.8640899658203,
+          "bottom": 415.24532318115234,
+          "width": 168.3615264892578,
+          "height": 31.55858612060547
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 833.5025634765625,
+              "top": 383.6867370605469,
+              "right": 1001.8640899658203,
+              "bottom": 415.24532318115234,
+              "width": 168.3615264892578,
+              "height": 31.55858612060547
+            },
+            "charStart": 0,
+            "charEnd": 21
+          }
+        ],
+        "content": {
+          "text": "since it includes a\nn"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-a369b58e0e94464e9a7689376590bffa",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 661.1123046875,
+          "top": 384.12664794921875,
+          "right": 915.5141906738281,
+          "bottom": 418.0476608276367,
+          "width": 254.40188598632812,
+          "height": 33.92101287841797
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 661.1123046875,
+              "top": 384.12664794921875,
+              "right": 915.5141906738281,
+              "bottom": 418.0476608276367,
+              "width": 254.40188598632812,
+              "height": 33.92101287841797
+            },
+            "charStart": 0,
+            "charEnd": 34
+          }
+        ],
+        "content": {
+          "text": "to perform HPO, since it i\nMIA _la"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-e12f8c7f34e54b5d90b9d6fa0b203d85",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 679.1318969726562,
+          "top": 384.1455383300781,
+          "right": 1003.0430603027344,
+          "bottom": 416.6723747253418,
+          "width": 323.9111633300781,
+          "height": 32.52683639526367
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 679.1318969726562,
+              "top": 384.1455383300781,
+              "right": 1003.0430603027344,
+              "bottom": 416.6723747253418,
+              "width": 323.9111633300781,
+              "height": 32.52683639526367
+            },
+            "charStart": 0,
+            "charEnd": 32
+          }
+        ],
+        "content": {
+          "text": "perform HPO, since it includes a"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-770b1b2c884741518ad908d9c64ecffe",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 807.6264038085938,
+          "top": 384.6608581542969,
+          "right": 988.4602966308594,
+          "bottom": 417.83604431152344,
+          "width": 180.83389282226562,
+          "height": 33.17518615722656
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 807.6264038085938,
+              "top": 384.6608581542969,
+              "right": 988.4602966308594,
+              "bottom": 417.83604431152344,
+              "width": 180.83389282226562,
+              "height": 33.17518615722656
+            },
+            "charStart": 0,
+            "charEnd": 26
+          }
+        ],
+        "content": {
+          "text": "O. since it includes\n3l@ :"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-6bb4e21f864546e5bae0184d74dbd3cd",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.3994445800781,
+          "top": 384.805419921875,
+          "right": 664.1079711914062,
+          "bottom": 403.0245609283447,
+          "width": 384.7085266113281,
+          "height": 18.219141006469727
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.3994445800781,
+              "top": 384.805419921875,
+              "right": 664.1079711914062,
+              "bottom": 403.0245609283447,
+              "width": 384.7085266113281,
+              "height": 18.219141006469727
+            },
+            "charStart": 0,
+            "charEnd": 37
+          }
+        ],
+        "content": {
+          "text": "We have chosen the PubTabNet data set"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-91a1e0b2fa3c4dff9b7af60548308065",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 661.7799682617188,
+          "top": 384.9932556152344,
+          "right": 899.4134979248047,
+          "bottom": 406.3029136657715,
+          "width": 237.63352966308594,
+          "height": 21.30965805053711
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 661.7799682617188,
+              "top": 384.9932556152344,
+              "right": 899.4134979248047,
+              "bottom": 406.3029136657715,
+              "width": 237.63352966308594,
+              "height": 21.30965805053711
+            },
+            "charStart": 0,
+            "charEnd": 24
+          }
+        ],
+        "content": {
+          "text": "to perform HPO. since it"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-4cb8e09655fc4d6488beeb3e9d37fde5",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 668.0809936523438,
+          "top": 385.1061706542969,
+          "right": 1001.4749450683594,
+          "bottom": 406.3380546569824,
+          "width": 333.3939514160156,
+          "height": 21.231884002685547
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 668.0809936523438,
+              "top": 385.1061706542969,
+              "right": 1001.4749450683594,
+              "bottom": 406.3380546569824,
+              "width": 333.3939514160156,
+              "height": 21.231884002685547
+            },
+            "charStart": 0,
+            "charEnd": 35
+          }
+        ],
+        "content": {
+          "text": "to perform HPO. Since It includes a"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-73951fab917a4922b5d2f4b25d82a2fe",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 709.33349609375,
+          "top": 385.1144714355469,
+          "right": 976.9875183105469,
+          "bottom": 417.06739044189453,
+          "width": 267.6540222167969,
+          "height": 31.952919006347656
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 709.33349609375,
+              "top": 385.1144714355469,
+              "right": 976.9875183105469,
+              "bottom": 417.06739044189453,
+              "width": 267.6540222167969,
+              "height": 31.952919006347656
+            },
+            "charStart": 0,
+            "charEnd": 29
+          }
+        ],
+        "content": {
+          "text": "erform HPO. since it includes"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-f52da7b40623418ea5e19d4e8c8ee8d4",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 280.3373107910156,
+          "top": 385.123779296875,
+          "right": 1002.1703186035156,
+          "bottom": 454.3121109008789,
+          "width": 721.8330078125,
+          "height": 69.1883316040039
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 280.3373107910156,
+              "top": 385.123779296875,
+              "right": 1002.1703186035156,
+              "bottom": 454.3121109008789,
+              "width": 721.8330078125,
+              "height": 69.1883316040039
+            },
+            "charStart": 0,
+            "charEnd": 243
+          }
+        ],
+        "content": {
+          "text": "We have choscn Uhc PuNIaHNck data sc6 6o perLoryl HL O , Since IL includcs a\nhighly diverse set oF tables; Also we report \u0027IEL) scorcs separately Foi Simple and\n(OllpLex tables (Fablcs wiHh cell Spaus |, Results alc pxescuted il Lable || IF is"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-7e66f027d578491292d4408add5b96d5",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 834.27490234375,
+          "top": 385.1578674316406,
+          "right": 1001.6886749267578,
+          "bottom": 405.75997161865234,
+          "width": 167.4137725830078,
+          "height": 20.60210418701172
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 834.27490234375,
+              "top": 385.1578674316406,
+              "right": 1001.6886749267578,
+              "bottom": 405.75997161865234,
+              "width": 167.4137725830078,
+              "height": 20.60210418701172
+            },
+            "charStart": 0,
+            "charEnd": 19
+          }
+        ],
+        "content": {
+          "text": "since it includes a"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-bc3808e1674642749cf512768f5d2d6c",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 793.67431640625,
+          "top": 385.5811767578125,
+          "right": 994.6517028808594,
+          "bottom": 417.9578552246094,
+          "width": 200.97738647460938,
+          "height": 32.376678466796875
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 793.67431640625,
+              "top": 385.5811767578125,
+              "right": 994.6517028808594,
+              "bottom": 417.9578552246094,
+              "width": 200.97738647460938,
+              "height": 32.376678466796875
+            },
+            "charStart": 0,
+            "charEnd": 26
+          }
+        ],
+        "content": {
+          "text": "PO. since it includes\nlC :"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-5428c40909ca445b84f21195b362f6e4",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.67010498046875,
+          "top": 385.6961975097656,
+          "right": 1002.8017578125,
+          "bottom": 530.7530975341797,
+          "width": 723.1316528320312,
+          "height": 145.05690002441406
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.67010498046875,
+              "top": 385.6961975097656,
+              "right": 1002.8017578125,
+              "bottom": 530.7530975341797,
+              "width": 723.1316528320312,
+              "height": 145.05690002441406
+            },
+            "charStart": 0,
+            "charEnd": 427
+          }
+        ],
+        "content": {
+          "text": "We have choseul Uhe PubZahNct data sct to perforrl HL O , since it includes a\nhighly diverse set of tables, Also we report \u0027IED) scores separately Foi simple and\ncouplex tables (tables with cell spans) Results are presented in \u0027able |1 It is\nevident that with (ZXSL, Our model achieves the same TED score and slightly\nbetter map scorcs il corparison to HZML; However (ISL yiclds a 2; speed\nup in the inference runtime over HTML"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-71987d01b2df4e719e36c495d0db1b2a",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.4830627441406,
+          "top": 385.8069152832031,
+          "right": 1001.5459289550781,
+          "bottom": 407.3234176635742,
+          "width": 722.0628662109375,
+          "height": 21.516502380371094
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.4830627441406,
+              "top": 385.8069152832031,
+              "right": 1001.5459289550781,
+              "bottom": 407.3234176635742,
+              "width": 722.0628662109375,
+              "height": 21.516502380371094
+            },
+            "charStart": 0,
+            "charEnd": 73
+          }
+        ],
+        "content": {
+          "text": "We have choscn Uc L#ULabNct daka Sc6 6o porLorul HLO, sincc IL incJudgs a"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-a7071336c4d5457996a6ac7406868572",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 705.5103759765625,
+          "top": 385.8805847167969,
+          "right": 1001.008056640625,
+          "bottom": 433.8927345275879,
+          "width": 295.4976806640625,
+          "height": 48.012149810791016
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 705.5103759765625,
+              "top": 385.8805847167969,
+              "right": 1001.008056640625,
+              "bottom": 433.8927345275879,
+              "width": 295.4976806640625,
+              "height": 48.012149810791016
+            },
+            "charStart": 0,
+            "charEnd": 64
+          }
+        ],
+        "content": {
+          "text": "erform HPO. since it includes a\nscores separately for simple and"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-24ff2b2898af4eecab43d2b91fea535c",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 277.2893371582031,
+          "top": 385.9004211425781,
+          "right": 1001.4286804199219,
+          "bottom": 407.1062240600586,
+          "width": 724.1393432617188,
+          "height": 21.20580291748047
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 277.2893371582031,
+              "top": 385.9004211425781,
+              "right": 1001.4286804199219,
+              "bottom": 407.1062240600586,
+              "width": 724.1393432617188,
+              "height": 21.20580291748047
+            },
+            "charStart": 0,
+            "charEnd": 71
+          }
+        ],
+        "content": {
+          "text": "havc choscu Hhc PuVlahNck data sc6 6o pcrForul HPO , siuce I6 jcludcs a"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-2c533a13c9a34becaf175f98a3bda067",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 863.5011596679688,
+          "top": 386.1686706542969,
+          "right": 1001.9568939208984,
+          "bottom": 451.23297119140625,
+          "width": 138.4557342529297,
+          "height": 65.06430053710938
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 863.5011596679688,
+              "top": 386.1686706542969,
+              "right": 1001.9568939208984,
+              "bottom": 451.23297119140625,
+              "width": 138.4557342529297,
+              "height": 65.06430053710938
+            },
+            "charStart": 0,
+            "charEnd": 49
+          }
+        ],
+        "content": {
+          "text": "ze it includes a\nfor simple and\n1 Table:Ill It is"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-e56f331ededf467180abdc9dde216dd0",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 352.4638671875,
+          "top": 387.3448791503906,
+          "right": 986.1419677734375,
+          "bottom": 443.5638656616211,
+          "width": 633.6781005859375,
+          "height": 56.21898651123047
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 352.4638671875,
+              "top": 387.3448791503906,
+              "right": 986.1419677734375,
+              "bottom": 443.5638656616211,
+              "width": 633.6781005859375,
+              "height": 56.21898651123047
+            },
+            "charStart": 0,
+            "charEnd": 151
+          }
+        ],
+        "content": {
+          "text": "choscil Uhc [Yub LahNet data sc6 to perLoril HO) , S1cc I6 includes\niversc sck oF tables, Akso we repolg \u0027LED scores scparately Foi\u0022 Sipkc \u0027\nLL LL_U UL"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-18805ffd193b40cbacd8fa15896d17d1",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 281.2737731933594,
+          "top": 387.5509948730469,
+          "right": 1000.7602233886719,
+          "bottom": 441.5726203918457,
+          "width": 719.4864501953125,
+          "height": 54.02162551879883
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 281.2737731933594,
+              "top": 387.5509948730469,
+              "right": 1000.7602233886719,
+              "bottom": 441.5726203918457,
+              "width": 719.4864501953125,
+              "height": 54.02162551879883
+            },
+            "charStart": 0,
+            "charEnd": 165
+          }
+        ],
+        "content": {
+          "text": "We havc chuscl Hhc [Y4ULahNct data Sc6 6o pOLLOLyl HLU, Suc I6 Hchudgs\nhiehlv dversc Sc6 OF tables; Akso We repor6 \u0027IHL) scorcs scparatcly For Siupkc Hc\nU U M # UU U"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-945772bb97a6475ead08aaa2e3759f9c",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.637451171875,
+          "top": 399.2618103027344,
+          "right": 1002.1022338867188,
+          "bottom": 461.9016418457031,
+          "width": 722.4647827148438,
+          "height": 62.63983154296875
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.637451171875,
+              "top": 399.2618103027344,
+              "right": 1002.1022338867188,
+              "bottom": 461.9016418457031,
+              "width": 722.4647827148438,
+              "height": 62.63983154296875
+            },
+            "charStart": 0,
+            "charEnd": 197
+          }
+        ],
+        "content": {
+          "text": "Mv U ea V 0 Heana Aae u uHu 0 Ae\nhighly diversc sc6 oF tables, Also we report \u0027IEL) scorcs soparately Foi Simple and\nclplex tables (tables wilh cel spahs|, Results are prescnted i1 \u0027Iabke ||| IF is"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-a4048a823fbf41ffbee8f65554ec4a42",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.5932922363281,
+          "top": 402.6390380859375,
+          "right": 1002.1314392089844,
+          "bottom": 465.8369331359863,
+          "width": 722.5381469726562,
+          "height": 63.19789505004883
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.5932922363281,
+              "top": 402.6390380859375,
+              "right": 1002.1314392089844,
+              "bottom": 465.8369331359863,
+              "width": 722.5381469726562,
+              "height": 63.19789505004883
+            },
+            "charStart": 0,
+            "charEnd": 173
+          }
+        ],
+        "content": {
+          "text": "highly diversc sc6 oF tables, Also we report \u0027IEL) scorcs soparately Foi Simple and\nclplex tables (tables wilh cel spahs|, Results are prescnted i1 \u0027Iabke ||| IF is\nUel CI e"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-57ac15823d0c4688917aa6a483ac0bf3",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 651.0128173828125,
+          "top": 428.2930603027344,
+          "right": 1000.6788940429688,
+          "bottom": 454.7662048339844,
+          "width": 349.66607666015625,
+          "height": 26.47314453125
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 651.0128173828125,
+              "top": 428.2930603027344,
+              "right": 1000.6788940429688,
+              "bottom": 454.7662048339844,
+              "width": 349.66607666015625,
+              "height": 26.47314453125
+            },
+            "charStart": 0,
+            "charEnd": 41
+          }
+        ],
+        "content": {
+          "text": "Results are presented in Table. Ill It is"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-dce1f18e379f41a78db5320311dec0bc",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 782.5429077148438,
+          "top": 448.6646423339844,
+          "right": 1001.5360107421875,
+          "bottom": 472.37728691101074,
+          "width": 218.99310302734375,
+          "height": 23.712644577026367
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 782.5429077148438,
+              "top": 448.6646423339844,
+              "right": 1001.5360107421875,
+              "bottom": 472.37728691101074,
+              "width": 218.99310302734375,
+              "height": 23.712644577026367
+            },
+            "charStart": 0,
+            "charEnd": 43
+          }
+        ],
+        "content": {
+          "text": "JuUiULL 44 Iupiltil 40 [0\necora and eliobtl"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-629148a8d1f94e13b946383ee24230eb",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.6784973144531,
+          "top": 469.49395751953125,
+          "right": 1002.3952941894531,
+          "bottom": 530.2108535766602,
+          "width": 722.716796875,
+          "height": 60.716896057128906
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.6784973144531,
+              "top": 469.49395751953125,
+              "right": 1002.3952941894531,
+              "bottom": 530.2108535766602,
+              "width": 722.716796875,
+              "height": 60.716896057128906
+            },
+            "charStart": 0,
+            "charEnd": 166
+          }
+        ],
+        "content": {
+          "text": "WHUUIV V WI VINU Vu HuuuI (UlVw Vl N LLV Nuulu (M DUKH\nbettcr IAP scurcs I1l COiparisozl to HML; However (LSL vickds a I; Speed\nup in the inference runtime over HTML."
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-c686d742640b47c2a4063a68f46bd760",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.5362548828125,
+          "top": 470.3599853515625,
+          "right": 1001.8392333984375,
+          "bottom": 531.8917922973633,
+          "width": 722.302978515625,
+          "height": 61.53180694580078
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.5362548828125,
+              "top": 470.3599853515625,
+              "right": 1001.8392333984375,
+              "bottom": 531.8917922973633,
+              "width": 722.302978515625,
+              "height": 61.53180694580078
+            },
+            "charStart": 0,
+            "charEnd": 169
+          }
+        ],
+        "content": {
+          "text": "VYMUIV Vw WIV VIVU Vu HuhuI (HvYUn VV NN LLV NIv (U MrW\nbettcr IAp scorcs i11 C iLpariso1l to HIML; However (IISL vickds a %; Sheed\nup in the inference runtime over HTML"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-1da48e049c13418d82f40e146c1c9e5f",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.7215576171875,
+          "top": 470.4533386230469,
+          "right": 1002.4221801757812,
+          "bottom": 531.5064277648926,
+          "width": 722.7006225585938,
+          "height": 61.0530891418457
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.7215576171875,
+              "top": 470.4533386230469,
+              "right": 1002.4221801757812,
+              "bottom": 531.5064277648926,
+              "width": 722.7006225585938,
+              "height": 61.0530891418457
+            },
+            "charStart": 0,
+            "charEnd": 168
+          }
+        ],
+        "content": {
+          "text": "VYMUI Vw WIV VINU Vh Huu? (HuTuo VN M ILV DUuIt OU MHrHW\nbettcr IAP scurcs I1l COiparisozl to HML; However (LSL vickds a I; Speed\nup in the inference runtime over HTML."
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-d6768e2d6e344709a6037daa5134f758",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 274.5224304199219,
+          "top": 508.06768798828125,
+          "right": 626.6231079101562,
+          "bottom": 529.9671173095703,
+          "width": 352.1006774902344,
+          "height": 21.899429321289062
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 274.5224304199219,
+              "top": 508.06768798828125,
+              "right": 626.6231079101562,
+              "bottom": 529.9671173095703,
+              "width": 352.1006774902344,
+              "height": 21.899429321289062
+            },
+            "charStart": 0,
+            "charEnd": 31
+          }
+        ],
+        "content": {
+          "text": "1n the inference runtime over H"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-cc66f4205b5947979e538bc6b0d73539",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 280.34124755859375,
+          "top": 510.0980224609375,
+          "right": 446.36492919921875,
+          "bottom": 529.3803024291992,
+          "width": 166.023681640625,
+          "height": 19.28227996826172
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 280.34124755859375,
+              "top": 510.0980224609375,
+              "right": 446.36492919921875,
+              "bottom": 529.3803024291992,
+              "width": 166.023681640625,
+              "height": 19.28227996826172
+            },
+            "charStart": 0,
+            "charEnd": 19
+          }
+        ],
+        "content": {
+          "text": "up in the inference"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-b855c0853fec428dbe1421f28efa0c72",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 281.0019836425781,
+          "top": 510.16766357421875,
+          "right": 648.5973815917969,
+          "bottom": 530.9083213806152,
+          "width": 367.59539794921875,
+          "height": 20.740657806396484
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 281.0019836425781,
+              "top": 510.16766357421875,
+              "right": 648.5973815917969,
+              "bottom": 530.9083213806152,
+              "width": 367.59539794921875,
+              "height": 20.740657806396484
+            },
+            "charStart": 0,
+            "charEnd": 30
+          }
+        ],
+        "content": {
+          "text": "11 the 1nference rutlme over H"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-bbca6b46e0854b248d46c7c06d08747d",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 282.28363037109375,
+          "top": 510.214111328125,
+          "right": 448.4301300048828,
+          "bottom": 530.236515045166,
+          "width": 166.14649963378906,
+          "height": 20.022403717041016
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 282.28363037109375,
+              "top": 510.214111328125,
+              "right": 448.4301300048828,
+              "bottom": 530.236515045166,
+              "width": 166.14649963378906,
+              "height": 20.022403717041016
+            },
+            "charStart": 0,
+            "charEnd": 19
+          }
+        ],
+        "content": {
+          "text": "up in the inference"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-318ea552ca62439595bc39d990cf72ed",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 282.7221984863281,
+          "top": 510.23223876953125,
+          "right": 448.63624572753906,
+          "bottom": 530.300630569458,
+          "width": 165.91404724121094,
+          "height": 20.068391799926758
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 282.7221984863281,
+              "top": 510.23223876953125,
+              "right": 448.63624572753906,
+              "bottom": 530.300630569458,
+              "width": 165.91404724121094,
+              "height": 20.068391799926758
+            },
+            "charStart": 0,
+            "charEnd": 19
+          }
+        ],
+        "content": {
+          "text": "up in the inference"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-48fcd41d426f4934a63ae65d31aa4867",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 281.09552001953125,
+          "top": 510.5693054199219,
+          "right": 450.99481201171875,
+          "bottom": 531.2900562286377,
+          "width": 169.8992919921875,
+          "height": 20.72075080871582
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 281.09552001953125,
+              "top": 510.5693054199219,
+              "right": 450.99481201171875,
+              "bottom": 531.2900562286377,
+              "width": 169.8992919921875,
+              "height": 20.72075080871582
+            },
+            "charStart": 0,
+            "charEnd": 19
+          }
+        ],
+        "content": {
+          "text": "up in the inference"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-c2d43b6b913d4953ae57e2299081ebb3",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 451.5193176269531,
+          "top": 511.2483215332031,
+          "right": 648.6390686035156,
+          "bottom": 527.7153797149658,
+          "width": 197.1197509765625,
+          "height": 16.467058181762695
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 451.5193176269531,
+              "top": 511.2483215332031,
+              "right": 648.6390686035156,
+              "bottom": 527.7153797149658,
+              "width": 197.1197509765625,
+              "height": 16.467058181762695
+            },
+            "charStart": 0,
+            "charEnd": 7
+          }
+        ],
+        "content": {
+          "text": "me over"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-ba5cd71f41a24cbcb66e5177744004e1",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 469.41119384765625,
+          "top": 511.9955139160156,
+          "right": 568.2655868530273,
+          "bottom": 527.5826349258423,
+          "width": 98.8543930053711,
+          "height": 15.58712100982666
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 469.41119384765625,
+              "top": 511.9955139160156,
+              "right": 568.2655868530273,
+              "bottom": 527.5826349258423,
+              "width": 98.8543930053711,
+              "height": 15.58712100982666
+            },
+            "charStart": 0,
+            "charEnd": 10
+          }
+        ],
+        "content": {
+          "text": "ntime ove)"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-c901c7c55f62434184cd5f738d35f059",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 932.2982788085938,
+          "top": 568.6625366210938,
+          "right": 1001.1698913574219,
+          "bottom": 612.6675682067871,
+          "width": 68.87161254882812,
+          "height": 44.00503158569336
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 932.2982788085938,
+              "top": 568.6625366210938,
+              "right": 1001.1698913574219,
+              "bottom": 612.6675682067871,
+              "width": 68.87161254882812,
+              "height": 44.00503158569336
+            },
+            "charStart": 0,
+            "charEnd": 15
+          }
+        ],
+        "content": {
+          "text": "1e same\n221. Ef"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-23ef54a8a5ad40a7b2668c1040973920",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 929.985595703125,
+          "top": 569.455078125,
+          "right": 1001.9428863525391,
+          "bottom": 609.511531829834,
+          "width": 71.95729064941406,
+          "height": 40.056453704833984
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 929.985595703125,
+              "top": 569.455078125,
+              "right": 1001.9428863525391,
+              "bottom": 609.511531829834,
+              "width": 71.95729064941406,
+              "height": 40.056453704833984
+            },
+            "charStart": 0,
+            "charEnd": 16
+          }
+        ],
+        "content": {
+          "text": "hle same\n221. Ef"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-6106ae1bf16841b5a652378d9eb1ac88",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 792.348388671875,
+          "top": 569.629150390625,
+          "right": 995.3837585449219,
+          "bottom": 605.1354103088379,
+          "width": 203.03536987304688,
+          "height": 35.50625991821289
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 792.348388671875,
+              "top": 569.629150390625,
+              "right": 995.3837585449219,
+              "bottom": 605.1354103088379,
+              "width": 203.03536987304688,
+              "height": 35.50625991821289
+            },
+            "charStart": 0,
+            "charEnd": 41
+          }
+        ],
+        "content": {
+          "text": "esentation on the same\nO PakTlNet Iool Ff"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-29629fec856342c4aabf40065ab63bc8",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 827.4735107421875,
+          "top": 570.520263671875,
+          "right": 1006.5464324951172,
+          "bottom": 610.2681007385254,
+          "width": 179.0729217529297,
+          "height": 39.74783706665039
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 827.4735107421875,
+              "top": 570.520263671875,
+              "right": 1006.5464324951172,
+              "bottom": 610.2681007385254,
+              "width": 179.0729217529297,
+              "height": 39.74783706665039
+            },
+            "charStart": 0,
+            "charEnd": 37
+          }
+        ],
+        "content": {
+          "text": "ation on the same\nPubTabNet /22 . Ef-"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-8f498446abec4dfe9eae2eabcfde933a",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 280.1712951660156,
+          "top": 570.7653198242188,
+          "right": 1001.3125305175781,
+          "bottom": 591.4535369873047,
+          "width": 721.1412353515625,
+          "height": 20.688217163085938
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 280.1712951660156,
+              "top": 570.7653198242188,
+              "right": 1001.3125305175781,
+              "bottom": 591.4535369873047,
+              "width": 721.1412353515625,
+              "height": 20.688217163085938
+            },
+            "charStart": 0,
+            "charEnd": 62
+          }
+        ],
+        "content": {
+          "text": "EIPO) pexLormed jul OSL axd HITML representatioll 011 Uhe Sale"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-590667eb5b2d41348cdd8987ce131972",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 280.0553894042969,
+          "top": 570.9854736328125,
+          "right": 1001.3272399902344,
+          "bottom": 591.0198764801025,
+          "width": 721.2718505859375,
+          "height": 20.03440284729004
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 280.0553894042969,
+              "top": 570.9854736328125,
+              "right": 1001.3272399902344,
+              "bottom": 591.0198764801025,
+              "width": 721.2718505859375,
+              "height": 20.03440284729004
+            },
+            "charStart": 0,
+            "charEnd": 62
+          }
+        ],
+        "content": {
+          "text": "EIPO) pexLormed jul OSL axd HITML representatioll 011 Uhe Sale"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-eff12c45ff1245d58326943d33b703a2",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 280.3279724121094,
+          "top": 570.9877319335938,
+          "right": 1002.0684509277344,
+          "bottom": 615.129508972168,
+          "width": 721.740478515625,
+          "height": 44.14177703857422
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 280.3279724121094,
+              "top": 570.9877319335938,
+              "right": 1002.0684509277344,
+              "bottom": 615.129508972168,
+              "width": 721.740478515625,
+              "height": 44.14177703857422
+            },
+            "charStart": 0,
+            "charEnd": 148
+          }
+        ],
+        "content": {
+          "text": "[able 1, HIPO pexlored il OISL Axd HITML represeutakiol O11 Hhe Sate\nUralskoxtel-based TableFoxter || arclltccture; {raited ouLy O1 PubTabNex Wu, DL"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-9e47ee04fb6b429382912feee53acf78",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 784.1818237304688,
+          "top": 571.3136596679688,
+          "right": 991.7511749267578,
+          "bottom": 605.4248390197754,
+          "width": 207.56935119628906,
+          "height": 34.11117935180664
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 784.1818237304688,
+              "top": 571.3136596679688,
+              "right": 991.7511749267578,
+              "bottom": 605.4248390197754,
+              "width": 207.56935119628906,
+              "height": 34.11117935180664
+            },
+            "charStart": 0,
+            "charEnd": 40
+          }
+        ],
+        "content": {
+          "text": "resentation on the sam\nIO PakmlNolIool F"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-a3d02c1f20724ee88c2078b0a6f7fbe6",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 524.4657592773438,
+          "top": 571.4638671875,
+          "right": 596.458610534668,
+          "bottom": 613.9627647399902,
+          "width": 71.99285125732422,
+          "height": 42.498897552490234
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 524.4657592773438,
+              "top": 571.4638671875,
+              "right": 596.458610534668,
+              "bottom": 613.9627647399902,
+              "width": 71.99285125732422,
+              "height": 42.498897552490234
+            },
+            "charStart": 0,
+            "charEnd": 15
+          }
+        ],
+        "content": {
+          "text": "1 inOT\nler 9 ar"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-d125d1c0ce96409d8e66da9e38ed6454",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 812.6026611328125,
+          "top": 614.2113037109375,
+          "right": 1000.5308074951172,
+          "bottom": 634.5215129852295,
+          "width": 187.9281463623047,
+          "height": 20.310209274291992
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 812.6026611328125,
+              "top": 614.2113037109375,
+              "right": 1000.5308074951172,
+              "bottom": 634.5215129852295,
+              "width": 187.9281463623047,
+              "height": 20.310209274291992
+            },
+            "charStart": 0,
+            "charEnd": 23
+          }
+        ],
+        "content": {
+          "text": ")f the mnodel show that"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-172573bef0bb4fedb4b60d3daae317aa",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 823.6397705078125,
+          "top": 621.4837646484375,
+          "right": 989.8445739746094,
+          "bottom": 679.862663269043,
+          "width": 166.20480346679688,
+          "height": 58.37889862060547
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 823.6397705078125,
+              "top": 621.4837646484375,
+              "right": 989.8445739746094,
+              "bottom": 679.862663269043,
+              "width": 166.20480346679688,
+              "height": 58.37889862060547
+            },
+            "charStart": 0,
+            "charEnd": 57
+          }
+        ],
+        "content": {
+          "text": "bhle mnodel show tha\nrecognizing comple\n2 HTML counterpar"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-58a19b694c02445a86e1fb65d46f8d8f",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 929.5584106445312,
+          "top": 622.4210815429688,
+          "right": 1000.9604644775391,
+          "bottom": 639.0268478393555,
+          "width": 71.40205383300781,
+          "height": 16.60576629638672
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 929.5584106445312,
+              "top": 622.4210815429688,
+              "right": 1000.9604644775391,
+              "bottom": 639.0268478393555,
+              "width": 71.40205383300781,
+              "height": 16.60576629638672
+            },
+            "charStart": 0,
+            "charEnd": 7
+          }
+        ],
+        "content": {
+          "text": "OW thal"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-2ae1f0fb3b8b4b3682162db686228924",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.62908935546875,
+          "top": 623.947265625,
+          "right": 1001.3812866210938,
+          "bottom": 682.9594841003418,
+          "width": 721.752197265625,
+          "height": 59.0122184753418
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.62908935546875,
+              "top": 623.947265625,
+              "right": 1001.3812866210938,
+              "bottom": 682.9594841003418,
+              "width": 721.752197265625,
+              "height": 59.0122184753418
+            },
+            "charStart": 0,
+            "charEnd": 243
+          }
+        ],
+        "content": {
+          "text": "LLUS UL HCUUGHK Ve # UL HaVOUS |I CHCOUOL H UOUUUGL Shape8 UL Ve IHUUOL BIW Val\nBmaller models trained On OTISL perForul belker; especially il recoguizing colplex\nlable structures; and maintai a much higher mAP score Uhan Uhe FITML counterpart"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-8241510997a2462485f20ef63c24c6b2",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.5271911621094,
+          "top": 627.0238647460938,
+          "right": 1001.3769226074219,
+          "bottom": 682.8434829711914,
+          "width": 721.8497314453125,
+          "height": 55.819618225097656
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.5271911621094,
+              "top": 627.0238647460938,
+              "right": 1001.3769226074219,
+              "bottom": 682.8434829711914,
+              "width": 721.8497314453125,
+              "height": 55.819618225097656
+            },
+            "charStart": 0,
+            "charEnd": 226
+          }
+        ],
+        "content": {
+          "text": "Huuwu VL |QuMV VV | V Hyuu H VuUu ( Vuuuu $ugwv v V Ha VaH V\nBmaller models trained On OTISL perForul belker; especially il recoguizing colplex\ntable structures; and maintain a much higher IAP score Uhan Uhe IITML couunterpart"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-eba88f7f4fac4d77938569477c63b403",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 831.5437622070312,
+          "top": 628.1129760742188,
+          "right": 992.3730316162109,
+          "bottom": 681.871265411377,
+          "width": 160.8292694091797,
+          "height": 53.7582893371582
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 831.5437622070312,
+              "top": 628.1129760742188,
+              "right": 992.3730316162109,
+              "bottom": 681.871265411377,
+              "width": 160.8292694091797,
+              "height": 53.7582893371582
+            },
+            "charStart": 0,
+            "charEnd": 56
+          }
+        ],
+        "content": {
+          "text": "VITU IO4UI Dlot UHlu\nrecognizing comple\nHTML counterpart"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-66e598bd71fb4c8ea3d7a904f66a2201",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 921.9209594726562,
+          "top": 630.54296875,
+          "right": 999.2032623291016,
+          "bottom": 680.3263206481934,
+          "width": 77.28230285644531,
+          "height": 49.78335189819336
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 921.9209594726562,
+              "top": 630.54296875,
+              "right": 999.2032623291016,
+              "bottom": 680.3263206481934,
+              "width": 77.28230285644531,
+              "height": 49.78335189819336
+            },
+            "charStart": 0,
+            "charEnd": 28
+          }
+        ],
+        "content": {
+          "text": "Sellclll=\ncomplex\n1nterpart."
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-4154709e7eb043a4bae87ec8a97d823f",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.3084411621094,
+          "top": 632.3491821289062,
+          "right": 341.96593475341797,
+          "bottom": 656.580472946167,
+          "width": 62.657493591308594,
+          "height": 24.231290817260742
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.3084411621094,
+              "top": 632.3491821289062,
+              "right": 341.96593475341797,
+              "bottom": 656.580472946167,
+              "width": 62.657493591308594,
+              "height": 24.231290817260742
+            },
+            "charStart": 0,
+            "charEnd": 8
+          }
+        ],
+        "content": {
+          "text": "smnaller"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-8c0bd562225d4a81b4aa50612724a439",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.8830261230469,
+          "top": 632.49169921875,
+          "right": 1000.9692077636719,
+          "bottom": 683.3442878723145,
+          "width": 721.086181640625,
+          "height": 50.85258865356445
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.8830261230469,
+              "top": 632.49169921875,
+              "right": 1000.9692077636719,
+              "bottom": 683.3442878723145,
+              "width": 721.086181640625,
+              "height": 50.85258865356445
+            },
+            "charStart": 0,
+            "charEnd": 164
+          }
+        ],
+        "content": {
+          "text": "Bualler mlodels Lraited 0u (IISL perLort beuker; especially I1 recoguizIng colplex\nlable struchures; and iaittail a much higher IAP score Uhan Uhe IIIVL couuterparg"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-a147c1f27c8c4b1b88f9c82c5464fb13",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 930.5870971679688,
+          "top": 634.8154296875,
+          "right": 1000.165397644043,
+          "bottom": 652.6668281555176,
+          "width": 69.57830047607422,
+          "height": 17.851398468017578
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 930.5870971679688,
+              "top": 634.8154296875,
+              "right": 1000.165397644043,
+              "bottom": 652.6668281555176,
+              "width": 69.57830047607422,
+              "height": 17.851398468017578
+            },
+            "charStart": 0,
+            "charEnd": 7
+          }
+        ],
+        "content": {
+          "text": "comnlev"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-10eee8e64a7a4951adca190c507d70ac",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 794.272216796875,
+          "top": 638.2952880859375,
+          "right": 995.3665161132812,
+          "bottom": 681.7133026123047,
+          "width": 201.09429931640625,
+          "height": 43.41801452636719
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 794.272216796875,
+              "top": 638.2952880859375,
+              "right": 995.3665161132812,
+              "bottom": 681.7133026123047,
+              "width": 201.09429931640625,
+              "height": 43.41801452636719
+            },
+            "charStart": 0,
+            "charEnd": 44
+          }
+        ],
+        "content": {
+          "text": "in recognizing compler_\nthe HTML counterpart"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-d47e8f1b6d8a4f81b03823b4f64acda0",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 934.2215576171875,
+          "top": 641.7061767578125,
+          "right": 1001.3557968139648,
+          "bottom": 661.3316497802734,
+          "width": 67.13423919677734,
+          "height": 19.625473022460938
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 934.2215576171875,
+              "top": 641.7061767578125,
+              "right": 1001.3557968139648,
+              "bottom": 661.3316497802734,
+              "width": 67.13423919677734,
+              "height": 19.625473022460938
+            },
+            "charStart": 0,
+            "charEnd": 7
+          }
+        ],
+        "content": {
+          "text": "complex"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-978104e8811448c5829f0904b477295b",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 676.0324096679688,
+          "top": 649.3524780273438,
+          "right": 997.8168334960938,
+          "bottom": 682.0703048706055,
+          "width": 321.784423828125,
+          "height": 32.71782684326172
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 676.0324096679688,
+              "top": 649.3524780273438,
+              "right": 997.8168334960938,
+              "bottom": 682.0703048706055,
+              "width": 321.784423828125,
+              "height": 32.71782684326172
+            },
+            "charStart": 0,
+            "charEnd": 70
+          }
+        ],
+        "content": {
+          "text": "UCl, copcllally 4 [CLU5Iull5 LUIpIR\nAP score than the HTML counterpart"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-93caa3a550184627818f860fb4498638",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.56365966796875,
+          "top": 662.4133911132812,
+          "right": 999.6672973632812,
+          "bottom": 682.5003108978271,
+          "width": 720.1036376953125,
+          "height": 20.0869197845459
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.56365966796875,
+              "top": 662.4133911132812,
+              "right": 999.6672973632812,
+              "bottom": 682.5003108978271,
+              "width": 720.1036376953125,
+              "height": 20.0869197845459
+            },
+            "charStart": 0,
+            "charEnd": 74
+          }
+        ],
+        "content": {
+          "text": "Uable sUrucues; Ald IaIai a Iuch Heher IAP scure Hhan Hhe IHIVL LUiterpar6"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-f7cefbfc0ab640aeae7852535d6bfb15",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 280.2966613769531,
+          "top": 663.79638671875,
+          "right": 321.2689666748047,
+          "bottom": 679.9947967529297,
+          "width": 40.97230529785156,
+          "height": 16.198410034179688
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 280.2966613769531,
+              "top": 663.79638671875,
+              "right": 321.2689666748047,
+              "bottom": 679.9947967529297,
+              "width": 40.97230529785156,
+              "height": 16.198410034179688
+            },
+            "charStart": 0,
+            "charEnd": 74
+          }
+        ],
+        "content": {
+          "text": "Uable sUrucues; Ald IaIai a Iuch Heher IAP scure Hhan Hhe IHIVL LUiterpar6"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-2f45ec7241cf43f6a1595273a3bb5212",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 281.406494140625,
+          "top": 663.9153442382812,
+          "right": 318.9543342590332,
+          "bottom": 679.350341796875,
+          "width": 37.5478401184082,
+          "height": 15.43499755859375
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 281.406494140625,
+              "top": 663.9153442382812,
+              "right": 318.9543342590332,
+              "bottom": 679.350341796875,
+              "width": 37.5478401184082,
+              "height": 15.43499755859375
+            },
+            "charStart": 0,
+            "charEnd": 74
+          }
+        ],
+        "content": {
+          "text": "Uable sUrucues; Ald IaIai a Iuch Heher IAP scure Hhan Hhe IHIVL LUiterpar6"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-23c59dabd4a147839d094367e21a2e22",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 822.5692138671875,
+          "top": 701.7238159179688,
+          "right": 874.751148223877,
+          "bottom": 741.8550910949707,
+          "width": 52.18193435668945,
+          "height": 40.13127517700195
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 822.5692138671875,
+              "top": 701.7238159179688,
+              "right": 874.751148223877,
+              "bottom": 741.8550910949707,
+              "width": 52.18193435668945,
+              "height": 40.13127517700195
+            },
+            "charStart": 0,
+            "charEnd": 9
+          }
+        ],
+        "content": {
+          "text": "mAP\no 7E}"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-4f7953bce3b94be1a5371184febe58cb",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 290.5719909667969,
+          "top": 702.3953247070312,
+          "right": 989.7645568847656,
+          "bottom": 814.204345703125,
+          "width": 699.1925659179688,
+          "height": 111.80902099609375
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 290.5719909667969,
+              "top": 702.3953247070312,
+              "right": 989.7645568847656,
+              "bottom": 814.204345703125,
+              "width": 699.1925659179688,
+              "height": 111.80902099609375
+            },
+            "charStart": 0,
+            "charEnd": 201
+          }
+        ],
+        "content": {
+          "text": "TEDs | mAP | Inference\nLanguage\nenc-layers | dec-layers | 17ouno\u0022 | simple | complex | all | (0.75) | time (secs)\nOTSL | 0.965 | 0,934 | 0.955 | 0,88 | 2.73\nHITML | 0,969 | 0.927 | 0.955 | 0,857 | 5,39"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-882a8b8c212e4769a1154ca4555eec0e",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 290.14208984375,
+          "top": 702.6259155273438,
+          "right": 987.8674926757812,
+          "bottom": 978.9877319335938,
+          "width": 697.7254028320312,
+          "height": 276.36181640625
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 290.14208984375,
+              "top": 702.6259155273438,
+              "right": 987.8674926757812,
+              "bottom": 978.9877319335938,
+              "width": 697.7254028320312,
+              "height": 276.36181640625
+            },
+            "charStart": 0,
+            "charEnd": 467
+          }
+        ],
+        "content": {
+          "text": "TEDs | mAP Inference\nLanguage\nenc-layers | dec-layers | 17ouno\u0022 | simple | complex | all | (0.75) | time (secs)\nOTSL | 0.965 | 0.934 | 0.955 | 0.88 | 2.73\nHITML | 0.,969 | 0.,927 | 0.955 | 0.857 | 5,39\nOTSL | 0.938 | 0.904 | 0.927 | 0,853 | 1,97\nHTML | 0.,952 | 0.909 | 0.938 | 0.843 | 3.77\nOTSL | 0.923 | 0.897 | 0.915 | 0.859 | 1,91\nHTML | 0,945 | 0.901 | 0,931 | 0.834 / 3.81\nOTSL | 0.,952 | 0.92 | 0.942 | 0,857 | 1,22\n2\nHITML | 0.944 | 0.,903 | 0.931 | 0,824 / 2"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-d98cca8985b14baabd35d37253de8c24",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 291.19171142578125,
+          "top": 703.1607666015625,
+          "right": 986.7413330078125,
+          "bottom": 820.7099075317383,
+          "width": 695.5496215820312,
+          "height": 117.54914093017578
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 291.19171142578125,
+              "top": 703.1607666015625,
+              "right": 986.7413330078125,
+              "bottom": 820.7099075317383,
+              "width": 695.5496215820312,
+              "height": 117.54914093017578
+            },
+            "charStart": 0,
+            "charEnd": 202
+          }
+        ],
+        "content": {
+          "text": "TEDs | mAP | Inference\nLanguage\nenc-layers | dec-layers | \u002227ouno\u0022 | sitple | complex | all | (0.75) | time (secs\nOTSL | 0.965 | 0.934 | 0.,955 | 0,88 | 2.73\nHITML | 0,969 | 0.927 | 0.955 | 0.857 | 5,39"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-591f980491d24a35a56ee21ba4a15ea9",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 890.7107543945312,
+          "top": 703.1768798828125,
+          "right": 981.6242828369141,
+          "bottom": 749.6655044555664,
+          "width": 90.91352844238281,
+          "height": 46.488624572753906
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 890.7107543945312,
+              "top": 703.1768798828125,
+              "right": 981.6242828369141,
+              "bottom": 749.6655044555664,
+              "width": 90.91352844238281,
+              "height": 46.488624572753906
+            },
+            "charStart": 0,
+            "charEnd": 20
+          }
+        ],
+        "content": {
+          "text": "Inference\ntime (secs"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-4a65be8c59c441b5abd5865640eb9533",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 890.8396606445312,
+          "top": 703.6748046875,
+          "right": 980.5934677124023,
+          "bottom": 749.1533622741699,
+          "width": 89.7538070678711,
+          "height": 45.47855758666992
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 890.8396606445312,
+              "top": 703.6748046875,
+              "right": 980.5934677124023,
+              "bottom": 749.1533622741699,
+              "width": 89.7538070678711,
+              "height": 45.47855758666992
+            },
+            "charStart": 0,
+            "charEnd": 20
+          }
+        ],
+        "content": {
+          "text": "Inference\ntime (secs"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-3a725dba2f1540449f8df787fde9f28b",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 686.5717163085938,
+          "top": 705.9728393554688,
+          "right": 962.4531860351562,
+          "bottom": 976.50634765625,
+          "width": 275.8814697265625,
+          "height": 270.53350830078125
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 686.5717163085938,
+              "top": 705.9728393554688,
+              "right": 962.4531860351562,
+              "bottom": 976.50634765625,
+              "width": 275.8814697265625,
+              "height": 270.53350830078125
+            },
+            "charStart": 0,
+            "charEnd": 277
+          }
+        ],
+        "content": {
+          "text": "\u0027EDs | mAP Inferenc\nmplex | all | (0.75) | time (sec\n).934 | 0.955 | 0.88 | 2.73\n).927 | 0.955 | 0.857 | 5.39\n1.904 | 0.927 | 0.853 | 1.97\n).909 | 0.938 | 0.843 3.77\n).897 | 0.915 | 0.859 | 1.91\n).901 | 0.931 / 0.834 | 3.81\n0.92 | 0.942 | 0.857 | 1.22\n1.903 | 0.931 | 0.824 | 2"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-6a16d640c5f14829bdc13ff41b37b216",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 902.0332641601562,
+          "top": 709.1253051757812,
+          "right": 991.6054077148438,
+          "bottom": 977.2532043457031,
+          "width": 89.5721435546875,
+          "height": 268.1278991699219
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 902.0332641601562,
+              "top": 709.1253051757812,
+              "right": 991.6054077148438,
+              "bottom": 977.2532043457031,
+              "width": 89.5721435546875,
+              "height": 268.1278991699219
+            },
+            "charStart": 0,
+            "charEnd": 55
+          }
+        ],
+        "content": {
+          "text": "nference\nme (secs)\n2.73\n5.39\n1.97\n3.77\n1.91\n3.81\n1.22\n2"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-03fd87d9cba74511b89909e88016c3c6",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 293.8786315917969,
+          "top": 713.0745239257812,
+          "right": 384.6486511230469,
+          "bottom": 756.3017044067383,
+          "width": 90.77001953125,
+          "height": 43.22718048095703
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 293.8786315917969,
+              "top": 713.0745239257812,
+              "right": 384.6486511230469,
+              "bottom": 756.3017044067383,
+              "width": 90.77001953125,
+              "height": 43.22718048095703
+            },
+            "charStart": 0,
+            "charEnd": 12
+          }
+        ],
+        "content": {
+          "text": "#\nenc-layers"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-2c38f991707049baa6c18c4d4753cf11",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 320.1966247558594,
+          "top": 726.6406860351562,
+          "right": 425.6000289916992,
+          "bottom": 904.1299743652344,
+          "width": 105.40340423583984,
+          "height": 177.48928833007812
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 320.1966247558594,
+              "top": 726.6406860351562,
+              "right": 425.6000289916992,
+              "bottom": 904.1299743652344,
+              "width": 105.40340423583984,
+              "height": 177.48928833007812
+            },
+            "charStart": 0,
+            "charEnd": 20
+          }
+        ],
+        "content": {
+          "text": "c-layers | dec\n6\n4\n2"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-81ba70d514d84a2aabb03da872aa375a",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 891.4909057617188,
+          "top": 732.1119384765625,
+          "right": 983.1214218139648,
+          "bottom": 750.5421333312988,
+          "width": 91.6305160522461,
+          "height": 18.430194854736328
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 891.4909057617188,
+              "top": 732.1119384765625,
+              "right": 983.1214218139648,
+              "bottom": 750.5421333312988,
+              "width": 91.6305160522461,
+              "height": 18.430194854736328
+            },
+            "charStart": 0,
+            "charEnd": 10
+          }
+        ],
+        "content": {
+          "text": "Gime (secs"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-b9aaf64d82664066bbd95219025eba43",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 893.3966064453125,
+          "top": 735.8339233398438,
+          "right": 983.0225601196289,
+          "bottom": 752.4309177398682,
+          "width": 89.6259536743164,
+          "height": 16.596994400024414
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 893.3966064453125,
+              "top": 735.8339233398438,
+              "right": 983.0225601196289,
+              "bottom": 752.4309177398682,
+              "width": 89.6259536743164,
+              "height": 16.596994400024414
+            },
+            "charStart": 0,
+            "charEnd": 8
+          }
+        ],
+        "content": {
+          "text": "se (secs"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-23c7f76e30db4f70b51f369680b06e22",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 295.1502685546875,
+          "top": 738.8687133789062,
+          "right": 384.29766845703125,
+          "bottom": 754.7620887756348,
+          "width": 89.14739990234375,
+          "height": 15.893375396728516
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 295.1502685546875,
+              "top": 738.8687133789062,
+              "right": 384.29766845703125,
+              "bottom": 754.7620887756348,
+              "width": 89.14739990234375,
+              "height": 15.893375396728516
+            },
+            "charStart": 0,
+            "charEnd": 10
+          }
+        ],
+        "content": {
+          "text": "enc-lavers"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-315db25723aa41a0ad6dfe8488ff292b",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 294.7479553222656,
+          "top": 833.7752685546875,
+          "right": 984.3268737792969,
+          "bottom": 975.0088806152344,
+          "width": 689.5789184570312,
+          "height": 141.23361206054688
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 294.7479553222656,
+              "top": 833.7752685546875,
+              "right": 984.3268737792969,
+              "bottom": 975.0088806152344,
+              "width": 689.5789184570312,
+              "height": 141.23361206054688
+            },
+            "charStart": 0,
+            "charEnd": 241
+          }
+        ],
+        "content": {
+          "text": "Vond |V| Wt | V| |\u0022\nHITML | 0,952 | 0.909 | 0,938 | 0.843 / 3.77\nOTSL | 0.923 | 0.897 | 0.915 | 0,859 | 1.,91\n2\nHITML | 0,945 | 0.901 | 0,931 | 0.834 / 3.81\nOTSL | 0,952 | 0.92 | 0,942 | 0,857 | 1.22\nHITML | 0,944 | 0.903 | 0.931 | 0.824 | 2"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-8b7e1355dda24c39a6e07bfdf2310226",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 311.2891540527344,
+          "top": 835.3680419921875,
+          "right": 959.7662048339844,
+          "bottom": 975.7620086669922,
+          "width": 648.47705078125,
+          "height": 140.3939666748047
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 311.2891540527344,
+              "top": 835.3680419921875,
+              "right": 959.7662048339844,
+              "bottom": 975.7620086669922,
+              "width": 648.47705078125,
+              "height": 140.3939666748047
+            },
+            "charStart": 0,
+            "charEnd": 218
+          }
+        ],
+        "content": {
+          "text": "HITML | 0,952 | 0.909 | 0,938 | 0,843 | 3.77\nOTSL | 0,923 | 0.897 | 0,915 | 0,859 | 1,91\nHITML | 0.945 | 0.901 | 0,931 | 0.834 / 3.81\nOTSL | 0,952 | 0.92 | 0,942 | 0,857 | 1,22\nHITML | 0,944 | 0.903 | 0.931 | 0.824 | 2"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-cf103ed17fea473dac2ea3bf253159aa",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 275.4970703125,
+          "top": 880.3777465820312,
+          "right": 963.3863525390625,
+          "bottom": 974.27490234375,
+          "width": 687.8892822265625,
+          "height": 93.89715576171875
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 275.4970703125,
+              "top": 880.3777465820312,
+              "right": 963.3863525390625,
+              "bottom": 974.27490234375,
+              "width": 687.8892822265625,
+              "height": 93.89715576171875
+            },
+            "charStart": 0,
+            "charEnd": 167
+          }
+        ],
+        "content": {
+          "text": "VInL | U,L | U896 |UNL) | U,059 | 1Jl\nHITML | 0,945 | 0.901 | 0,931 | 0,834 | 3.81\nOTSL | 0,952 | 0.92 | 0,942 | 0,857 | 1.22\nHITML | 0,944 | 0.903 | 0.931 | 0,824 / 2"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-7092d942231a4b129a26f9467a225e9b",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 285.9668884277344,
+          "top": 883.0252685546875,
+          "right": 453.1673126220703,
+          "bottom": 982.3099136352539,
+          "width": 167.20042419433594,
+          "height": 99.2846450805664
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 285.9668884277344,
+              "top": 883.0252685546875,
+              "right": 453.1673126220703,
+              "bottom": 982.3099136352539,
+              "width": 167.20042419433594,
+              "height": 99.2846450805664
+            },
+            "charStart": 0,
+            "charEnd": 11
+          }
+        ],
+        "content": {
+          "text": "2 | 4\n4 | 2"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-4b2f89e70be24460b5c51973d9276f8b",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 307.8869934082031,
+          "top": 888.3591918945312,
+          "right": 981.0292053222656,
+          "bottom": 973.8310241699219,
+          "width": 673.1422119140625,
+          "height": 85.47183227539062
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 307.8869934082031,
+              "top": 888.3591918945312,
+              "right": 981.0292053222656,
+              "bottom": 973.8310241699219,
+              "width": 673.1422119140625,
+              "height": 85.47183227539062
+            },
+            "charStart": 0,
+            "charEnd": 148
+          }
+        ],
+        "content": {
+          "text": "Vond | V| W |W ||#\nHITML | 0,945 | 0.901 | 0,931 | 0,834 | 3.81\nOTSL | 0.952 | 0.92 | 0,942 | 0,857 | 1.22\nHITML | 0,944 | 0.903 | 0.931 | 0,824 / 2"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-38af1ea8bf64440d877b7f3babb18058",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 292.988037109375,
+          "top": 888.6227416992188,
+          "right": 660.0587463378906,
+          "bottom": 978.6440582275391,
+          "width": 367.0707092285156,
+          "height": 90.02131652832031
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 292.988037109375,
+              "top": 888.6227416992188,
+              "right": 660.0587463378906,
+              "bottom": 978.6440582275391,
+              "width": 367.0707092285156,
+              "height": 90.02131652832031
+            },
+            "charStart": 0,
+            "charEnd": 50
+          }
+        ],
+        "content": {
+          "text": "aLlitdd\n2\nHTML | 0.945\nOTSL | 0.952\n2\nHTML | 0.944"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-b6dbe0fc77a047d4b3253c95477d7955",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 298.5762634277344,
+          "top": 893.80517578125,
+          "right": 982.6785583496094,
+          "bottom": 975.7186279296875,
+          "width": 684.102294921875,
+          "height": 81.9134521484375
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 298.5762634277344,
+              "top": 893.80517578125,
+              "right": 982.6785583496094,
+              "bottom": 975.7186279296875,
+              "width": 684.102294921875,
+              "height": 81.9134521484375
+            },
+            "charStart": 0,
+            "charEnd": 129
+          }
+        ],
+        "content": {
+          "text": "HITML | 0,945 | 0.901 | 0,931 | 0.834 / 3.81\nOTSL | 0.952 | 0.92 | 0.942 | 0,857 | 1.22\nHITML | 0,944 | 0,903 | 0.931 | 0.824 | 2"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-0e507eceb03e49a6aea67fb68f7b0125",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 292.447509765625,
+          "top": 893.8709106445312,
+          "right": 986.11181640625,
+          "bottom": 976.275634765625,
+          "width": 693.664306640625,
+          "height": 82.40472412109375
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 292.447509765625,
+              "top": 893.8709106445312,
+              "right": 986.11181640625,
+              "bottom": 976.275634765625,
+              "width": 693.664306640625,
+              "height": 82.40472412109375
+            },
+            "charStart": 0,
+            "charEnd": 124
+          }
+        ],
+        "content": {
+          "text": "HITML | 0.945 | 0.901 | 0,931 | 0.834 / 3.81\nOTSL | 0,952 | 0.92 | 0,942 | 0,857 | 1.22\nHTML | 0.944 | 0.903 | 0.931 | 0.824"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-33dc3b3b7d244650a1f758e73cc83555",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 295.1267395019531,
+          "top": 895.6904296875,
+          "right": 986.6747741699219,
+          "bottom": 977.4739074707031,
+          "width": 691.5480346679688,
+          "height": 81.78347778320312
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 295.1267395019531,
+              "top": 895.6904296875,
+              "right": 986.6747741699219,
+              "bottom": 977.4739074707031,
+              "width": 691.5480346679688,
+              "height": 81.78347778320312
+            },
+            "charStart": 0,
+            "charEnd": 124
+          }
+        ],
+        "content": {
+          "text": "HITML | 0.945 | 0.901 | 0,931 | 0.834 / 3.81\nOTSL | 0.952 | 0.92 | 0,942 | 0,857 | 1.22\nHTML | 0.944 | 0.903 | 0.931 | 0.824"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-2928c4d226ea4a4ebac740768e443839",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 472.5054931640625,
+          "top": 1055.2166748046875,
+          "right": 549.5246200561523,
+          "bottom": 1073.888412475586,
+          "width": 77.01912689208984,
+          "height": 18.671737670898438
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 472.5054931640625,
+              "top": 1055.2166748046875,
+              "right": 549.5246200561523,
+              "bottom": 1073.888412475586,
+              "width": 77.01912689208984,
+              "height": 18.671737670898438
+            },
+            "charStart": 0,
+            "charEnd": 7
+          }
+        ],
+        "content": {
+          "text": "Results"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-33abf8b3ecef4427a62606652bbb7770",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 473.1852722167969,
+          "top": 1055.8846435546875,
+          "right": 550.1353149414062,
+          "bottom": 1073.691785812378,
+          "width": 76.95004272460938,
+          "height": 17.80714225769043
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 473.1852722167969,
+              "top": 1055.8846435546875,
+              "right": 550.1353149414062,
+              "bottom": 1073.691785812378,
+              "width": 76.95004272460938,
+              "height": 17.80714225769043
+            },
+            "charStart": 0,
+            "charEnd": 7
+          }
+        ],
+        "content": {
+          "text": "Results"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-120265074a9c4ba2b251d2663814c1b0",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 280.6838073730469,
+          "top": 1055.9234619140625,
+          "right": 314.4323196411133,
+          "bottom": 1075.8529472351074,
+          "width": 33.748512268066406,
+          "height": 19.929485321044922
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 280.6838073730469,
+              "top": 1055.9234619140625,
+              "right": 314.4323196411133,
+              "bottom": 1075.8529472351074,
+              "width": 33.748512268066406,
+              "height": 19.929485321044922
+            },
+            "charStart": 0,
+            "charEnd": 24
+          }
+        ],
+        "content": {
+          "text": "5.2 Quantitative Results"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-628123be27e243efbcb29f6b704613ae",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 474.0383605957031,
+          "top": 1056.32568359375,
+          "right": 550.6814041137695,
+          "bottom": 1074.1957683563232,
+          "width": 76.6430435180664,
+          "height": 17.870084762573242
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 474.0383605957031,
+              "top": 1056.32568359375,
+              "right": 550.6814041137695,
+              "bottom": 1074.1957683563232,
+              "width": 76.6430435180664,
+              "height": 17.870084762573242
+            },
+            "charStart": 0,
+            "charEnd": 7
+          }
+        ],
+        "content": {
+          "text": "Results"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-fec684838c934aecb616b33e00385474",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 479.87432861328125,
+          "top": 1056.3330078125,
+          "right": 550.7733917236328,
+          "bottom": 1074.007656097412,
+          "width": 70.89906311035156,
+          "height": 17.67464828491211
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 479.87432861328125,
+              "top": 1056.3330078125,
+              "right": 550.7733917236328,
+              "bottom": 1074.007656097412,
+              "width": 70.89906311035156,
+              "height": 17.67464828491211
+            },
+            "charStart": 0,
+            "charEnd": 7
+          }
+        ],
+        "content": {
+          "text": "Results"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-75884c58eebe4eb18a8cc213a8937c4a",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 280.333984375,
+          "top": 1056.4560546875,
+          "right": 550.8453674316406,
+          "bottom": 1076.9293632507324,
+          "width": 270.5113830566406,
+          "height": 20.473308563232422
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 280.333984375,
+              "top": 1056.4560546875,
+              "right": 550.8453674316406,
+              "bottom": 1076.9293632507324,
+              "width": 270.5113830566406,
+              "height": 20.473308563232422
+            },
+            "charStart": 0,
+            "charEnd": 24
+          }
+        ],
+        "content": {
+          "text": "5.2 Quantitative Results"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-57295f2b1c444816937ad385fdf70e21",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 478.00360107421875,
+          "top": 1056.479736328125,
+          "right": 549.7284698486328,
+          "bottom": 1074.827398300171,
+          "width": 71.72486877441406,
+          "height": 18.3476619720459
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 478.00360107421875,
+              "top": 1056.479736328125,
+              "right": 549.7284698486328,
+              "bottom": 1074.827398300171,
+              "width": 71.72486877441406,
+              "height": 18.3476619720459
+            },
+            "charStart": 0,
+            "charEnd": 7
+          }
+        ],
+        "content": {
+          "text": "Results"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-fb6116e970db47399e04bc06a1f9fef0",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 475.1596984863281,
+          "top": 1056.49951171875,
+          "right": 548.2944030761719,
+          "bottom": 1074.202169418335,
+          "width": 73.13470458984375,
+          "height": 17.70265769958496
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 475.1596984863281,
+              "top": 1056.49951171875,
+              "right": 548.2944030761719,
+              "bottom": 1074.202169418335,
+              "width": 73.13470458984375,
+              "height": 17.70265769958496
+            },
+            "charStart": 0,
+            "charEnd": 7
+          }
+        ],
+        "content": {
+          "text": "Results"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-a8f4255d3b3d4be88d2c94796b4ea8d3",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 281.431884765625,
+          "top": 1056.632080078125,
+          "right": 550.6196594238281,
+          "bottom": 1077.0356006622314,
+          "width": 269.1877746582031,
+          "height": 20.403520584106445
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 281.431884765625,
+              "top": 1056.632080078125,
+              "right": 550.6196594238281,
+              "bottom": 1077.0356006622314,
+              "width": 269.1877746582031,
+              "height": 20.403520584106445
+            },
+            "charStart": 0,
+            "charEnd": 24
+          }
+        ],
+        "content": {
+          "text": "5.2 Quantitative Results"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-1a9399d164a44fb8aa24b1e800485a0c",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 280.5957946777344,
+          "top": 1056.674560546875,
+          "right": 550.5452880859375,
+          "bottom": 1077.0231647491455,
+          "width": 269.9494934082031,
+          "height": 20.348604202270508
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 280.5957946777344,
+              "top": 1056.674560546875,
+              "right": 550.5452880859375,
+              "bottom": 1077.0231647491455,
+              "width": 269.9494934082031,
+              "height": 20.348604202270508
+            },
+            "charStart": 0,
+            "charEnd": 24
+          }
+        ],
+        "content": {
+          "text": "5.2 Quantitative Results"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-8c58bc8f916045d8b6b3e7a8482de0ac",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 471.67626953125,
+          "top": 1056.724609375,
+          "right": 550.3763885498047,
+          "bottom": 1073.9928073883057,
+          "width": 78.70011901855469,
+          "height": 17.268198013305664
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 471.67626953125,
+              "top": 1056.724609375,
+              "right": 550.3763885498047,
+              "bottom": 1073.9928073883057,
+              "width": 78.70011901855469,
+              "height": 17.268198013305664
+            },
+            "charStart": 0,
+            "charEnd": 7
+          }
+        ],
+        "content": {
+          "text": "Results"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-d4aebc8c0ef244a6b73bb2f24bed95ea",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 472.1453552246094,
+          "top": 1057.1220703125,
+          "right": 549.7550735473633,
+          "bottom": 1074.4880638122559,
+          "width": 77.6097183227539,
+          "height": 17.36599349975586
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 472.1453552246094,
+              "top": 1057.1220703125,
+              "right": 549.7550735473633,
+              "bottom": 1074.4880638122559,
+              "width": 77.6097183227539,
+              "height": 17.36599349975586
+            },
+            "charStart": 0,
+            "charEnd": 7
+          }
+        ],
+        "content": {
+          "text": "Results"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-364493aa0c4746eea6e387b61d2143f1",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.8377685546875,
+          "top": 1088.5115966796875,
+          "right": 469.0155944824219,
+          "bottom": 1105.9619331359863,
+          "width": 189.17782592773438,
+          "height": 17.450336456298828
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.8377685546875,
+              "top": 1088.5115966796875,
+              "right": 469.0155944824219,
+              "bottom": 1105.9619331359863,
+              "width": 189.17782592773438,
+              "height": 17.450336456298828
+            },
+            "charStart": 0,
+            "charEnd": 9
+          }
+        ],
+        "content": {
+          "text": "nicked \u002Bk"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-952ab99724a7431ba4e62e3a702e9b91",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 280.4520568847656,
+          "top": 1089.1689453125,
+          "right": 388.50769805908203,
+          "bottom": 1107.7380065917969,
+          "width": 108.0556411743164,
+          "height": 18.569061279296875
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 280.4520568847656,
+              "top": 1089.1689453125,
+              "right": 388.50769805908203,
+              "bottom": 1107.7380065917969,
+              "width": 108.0556411743164,
+              "height": 18.569061279296875
+            },
+            "charStart": 0,
+            "charEnd": 11
+          }
+        ],
+        "content": {
+          "text": "We Dicked t"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-1df0e0ed102f4735af8a1441cb35566c",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 280.7728576660156,
+          "top": 1089.2252197265625,
+          "right": 391.9015884399414,
+          "bottom": 1107.5536041259766,
+          "width": 111.12873077392578,
+          "height": 18.328384399414062
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 280.7728576660156,
+              "top": 1089.2252197265625,
+              "right": 391.9015884399414,
+              "bottom": 1107.5536041259766,
+              "width": 111.12873077392578,
+              "height": 18.328384399414062
+            },
+            "charStart": 0,
+            "charEnd": 11
+          }
+        ],
+        "content": {
+          "text": "We Dicked t"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-e2edf5558fb74097a7e0559eabf4454c",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.7985534667969,
+          "top": 1089.3104248046875,
+          "right": 389.6858215332031,
+          "bottom": 1107.6185894012451,
+          "width": 109.88726806640625,
+          "height": 18.308164596557617
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.7985534667969,
+              "top": 1089.3104248046875,
+              "right": 389.6858215332031,
+              "bottom": 1107.6185894012451,
+              "width": 109.88726806640625,
+              "height": 18.308164596557617
+            },
+            "charStart": 0,
+            "charEnd": 11
+          }
+        ],
+        "content": {
+          "text": "We Dicked t"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-e71f09cd929a485fb7fe1b1d3d0747dd",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.9151916503906,
+          "top": 1089.3365478515625,
+          "right": 473.3397979736328,
+          "bottom": 1108.194278717041,
+          "width": 193.4246063232422,
+          "height": 18.857730865478516
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.9151916503906,
+              "top": 1089.3365478515625,
+              "right": 473.3397979736328,
+              "bottom": 1108.194278717041,
+              "width": 193.4246063232422,
+              "height": 18.857730865478516
+            },
+            "charStart": 0,
+            "charEnd": 19
+          }
+        ],
+        "content": {
+          "text": "We picked the model"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-1733429772ab412d87b94b2cbf1b2303",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.713623046875,
+          "top": 1089.400634765625,
+          "right": 333.0497627258301,
+          "bottom": 1107.5808696746826,
+          "width": 53.33613967895508,
+          "height": 18.180234909057617
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.713623046875,
+              "top": 1089.400634765625,
+              "right": 333.0497627258301,
+              "bottom": 1107.5808696746826,
+              "width": 53.33613967895508,
+              "height": 18.180234909057617
+            },
+            "charStart": 0,
+            "charEnd": 11
+          }
+        ],
+        "content": {
+          "text": "We Dicked t"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-6df6d8eb4f1e4bc1a67d220e8381e742",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 698.9797973632812,
+          "top": 1091.1746826171875,
+          "right": 1002.6452026367188,
+          "bottom": 1111.8571166992188,
+          "width": 303.6654052734375,
+          "height": 20.68243408203125
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 698.9797973632812,
+              "top": 1091.1746826171875,
+              "right": 1002.6452026367188,
+              "bottom": 1111.8571166992188,
+              "width": 303.6654052734375,
+              "height": 20.68243408203125
+            },
+            "charStart": 0,
+            "charEnd": 33
+          }
+        ],
+        "content": {
+          "text": "that produced the best prediction"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-78ecfc28c3f7435c9497a204554f599d",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.8480529785156,
+          "top": 1091.365966796875,
+          "right": 1001.9882507324219,
+          "bottom": 1141.0800018310547,
+          "width": 722.1401977539062,
+          "height": 49.71403503417969
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.8480529785156,
+              "top": 1091.365966796875,
+              "right": 1001.9882507324219,
+              "bottom": 1141.0800018310547,
+              "width": 722.1401977539062,
+              "height": 49.71403503417969
+            },
+            "charStart": 0,
+            "charEnd": 146
+          }
+        ],
+        "content": {
+          "text": "We picked Hhe model paralcter colgurakiox thak produccd Hhe besk prcdicgiou\nquality (cuc=6, doc=6, hcads-8) with PuIabNct alxc; Ghen independently"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-bfa7aa6d9893465fb601605a8dc1156b",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.4091796875,
+          "top": 1091.5635986328125,
+          "right": 1002.0219116210938,
+          "bottom": 1111.2485523223877,
+          "width": 722.6127319335938,
+          "height": 19.684953689575195
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.4091796875,
+              "top": 1091.5635986328125,
+              "right": 1002.0219116210938,
+              "bottom": 1111.2485523223877,
+              "width": 722.6127319335938,
+              "height": 19.684953689575195
+            },
+            "charStart": 0,
+            "charEnd": 69
+          }
+        ],
+        "content": {
+          "text": "the modeL parauncter confieuragjox \u0026hat produccd Uhc best prcdictioll"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-88586e64940741e78a96a43bc8b37e1a",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.81939697265625,
+          "top": 1091.6917724609375,
+          "right": 1002.539306640625,
+          "bottom": 1186.4616241455078,
+          "width": 722.7199096679688,
+          "height": 94.76985168457031
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.81939697265625,
+              "top": 1091.6917724609375,
+              "right": 1002.539306640625,
+              "bottom": 1186.4616241455078,
+              "width": 722.7199096679688,
+              "height": 94.76985168457031
+            },
+            "charStart": 0,
+            "charEnd": 302
+          }
+        ],
+        "content": {
+          "text": "We picked the modelparameter confguration that produced the best predliction\nquality (cnc=6, dcc=6, heads=8) with PublahNet alone; Hhen iudependently\ntrained and evaluated it on thrce puhlicly available data Scts; PublabNet (805k\nsamples) , EixlahNct (118k samples) and PubZables-IML (about IM sarples)"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-deb39e1b483148248a6f68d213e27fd2",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 878.9439086914062,
+          "top": 1092.0693359375,
+          "right": 999.0404891967773,
+          "bottom": 1137.413272857666,
+          "width": 120.0965805053711,
+          "height": 45.343936920166016
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 878.9439086914062,
+              "top": 1092.0693359375,
+              "right": 999.0404891967773,
+              "bottom": 1137.413272857666,
+              "width": 120.0965805053711,
+              "height": 45.343936920166016
+            },
+            "charStart": 0,
+            "charEnd": 27
+          }
+        ],
+        "content": {
+          "text": "est prediction\nndependently"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-9c58569a0c1d4962a731b762767037a9",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 905.4600219726562,
+          "top": 1092.1556396484375,
+          "right": 999.9548950195312,
+          "bottom": 1113.5706462860107,
+          "width": 94.494873046875,
+          "height": 21.415006637573242
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 905.4600219726562,
+              "top": 1092.1556396484375,
+              "right": 999.9548950195312,
+              "bottom": 1113.5706462860107,
+              "width": 94.494873046875,
+              "height": 21.415006637573242
+            },
+            "charStart": 0,
+            "charEnd": 10
+          }
+        ],
+        "content": {
+          "text": "prediction"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-24bb19ff2190431194e9aa8687c64ec1",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.53863525390625,
+          "top": 1092.2119140625,
+          "right": 1002.5731811523438,
+          "bottom": 1285.5823059082031,
+          "width": 723.0345458984375,
+          "height": 193.37039184570312
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.53863525390625,
+              "top": 1092.2119140625,
+              "right": 1002.5731811523438,
+              "bottom": 1285.5823059082031,
+              "width": 723.0345458984375,
+              "height": 193.37039184570312
+            },
+            "charStart": 0,
+            "charEnd": 555
+          }
+        ],
+        "content": {
+          "text": "We picked the model parameter conliguratiou that produccd Ghe best preciction\nquality (enc-6, dec-6, heads-8) with PublabNet alue; then independently\ntrained and evaluated it on thrce puhlicly available data Scts; PublabNet (805k\nsamples) , EixlahNct (118k samples) and PubZables-IML (about IM sarples)\nPerformance results are presented in \u0027Iable:|| It is clcarly evident Ghat Uhe model\ntrained on 0ZSL outperforms HZML across the board, kceping high \u0027EDs and\nmap scoxes evel1 011 diflcult fnancial tables (EinZabNct) Hhak cutaill spaxsc\nand large tables."
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-217bd871611d40688ff6b9955540bed1",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 284.5057067871094,
+          "top": 1092.3779296875,
+          "right": 505.99200439453125,
+          "bottom": 1191.067527770996,
+          "width": 221.48629760742188,
+          "height": 98.6895980834961
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 284.5057067871094,
+              "top": 1092.3779296875,
+              "right": 505.99200439453125,
+              "bottom": 1191.067527770996,
+              "width": 221.48629760742188,
+              "height": 98.6895980834961
+            },
+            "charStart": 0,
+            "charEnd": 94
+          }
+        ],
+        "content": {
+          "text": "We picked the model par\nquality (enc=6, dec=6,\nrained and evaluated it\namples) , FinTabNet (11"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-efacadb05e41408bb97a35d3938a8ac2",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 872.0728759765625,
+          "top": 1092.4324951171875,
+          "right": 1000.1344299316406,
+          "bottom": 1151.70560836792,
+          "width": 128.06155395507812,
+          "height": 59.27311325073242
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 872.0728759765625,
+              "top": 1092.4324951171875,
+              "right": 1000.1344299316406,
+              "bottom": 1151.70560836792,
+              "width": 128.06155395507812,
+              "height": 59.27311325073242
+            },
+            "charStart": 0,
+            "charEnd": 42
+          }
+        ],
+        "content": {
+          "text": "est prediction\nindependently\nAMALAT\u002B (2051"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-d964f9b53a52451aba589014b5940583",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 846.4067993164062,
+          "top": 1148.759521484375,
+          "right": 1001.9437866210938,
+          "bottom": 1170.0492725372314,
+          "width": 155.5369873046875,
+          "height": 21.289751052856445
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 846.4067993164062,
+              "top": 1148.759521484375,
+              "right": 1001.9437866210938,
+              "bottom": 1170.0492725372314,
+              "width": 155.5369873046875,
+              "height": 21.289751052856445
+            },
+            "charStart": 0,
+            "charEnd": 14
+          }
+        ],
+        "content": {
+          "text": "~UDLabfCl JJok"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-63e772b65f544fde95f4d11ab6a86589",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 890.9323120117188,
+          "top": 1156.0780029296875,
+          "right": 997.6655731201172,
+          "bottom": 1174.689157485962,
+          "width": 106.73326110839844,
+          "height": 18.611154556274414
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 890.9323120117188,
+              "top": 1156.0780029296875,
+              "right": 997.6655731201172,
+              "bottom": 1174.689157485962,
+              "width": 106.73326110839844,
+              "height": 18.611154556274414
+            },
+            "charStart": 0,
+            "charEnd": 1
+          }
+        ],
+        "content": {
+          "text": "n"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-62a845a858444f5f88c966ffbd696347",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 923.6281127929688,
+          "top": 1157.4525146484375,
+          "right": 996.0959396362305,
+          "bottom": 1175.7456512451172,
+          "width": 72.46782684326172,
+          "height": 18.293136596679688
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 923.6281127929688,
+              "top": 1157.4525146484375,
+              "right": 996.0959396362305,
+              "bottom": 1175.7456512451172,
+              "width": 72.46782684326172,
+              "height": 18.293136596679688
+            },
+            "charStart": 0,
+            "charEnd": 4
+          }
+        ],
+        "content": {
+          "text": "Utln"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-a99427886282420aa0774c53bb762691",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 815.2083740234375,
+          "top": 1158.4442138671875,
+          "right": 1000.144775390625,
+          "bottom": 1183.2782573699951,
+          "width": 184.9364013671875,
+          "height": 24.834043502807617
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 815.2083740234375,
+              "top": 1158.4442138671875,
+              "right": 1000.144775390625,
+              "bottom": 1183.2782573699951,
+              "width": 184.9364013671875,
+              "height": 24.834043502807617
+            },
+            "charStart": 0,
+            "charEnd": 16
+          }
+        ],
+        "content": {
+          "text": "about IM samples"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-31fd82f81a004b24a8f2cadf12a87004",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 823.8724975585938,
+          "top": 1161.970703125,
+          "right": 999.8160705566406,
+          "bottom": 1184.2754020690918,
+          "width": 175.94357299804688,
+          "height": 22.304698944091797
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 823.8724975585938,
+              "top": 1161.970703125,
+              "right": 999.8160705566406,
+              "bottom": 1184.2754020690918,
+              "width": 175.94357299804688,
+              "height": 22.304698944091797
+            },
+            "charStart": 0,
+            "charEnd": 15
+          }
+        ],
+        "content": {
+          "text": "bout 1M samples"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-8c325cf5a06943668ec9fef898607094",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 861.2234497070312,
+          "top": 1162.2191162109375,
+          "right": 999.889404296875,
+          "bottom": 1186.335693359375,
+          "width": 138.66595458984375,
+          "height": 24.1165771484375
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 861.2234497070312,
+              "top": 1162.2191162109375,
+              "right": 999.889404296875,
+              "bottom": 1186.335693359375,
+              "width": 138.66595458984375,
+              "height": 24.1165771484375
+            },
+            "charStart": 0,
+            "charEnd": 12
+          }
+        ],
+        "content": {
+          "text": "t 1M samples"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-39634b05ecb248b992599318a84d835e",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 825.6156005859375,
+          "top": 1166.16845703125,
+          "right": 999.9313201904297,
+          "bottom": 1191.7036800384521,
+          "width": 174.3157196044922,
+          "height": 25.53522300720215
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 825.6156005859375,
+              "top": 1166.16845703125,
+              "right": 999.9313201904297,
+              "bottom": 1191.7036800384521,
+              "width": 174.3157196044922,
+              "height": 25.53522300720215
+            },
+            "charStart": 0,
+            "charEnd": 15
+          }
+        ],
+        "content": {
+          "text": "bout 1M samples"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-b2244eeb51f243ffb254b5670e8faeec",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 868.7737426757812,
+          "top": 1189.4324951171875,
+          "right": 1000.57958984375,
+          "bottom": 1208.6758289337158,
+          "width": 131.80584716796875,
+          "height": 19.24333381652832
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 868.7737426757812,
+              "top": 1189.4324951171875,
+              "right": 1000.57958984375,
+              "bottom": 1208.6758289337158,
+              "width": 131.80584716796875,
+              "height": 19.24333381652832
+            },
+            "charStart": 0,
+            "charEnd": 14
+          }
+        ],
+        "content": {
+          "text": "that the model"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-c2478b28b6744e8d9d3c2acceb352e7f",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 873.7965087890625,
+          "top": 1192.5684814453125,
+          "right": 1001.6867904663086,
+          "bottom": 1209.6244049072266,
+          "width": 127.8902816772461,
+          "height": 17.055923461914062
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 873.7965087890625,
+              "top": 1192.5684814453125,
+              "right": 1001.6867904663086,
+              "bottom": 1209.6244049072266,
+              "width": 127.8902816772461,
+              "height": 17.055923461914062
+            },
+            "charStart": 0,
+            "charEnd": 13
+          }
+        ],
+        "content": {
+          "text": "hat the model"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-fe4ad999dd5245858bdc5a571c65ad2b",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.8429260253906,
+          "top": 1198.2525634765625,
+          "right": 1002.3079528808594,
+          "bottom": 1286.3601913452148,
+          "width": 722.4650268554688,
+          "height": 88.10762786865234
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.8429260253906,
+              "top": 1198.2525634765625,
+              "right": 1002.3079528808594,
+              "bottom": 1286.3601913452148,
+              "width": 722.4650268554688,
+              "height": 88.10762786865234
+            },
+            "charStart": 0,
+            "charEnd": 242
+          }
+        ],
+        "content": {
+          "text": "L CILOLMALC LLSMLUS HL\u20AC pLCschuU H LauI|4 # 8 Uicaly CVXCIN Vau Vc Huuu\ntrained on 0ZISL outperforms HIML across the board, kcoping high TEDs and\nIAL scores cvell O11 difcult fnancial tables (Ein ZabNct) Hhak coutaill Sparsc\nand large tables_"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-9accbfd20b744e5080d0c9da1fa32639",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.8142395019531,
+          "top": 1210.269775390625,
+          "right": 437.6303405761719,
+          "bottom": 1233.443946838379,
+          "width": 157.81610107421875,
+          "height": 23.174171447753906
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.8142395019531,
+              "top": 1210.269775390625,
+              "right": 437.6303405761719,
+              "bottom": 1233.443946838379,
+              "width": 157.81610107421875,
+              "height": 23.174171447753906
+            },
+            "charStart": 0,
+            "charEnd": 15
+          }
+        ],
+        "content": {
+          "text": "trained on OTSL"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-491402245e544b3a8f76393aed4d8d8b",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 847.6804809570312,
+          "top": 1214.2381591796875,
+          "right": 1006.0588531494141,
+          "bottom": 1234.7976989746094,
+          "width": 158.3783721923828,
+          "height": 20.559539794921875
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 847.6804809570312,
+              "top": 1214.2381591796875,
+              "right": 1006.0588531494141,
+              "bottom": 1234.7976989746094,
+              "width": 158.3783721923828,
+              "height": 20.559539794921875
+            },
+            "charStart": 0,
+            "charEnd": 13
+          }
+        ],
+        "content": {
+          "text": "high TEDs and"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-88461ababaec4699b793f04e0a84267b",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 905.474609375,
+          "top": 1214.672119140625,
+          "right": 999.1081161499023,
+          "bottom": 1237.0506191253662,
+          "width": 93.63350677490234,
+          "height": 22.37849998474121
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 905.474609375,
+              "top": 1214.672119140625,
+              "right": 999.1081161499023,
+              "bottom": 1237.0506191253662,
+              "width": 93.63350677490234,
+              "height": 22.37849998474121
+            },
+            "charStart": 0,
+            "charEnd": 8
+          }
+        ],
+        "content": {
+          "text": "TEDs and"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-ce99718a6bb346c3a10894eb8160ed82",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 902.1275634765625,
+          "top": 1215.4598388671875,
+          "right": 1002.5788421630859,
+          "bottom": 1234.2517166137695,
+          "width": 100.45127868652344,
+          "height": 18.79187774658203
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 902.1275634765625,
+              "top": 1215.4598388671875,
+              "right": 1002.5788421630859,
+              "bottom": 1234.2517166137695,
+              "width": 100.45127868652344,
+              "height": 18.79187774658203
+            },
+            "charStart": 0,
+            "charEnd": 8
+          }
+        ],
+        "content": {
+          "text": "TEDs and"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-fddb34a0b6f74ff19e46d4cee55982cf",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.5962829589844,
+          "top": 1217.12939453125,
+          "right": 1002.3274841308594,
+          "bottom": 1285.805648803711,
+          "width": 722.731201171875,
+          "height": 68.67625427246094
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.5962829589844,
+              "top": 1217.12939453125,
+              "right": 1002.3274841308594,
+              "bottom": 1285.805648803711,
+              "width": 722.731201171875,
+              "height": 68.67625427246094
+            },
+            "charStart": 0,
+            "charEnd": 171
+          }
+        ],
+        "content": {
+          "text": "trained on (ZSL outperEoris HIML across Ghc board, koeping high \u0027ZEDs and\nmAp scores eve11 011 diflicult Gnancial tables (LinLahNct) Hhak coutainl Sparsc\nand large tables_"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-2aa651926e444fe0b548660b862db285",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 823.036865234375,
+          "top": 1243.958984375,
+          "right": 1001.1214294433594,
+          "bottom": 1259.2547206878662,
+          "width": 178.08456420898438,
+          "height": 15.295736312866211
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 823.036865234375,
+              "top": 1243.958984375,
+              "right": 1001.1214294433594,
+              "bottom": 1259.2547206878662,
+              "width": 178.08456420898438,
+              "height": 15.295736312866211
+            },
+            "charStart": 0,
+            "charEnd": 19
+          }
+        ],
+        "content": {
+          "text": "that contain sparse"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-304e95ab355846cba7fdebf1201ca68b",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 822.1473388671875,
+          "top": 1288.6524658203125,
+          "right": 992.7327728271484,
+          "bottom": 1345.585220336914,
+          "width": 170.58543395996094,
+          "height": 56.93275451660156
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 822.1473388671875,
+              "top": 1288.6524658203125,
+              "right": 992.7327728271484,
+              "bottom": 1345.585220336914,
+              "width": 170.58543395996094,
+              "height": 56.93275451660156
+            },
+            "charStart": 0,
+            "charEnd": 41
+          }
+        ],
+        "content": {
+          "text": "antage over HTME\nchieves significantl\nAld"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-dcef2f58bc7c4510980ec3b2d11609a6",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.3377685546875,
+          "top": 1290.3514404296875,
+          "right": 1002.6936645507812,
+          "bottom": 1387.0430908203125,
+          "width": 723.3558959960938,
+          "height": 96.691650390625
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.3377685546875,
+              "top": 1290.3514404296875,
+              "right": 1002.6936645507812,
+              "bottom": 1387.0430908203125,
+              "width": 723.3558959960938,
+              "height": 96.691650390625
+            },
+            "charStart": 0,
+            "charEnd": 289
+          }
+        ],
+        "content": {
+          "text": "Additionally; the results show that O@SL has an advantage over HTML\nwhen applied on a bigger data set like PubLables-IM and achieves siguifcantly\nimproved scores, Finally; ( IXSL achieves faster inference due to fewer decoding\nsteps which is a result of the reduccd scqucncc representation"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-34327b2d6ac14091a979981e6e2dbba4",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 316.0755920410156,
+          "top": 1290.7496337890625,
+          "right": 1001.6387634277344,
+          "bottom": 1310.2144470214844,
+          "width": 685.5631713867188,
+          "height": 19.464813232421875
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 316.0755920410156,
+              "top": 1290.7496337890625,
+              "right": 1001.6387634277344,
+              "bottom": 1310.2144470214844,
+              "width": 685.5631713867188,
+              "height": 19.464813232421875
+            },
+            "charStart": 0,
+            "charEnd": 49
+          }
+        ],
+        "content": {
+          "text": "results show that OZSL has a advantage ovcc\u0027 HTML"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-6d0d5d19d27c413d982cb3c90cdf6fee",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 280.1322937011719,
+          "top": 1290.7608642578125,
+          "right": 1001.6494445800781,
+          "bottom": 1331.7519340515137,
+          "width": 721.5171508789062,
+          "height": 40.99106979370117
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 280.1322937011719,
+              "top": 1290.7608642578125,
+              "right": 1001.6494445800781,
+              "bottom": 1331.7519340515137,
+              "width": 721.5171508789062,
+              "height": 40.99106979370117
+            },
+            "charStart": 0,
+            "charEnd": 121
+          }
+        ],
+        "content": {
+          "text": "Additionallv; the rcsults show Hhak OIFSL has a1 advantagc Ovel HZML\nHHm O 9 Hivonr (aFa ScF Hko PHHs IM Hd acHoves Sihca"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-005ad1d2a38349fe9e6e61c0dc4caf1d",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 649.8504638671875,
+          "top": 1290.785400390625,
+          "right": 703.507453918457,
+          "bottom": 1308.7748413085938,
+          "width": 53.65699005126953,
+          "height": 17.98944091796875
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 649.8504638671875,
+              "top": 1290.785400390625,
+              "right": 703.507453918457,
+              "bottom": 1308.7748413085938,
+              "width": 53.65699005126953,
+              "height": 17.98944091796875
+            },
+            "charStart": 0,
+            "charEnd": 49
+          }
+        ],
+        "content": {
+          "text": "results show that OZSL has a advantage ovcc\u0027 HTML"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-e7e0a00f99fa4b3ea4bd78d4edb61021",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 334.58929443359375,
+          "top": 1290.786376953125,
+          "right": 1001.0443725585938,
+          "bottom": 1318.9654998779297,
+          "width": 666.455078125,
+          "height": 28.179122924804688
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 334.58929443359375,
+              "top": 1290.786376953125,
+              "right": 1001.0443725585938,
+              "bottom": 1318.9654998779297,
+              "width": 666.455078125,
+              "height": 28.179122924804688
+            },
+            "charStart": 0,
+            "charEnd": 67
+          }
+        ],
+        "content": {
+          "text": "Lditioxally, the results show thak OISL has a11 advantage ovei HIML"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-9477cfd410c749e3b11465b4450d4764",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 312.3597412109375,
+          "top": 1290.7877197265625,
+          "right": 1001.2056884765625,
+          "bottom": 1313.427194595337,
+          "width": 688.845947265625,
+          "height": 22.639474868774414
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 312.3597412109375,
+              "top": 1290.7877197265625,
+              "right": 1001.2056884765625,
+              "bottom": 1313.427194595337,
+              "width": 688.845947265625,
+              "height": 22.639474868774414
+            },
+            "charStart": 0,
+            "charEnd": 66
+          }
+        ],
+        "content": {
+          "text": "Ldditioually; Hhe rcsults show Hhak OISL has A11 advatage OvcI HML"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-43b5703bd62a470abd010cf2249e6c73",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.9361572265625,
+          "top": 1291.283447265625,
+          "right": 1001.5831909179688,
+          "bottom": 1326.851547241211,
+          "width": 721.6470336914062,
+          "height": 35.56809997558594
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.9361572265625,
+              "top": 1291.283447265625,
+              "right": 1001.5831909179688,
+              "bottom": 1326.851547241211,
+              "width": 721.6470336914062,
+              "height": 35.56809997558594
+            },
+            "charStart": 0,
+            "charEnd": 115
+          }
+        ],
+        "content": {
+          "text": "Additionally; the results show Uhak OIXSL has a1 advantage ovci HIML\nWhaw Orkaw o Hnav Ly w H !NHL UWaw| okwao xHwl"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-5aab4eda0cf54ec2bee2e740a4381b43",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 690.624267578125,
+          "top": 1291.5145263671875,
+          "right": 999.2401123046875,
+          "bottom": 1322.3599739074707,
+          "width": 308.6158447265625,
+          "height": 30.845447540283203
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 690.624267578125,
+              "top": 1291.5145263671875,
+              "right": 999.2401123046875,
+              "bottom": 1322.3599739074707,
+              "width": 308.6158447265625,
+              "height": 30.845447540283203
+            },
+            "charStart": 0,
+            "charEnd": 42
+          }
+        ],
+        "content": {
+          "text": "L has an advantage over HTML\nU 1 | |\u0027 \u0027 \u00270"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-6f15040bfdb5408fb444ea37456d45eb",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 710.6940307617188,
+          "top": 1292.0413818359375,
+          "right": 969.0366516113281,
+          "bottom": 1320.7585849761963,
+          "width": 258.3426208496094,
+          "height": 28.71720314025879
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 710.6940307617188,
+              "top": 1292.0413818359375,
+              "right": 969.0366516113281,
+              "bottom": 1320.7585849761963,
+              "width": 258.3426208496094,
+              "height": 28.71720314025879
+            },
+            "charStart": 0,
+            "charEnd": 24
+          }
+        ],
+        "content": {
+          "text": "has an advantage over HT"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-6dc3aa5192164b9c89d5f850fce977c6",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 277.5802307128906,
+          "top": 1329.02392578125,
+          "right": 374.0074768066406,
+          "bottom": 1354.7436485290527,
+          "width": 96.42724609375,
+          "height": 25.719722747802734
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 277.5802307128906,
+              "top": 1329.02392578125,
+              "right": 374.0074768066406,
+              "bottom": 1354.7436485290527,
+              "width": 96.42724609375,
+              "height": 25.719722747802734
+            },
+            "charStart": 0,
+            "charEnd": 21
+          }
+        ],
+        "content": {
+          "text": "11311 Grr-\nimnroved \u003C"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-3969bdcec5664c0f895a822646ece9d3",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 279.5820617675781,
+          "top": 1340.3978271484375,
+          "right": 1002.5810852050781,
+          "bottom": 1387.011157989502,
+          "width": 722.9990234375,
+          "height": 46.61333084106445
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 279.5820617675781,
+              "top": 1340.3978271484375,
+              "right": 1002.5810852050781,
+              "bottom": 1387.011157989502,
+              "width": 722.9990234375,
+              "height": 46.61333084106445
+            },
+            "charStart": 0,
+            "charEnd": 145
+          }
+        ],
+        "content": {
+          "text": "improvcd scores; Finally; (IXSL achieves faster infercncc due to Fewer decoding\nsteps which js a resuLg oF Ghe rcduccd Scquciicc rcprcscngakioll;"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-3de1759234674f6999cc4fecb2fbe3e1",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 278.8468322753906,
+          "top": 1343.972900390625,
+          "right": 1002.3435363769531,
+          "bottom": 1387.0973281860352,
+          "width": 723.4967041015625,
+          "height": 43.124427795410156
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 278.8468322753906,
+              "top": 1343.972900390625,
+              "right": 1002.3435363769531,
+              "bottom": 1387.0973281860352,
+              "width": 723.4967041015625,
+              "height": 43.124427795410156
+            },
+            "charStart": 0,
+            "charEnd": 143
+          }
+        ],
+        "content": {
+          "text": "Improvcd scorcs; Linaly () ZSL achieves Laskcl IlLerclcc due 6o Lewer dococig\nsteps which is a rcsult oE Ghe rcduccd scqucr1cc rcprcscnGakioll;"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-10c394f27baa448e830a7ee8c4f5ca68",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 399.40350341796875,
+          "top": 1365.04443359375,
+          "right": 541.3370361328125,
+          "bottom": 1383.2807655334473,
+          "width": 141.93353271484375,
+          "height": 18.236331939697266
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 399.40350341796875,
+              "top": 1365.04443359375,
+              "right": 541.3370361328125,
+              "bottom": 1383.2807655334473,
+              "width": 141.93353271484375,
+              "height": 18.236331939697266
+            },
+            "charStart": 0,
+            "charEnd": 17
+          }
+        ],
+        "content": {
+          "text": "5 \u0026 result of the"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-30b0317b94bb47c59c30ee84a5dc6279",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 297.5904846191406,
+          "top": 1365.7716064453125,
+          "right": 845.1748352050781,
+          "bottom": 1387.281105041504,
+          "width": 547.5843505859375,
+          "height": 21.509498596191406
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 297.5904846191406,
+              "top": 1365.7716064453125,
+              "right": 845.1748352050781,
+              "bottom": 1387.281105041504,
+              "width": 547.5843505859375,
+              "height": 21.509498596191406
+            },
+            "charStart": 0,
+            "charEnd": 61
+          }
+        ],
+        "content": {
+          "text": "cps which is a result of the reduced scquencc rcprescntation,"
+        }
+      },
+      {
+        "id": "PARAGRAPH-1-7e4accfb5c1f427697e93f5038edb45f",
+        "kind": "Paragraph",
+        "pageNumber": 1,
+        "boundingBox": {
+          "left": 280.76885986328125,
+          "top": 1366.8494873046875,
+          "right": 383.5122299194336,
+          "bottom": 1386.8677215576172,
+          "width": 102.74337005615234,
+          "height": 20.018234252929688
+        },
+        "tags": [],
+        "provenance": [
+          {
+            "pageNumber": 1,
+            "boundingBox": {
+              "left": 280.76885986328125,
+              "top": 1366.8494873046875,
+              "right": 383.5122299194336,
+              "bottom": 1386.8677215576172,
+              "width": 102.74337005615234,
+              "height": 20.018234252929688
+            },
+            "charStart": 0,
+            "charEnd": 11
+          }
+        ],
+        "content": {
+          "text": "steps which"
+        }
+      }
+    ]
+  },
+  "stage": "page_assembly",
+  "completedAt": "2025-10-11T05:47:11.589259+00:00"
+}
