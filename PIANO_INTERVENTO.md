@@ -84,8 +84,6 @@
 - [x] Implementare fix basato su diagnosi
 - [x] Testare con immagine di test
 - [x] Verificare output: 13-14 detections (come Python)
-- [ ] Ricompilare LayoutSdk come NuGet locale
-- [ ] Aggiornare riferimenti in Docling.Core
 
 **Output Atteso**: Layout SDK funzionante con detections corrette
 
@@ -102,6 +100,10 @@
 - [ ] Analizzare `LayoutPostprocessor` Python (merge, union-find, soglie per etichetta).
 - [ ] Definire strategia .NET (replica completa vs modulo di raffinamento esterno).
 - [ ] Implementare prototipo e validarlo contro il dataset di riferimento.
+
+#### Step 1.6: Packaging & References
+- [ ] Ricompilare LayoutSdk come NuGet locale
+- [ ] Aggiornare riferimenti in Docling.Core
 
 ---
 
