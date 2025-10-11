@@ -47,24 +47,36 @@
 #### Step 1.2: Confronto con Python Implementation
 **Obiettivo**: Capire differenze implementative
 **Azioni**:
-- [ ] Scaricare Docling Python (`git clone https://github.com/DS4SD/docling`)
-- [ ] Localizzare layout detection in Python
-- [ ] Confrontare preprocessing pipeline
-- [ ] Confrontare post-processing (NMS, filtering)
-- [ ] Documentare differenze chiave
+- [x] Scaricare Docling Python (`git clone https://github.com/DS4SD/docling`)
+- [x] Localizzare layout detection in Python
+- [x] Confrontare preprocessing pipeline
+- [x] Confrontare post-processing (NMS, filtering)
+- [x] Documentare differenze chiave
 
 **Output Atteso**: Lista differenze .NET vs Python
+
+**Osservazioni raccolte**:
+- Python usa `LayoutPredictor` (Torch + `RTDetrImageProcessor`) che esegue automaticamente resize/letterboxing a 640x640 e normalizzazione (rescale + mean/std) secondo `preprocessor_config.json`. In .NET la normalizzazione avviene in `LayoutSdkRunner.NormaliseForModel` + `SkiaImagePreprocessor`, con sola divisione per 255 e senza mean/std.
+- Il modello Python applica `post_process_object_detection` di HuggingFace che riporta i bbox nelle coordinate originali; l'ONNX backend .NET replica manualmente il parsing di `logits`/`pred_boxes` applicando sigmoid e clamp dei bounding box.
+- Python applica un ricco `LayoutPostprocessor` (merge Union-Find, indici spaziali, soglie di confidenza per etichetta, gestione wrapper/picture e assegnazione celle). In .NET il risultato del backend viene usato direttamente (solo reproiezione e clamp), senza filtri per etichetta né deduplicazioni.
+- Le etichette Python provengono da `LayoutLabels.shifted_canonical_categories()` (background + 17 classi). L’implementazione .NET mantiene un dizionario equivalente in `OnnxRuntimeBackend.ParseOutputs`, ma con soglia fissa 0.3 per tutte le classi.
+- In Python non è previsto un fallback ONNX: l’errore in inferenza fa fallire lo stage. Il runner .NET aveva un fallback (ora rimosso) e dipende dal preprocessing bespoke per evitare il caso 0 detections.
 
 #### Step 1.3: Test Isolato LayoutSdk
 **Obiettivo**: Riprodurre problema in isolamento
 **Azioni**:
-- [ ] Creare unit test standalone con `dataset/2305.03393v1-pg9-img.png`
-- [ ] Testare con Runtime.Ort
-- [ ] Testare con Runtime.OpenVino (se disponibile su macOS)
-- [ ] Aggiungere logging dettagliato
-- [ ] Verificare output ONNX raw (prima di NMS/filtering)
+- [x] Creare unit test standalone con `dataset/2305.03393v1-pg9-img.png`
+- [x] Testare con Runtime.Ort
+- [ ] Testare con Runtime.OpenVino (n/a su macOS)
+- [x] Aggiungere logging dettagliato
+- [x] Verificare output ONNX raw (prima di NMS/filtering)
 
 **Output Atteso**: Test che riproduce il problema
+
+**Note test**:
+- Aggiunto `DatasetFixture` per risolvere asset path in test e helper `CreateNormalizedImage` (Skia) che replica il letterboxing 640x640 usato dal runner .NET.
+- Nuovo test `LayoutSdkIntegrationTests.OnnxRuntime_ProducesBoundingBoxes_ForSampleImage` conferma 9 detection con `LayoutRuntime.Onnx` (log xUnit).
+- Il backend ONNX fallisce con input non normalizzato: l'helper evidenzia la dipendenza dall'image preprocessing corretto.
 
 #### Step 1.4: Fix LayoutSdk
 **Obiettivo**: Risolvere il problema di 0 detections
