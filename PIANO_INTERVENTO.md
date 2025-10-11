@@ -288,12 +288,12 @@ def getDetBoxes_core(textmap, linkmap, text_threshold, link_threshold, low_text)
 - [x] Modificare `DetectionPostProcessor` per generare tutte le bbox (text+link map).
 - [x] Usare ConnectedComponents/Morphology/GeometryUtils per min-area rect e rettangoli scalati.
 - [x] Collegare `TextDetector` alla nuova pipeline (fallback già presente).
-- [ ] Eseguire test EasyOcrNet (Richiede modelli: non eseguiti, vedere note).
+- [x] Eseguire test EasyOcrNet mirati (`DetectionPostProcessorTests`) con modelli sintetici.
 
 **Note**:
 - Il nuovo `DetectionPostProcessor` applica soglie (0.7/0.4/0.4), connected components, dilatazione adattiva e `GeometryUtils.MinAreaRect` per ottenere bounding box multiple.
 - Output finale in coordinate ridimensionate, ancora raggruppato in linee dal `TextComponentGrouper`.
-- Test di integrazione non eseguiti perché `EnsureReleaseModels` richiede modelli reali; occorre idratarli prima del run.
+- Test eseguiti via `dotnet test EasyOcrNet.Tests/EasyOcrNet.Tests.csproj --filter DetectionPostProcessorTests` dopo aver bypassato `EnsureReleaseModels` tramite la proprietà `SkipEnsureReleaseModels`.
 
 ##### **2.4.5: Modificare Read() per usare multiple boxes**
 - [ ] Aggiornare `EasyOcr.Read()`:
