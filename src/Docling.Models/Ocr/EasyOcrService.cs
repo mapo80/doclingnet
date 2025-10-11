@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.IO;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -42,8 +40,6 @@ public sealed class EasyOcrService : IOcrService
             LogLevel.Warning,
             new EventId(3, nameof(EasyOcrService) + "LanguageFallback"),
             "None of the configured EasyOCR languages ({Languages}) are supported. Falling back to English.");
-
-    private static readonly Func<OcrResult, double?> ConfidenceAccessor = CreateConfidenceAccessor();
 
     private readonly ILogger<EasyOcrService> _logger;
     private readonly IEasyOcrEngine _engine;
@@ -123,7 +119,7 @@ public sealed class EasyOcrService : IOcrService
                 continue;
             }
 
-            var confidence = ConfidenceAccessor(result) ?? 1.0d;
+            var confidence = result.Confidence;
             if (double.IsNaN(confidence) || double.IsInfinity(confidence))
             {
                 confidence = 1.0d;
@@ -368,84 +364,6 @@ public sealed class EasyOcrService : IOcrService
         }
 
         return threshold;
-    }
-
-    private static Func<OcrResult, double?> CreateConfidenceAccessor()
-    {
-        var type = typeof(OcrResult);
-        var propertyCandidates = new[] { "Confidence", "Score", "Probability" };
-        foreach (var name in propertyCandidates)
-        {
-            var property = type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            if (property is not null && property.CanRead)
-            {
-                return result => ConvertToDouble(property.GetValue(result));
-            }
-        }
-
-        var fieldCandidates = new[]
-        {
-            "<Confidence>k__BackingField",
-            "<Score>k__BackingField",
-            "<Probability>k__BackingField",
-            "confidence",
-            "_confidence",
-            "score",
-            "_score",
-        };
-
-        foreach (var name in fieldCandidates)
-        {
-            var field = type.GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            if (field is not null)
-            {
-                return result => ConvertToDouble(field.GetValue(result));
-            }
-        }
-
-        return _ => null;
-    }
-
-    private static double? ConvertToDouble(object? value)
-    {
-        switch (value)
-        {
-            case null:
-                return null;
-            case double d:
-                return d;
-            case float f:
-                return f;
-            case decimal m:
-                return (double)m;
-            case byte b:
-                return b;
-            case sbyte sb:
-                return sb;
-            case short s:
-                return s;
-            case ushort us:
-                return us;
-            case int i:
-                return i;
-            case uint ui:
-                return ui;
-            case long l:
-                return l;
-            case ulong ul:
-                return ul;
-            case IConvertible convertible:
-                try
-                {
-                    return convertible.ToDouble(CultureInfo.InvariantCulture);
-                }
-                catch
-                {
-                    return null;
-                }
-            default:
-                return null;
-        }
     }
 
     private sealed class CropContext : IDisposable
