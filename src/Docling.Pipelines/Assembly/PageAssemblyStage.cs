@@ -124,6 +124,7 @@ public sealed partial class PageAssemblyStage : IPipelineStage
                 }
 
                 var classification = ClassifyTextBlock(mergedText);
+
                 if (classification == TextBlockClassification.Caption)
                 {
                     var target = FindCaptionTarget(representativeItem, captionAnchors);
@@ -141,15 +142,15 @@ public sealed partial class PageAssemblyStage : IPipelineStage
                 }
                 else
                 {
-                    var paragraph = BuildParagraphItem(representativeItem, representativeBlock, mergedText);
-                    if (paragraph is not null)
+                    var textItem = BuildTextItem(representativeItem, representativeBlock, mergedText, classification);
+                    if (textItem is not null)
                     {
-                        builder.AddItem(paragraph, CreateTextProvenance(paragraph, paragraph.Text));
+                        builder.AddItem(textItem, CreateTextProvenance(textItem, textItem.Text));
                         emittedTextualContent = true;
                         // Aggiungi tutti gli elementi del gruppo come anchor
                         foreach (var groupItem in group.Items)
                         {
-                            captionAnchors.Add(paragraph);
+                            captionAnchors.Add(textItem);
                         }
                     }
                 }
@@ -189,12 +190,12 @@ public sealed partial class PageAssemblyStage : IPipelineStage
                 else
                 {
                     var paragraphText = ComposeText(block.Lines);
-                    var paragraph = BuildParagraphItem(item, block, paragraphText);
-                    if (paragraph is not null)
+                    var textItem = BuildTextItem(item, block, paragraphText, classification);
+                    if (textItem is not null)
                     {
-                        builder.AddItem(paragraph, CreateTextProvenance(paragraph, paragraph.Text));
+                        builder.AddItem(textItem, CreateTextProvenance(textItem, textItem.Text));
                         emittedTextualContent = true;
-                        captionAnchors.Add(paragraph);
+                        captionAnchors.Add(textItem);
                     }
                 }
             }
@@ -255,7 +256,7 @@ public sealed partial class PageAssemblyStage : IPipelineStage
         return Task.CompletedTask;
     }
 
-    private static ParagraphItem? BuildParagraphItem(LayoutItem layoutItem, OcrBlockResult block, string text)
+    private static DocItem? BuildTextItem(LayoutItem layoutItem, OcrBlockResult block, string text, TextBlockClassification classification)
     {
         if (string.IsNullOrWhiteSpace(text))
         {
@@ -267,7 +268,18 @@ public sealed partial class PageAssemblyStage : IPipelineStage
             ["docling:source"] = "layout_block",
             ["docling:layout_kind"] = layoutItem.Kind.ToString(),
             ["docling:line_count"] = block.Lines.Count,
+            ["docling:text_classification"] = classification.ToString(),
         };
+
+        // Usa sempre ParagraphItem ma con metadati specifici per il tipo
+        if (classification == TextBlockClassification.Title)
+        {
+            metadata["docling:text_role"] = "title";
+        }
+        else if (classification == TextBlockClassification.SectionHeader)
+        {
+            metadata["docling:text_role"] = "section_header";
+        }
 
         return new ParagraphItem(
             layoutItem.Page,
@@ -874,6 +886,8 @@ public sealed partial class PageAssemblyStage : IPipelineStage
     {
         Paragraph,
         Caption,
+        Title,
+        SectionHeader,
     }
 
     private readonly record struct TableStructurePlacement(TableStructure Structure, int Index, BoundingBox BoundingBox);
