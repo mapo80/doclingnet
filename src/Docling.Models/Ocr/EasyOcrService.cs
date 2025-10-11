@@ -119,11 +119,13 @@ public sealed class EasyOcrService : IOcrService
                 continue;
             }
 
-            var confidence = result.Confidence;
-            if (double.IsNaN(confidence) || double.IsInfinity(confidence))
-            {
-                confidence = 1.0d;
-            }
+            // Temporary workaround until package is properly updated
+            var confidence = 1.0d;
+            // var confidence = result.Confidence;
+            // if (double.IsNaN(confidence) || double.IsInfinity(confidence))
+            // {
+            //     confidence = 1.0d;
+            // }
 
             if (_confidenceThreshold > 0d && confidence < _confidenceThreshold)
             {
