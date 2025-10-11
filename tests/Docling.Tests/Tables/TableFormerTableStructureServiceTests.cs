@@ -192,7 +192,7 @@ public sealed class TableFormerTableStructureServiceTests : IDisposable
 
         public bool Disposed { get; private set; }
 
-        public TableStructureResult Process(string imagePath, bool overlay, TableFormerModelVariant variant, TableFormerRuntime runtime, TableFormerLanguage? language)
+        public TableStructureResult Process(string imagePath, bool overlay, TableFormerModelVariant variant, TableFormerRuntime runtime = TableFormerRuntime.Auto, TableFormerLanguage? language = null)
         {
             Invocations.Add((imagePath, overlay, variant, runtime, language));
             return _result;
