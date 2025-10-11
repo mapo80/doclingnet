@@ -385,9 +385,10 @@ def getDetBoxes_core(textmap, linkmap, text_threshold, link_threshold, low_text)
 - [x] Test d’integrazione (`EasyOcrServiceTests`) adeguati alle nuove firme.
 
 ##### **2.4.7: Testing & Validation** 🔄 IN CORSO
-- [x] Battery unit test (Detection/TextRecognizer/TextDetector) eseguiti con modelli ufficiali.
-- [ ] Creare scenari multi-line reali e confronto con pipeline Python.
-- [ ] Benchmark prestazioni end-to-end.
+- [x] Battery unit test (Detection/TextRecognizer/TextDetector) eseguiti con modelli ufficiali (`SkipEnsureReleaseModels=false`).
+- [x] Benchmark .NET (`EasyOcrNet.BenchmarkCli`) su `2305.03393v1-pg9-img.png` → 39 segmenti, media ~2.6–2.8 s (warm-up escluso) su ONNX CPU.
+- [x] Confronto Python EasyOCR (`easyocr.Reader`) stesso asset → 137 segmenti, media ~3.4 s dopo warm-up.
+- [ ] Benchmark end-to-end Docling.NET vs Docling Python (pipeline completa, markdown).
 
 **File da Creare/Modificare**:
 ```
