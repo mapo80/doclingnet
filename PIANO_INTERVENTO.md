@@ -94,6 +94,9 @@
 ✅ Fallback ONNX NON viene più usato
 ✅ Layout detection time < 2s
 
+#### Step 1.5: Post-processing Alignment
+- Valutare se replicare parte del LayoutPostprocessor Python in .NET (soglie per etichetta, merge wrapper, ecc.) oppure portare l’output grezzo a un modulo di raffinamento equivalente.
+
 ---
 
 ### **FASE 2: MIGLIORAMENTO OCR**
