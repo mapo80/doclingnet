@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Docling.Core\Docling.Core.csproj" />
     <ProjectReference Include="..\submodules\ds4sd-docling-layout-heron-onnx\dotnet\LayoutSdk\LayoutSdk.csproj" />
+    <ProjectReference Include="..\submodules\ds4sd-docling-tableformer-onnx\dotnet\TableFormerSdk\TableFormerSdk.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -13,7 +14,6 @@
 
   <ItemGroup>
     <PackageReference Include="EasyOcrNet" Version="1.0.0" />
-    <PackageReference Include="TableFormerSdk" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9" />
     <PackageReference Include="SkiaSharp" Version="3.119.0" />
   </ItemGroup>

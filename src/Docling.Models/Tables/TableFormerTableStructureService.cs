@@ -71,7 +71,12 @@ public sealed class TableFormerTableStructureService : ITableStructureService, I
         _generateOverlay = options.GenerateOverlay;
         _workingDirectory = PrepareWorkingDirectory(options.WorkingDirectory);
 
-        var sdkOptions = options.SdkOptions ?? new TableFormerSdkOptions();
+        var sdkOptions = options.SdkOptions ?? new TableFormerSdkOptions(
+            new TableFormerModelPaths("src/submodules/ds4sd-docling-tableformer-onnx/models/encoder.onnx", null),
+            pipeline: new PipelineModelPaths(
+                "src/submodules/ds4sd-docling-tableformer-onnx/models/encoder.onnx",
+                "src/submodules/ds4sd-docling-tableformer-onnx/models/bbox_decoder.onnx",
+                "src/submodules/ds4sd-docling-tableformer-onnx/models/decoder.onnx"));
         _tableFormer = tableFormer ?? new TableFormerInvoker(new TableFormerSdk.TableFormerSdk(sdkOptions));
     }
 
@@ -270,7 +275,7 @@ public sealed class TableFormerTableStructureService : ITableStructureService, I
 
 internal interface ITableFormerInvoker : IDisposable
 {
-    TableStructureResult Process(string imagePath, bool overlay, TableFormerModelVariant variant, TableFormerRuntime runtime, TableFormerLanguage? language);
+    TableStructureResult Process(string imagePath, bool overlay, TableFormerModelVariant variant, TableFormerRuntime runtime = TableFormerRuntime.Auto, TableFormerLanguage? language = null);
 }
 
 internal sealed class TableFormerInvoker : ITableFormerInvoker
@@ -282,7 +287,7 @@ internal sealed class TableFormerInvoker : ITableFormerInvoker
         _sdk = sdk ?? throw new ArgumentNullException(nameof(sdk));
     }
 
-    public TableStructureResult Process(string imagePath, bool overlay, TableFormerModelVariant variant, TableFormerRuntime runtime, TableFormerLanguage? language)
+    public TableStructureResult Process(string imagePath, bool overlay, TableFormerModelVariant variant, TableFormerRuntime runtime = TableFormerRuntime.Auto, TableFormerLanguage? language = null)
         => _sdk.Process(imagePath, overlay, variant, runtime, language);
 
     public void Dispose() => _sdk.Dispose();
