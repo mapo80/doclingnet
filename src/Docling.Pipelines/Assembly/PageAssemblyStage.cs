@@ -72,6 +72,12 @@ public sealed partial class PageAssemblyStage : IPipelineStage
                     .ThenBy(item => item.BoundingBox.Left)
                     .ToList());
 
+        // Migliora ordinamento considerando il contenuto e la struttura
+        foreach (var pageGroup in layoutByPage.Values)
+        {
+            ImproveReadingOrder(pageGroup);
+        }
+
         var ocrByPage = ocrResult.Blocks
             .GroupBy(block => block.Page.PageNumber)
             .ToDictionary(group => group.Key, group => group.ToList());
@@ -100,48 +106,104 @@ public sealed partial class PageAssemblyStage : IPipelineStage
             var emittedTextualContent = false;
             var captionAnchors = new List<DocItem>();
 
+            // Raggruppa elementi di testo adiacenti per migliorare la struttura
+            var textGroups = GroupAdjacentTextBlocks(pageItems, layoutLookup);
+
+            foreach (var group in textGroups)
+            {
+                if (group.Items.Count == 0) continue;
+
+                // Usa il primo elemento come rappresentante del gruppo per posizione e classificazione
+                var representativeItem = group.Items[0];
+                var representativeBlock = group.Blocks[0];
+                var mergedText = group.MergedText;
+
+                if (string.IsNullOrWhiteSpace(mergedText))
+                {
+                    continue;
+                }
+
+                var classification = ClassifyTextBlock(mergedText);
+                if (classification == TextBlockClassification.Caption)
+                {
+                    var target = FindCaptionTarget(representativeItem, captionAnchors);
+                    var caption = BuildCaptionItem(representativeItem, representativeBlock, mergedText, target);
+                    if (caption is not null)
+                    {
+                        builder.AddItem(caption, CreateTextProvenance(caption, caption.Text));
+                        emittedTextualContent = true;
+                        // Aggiungi tutti gli elementi del gruppo come anchor per le caption
+                        foreach (var groupItem in group.Items)
+                        {
+                            captionAnchors.Add(caption);
+                        }
+                    }
+                }
+                else
+                {
+                    var paragraph = BuildParagraphItem(representativeItem, representativeBlock, mergedText);
+                    if (paragraph is not null)
+                    {
+                        builder.AddItem(paragraph, CreateTextProvenance(paragraph, paragraph.Text));
+                        emittedTextualContent = true;
+                        // Aggiungi tutti gli elementi del gruppo come anchor
+                        foreach (var groupItem in group.Items)
+                        {
+                            captionAnchors.Add(paragraph);
+                        }
+                    }
+                }
+            }
+
+            // Processa elementi di testo non raggruppati (se presenti)
+            var processedItems = new HashSet<LayoutItem>(textGroups.SelectMany(g => g.Items));
+            foreach (var item in pageItems)
+            {
+                if (processedItems.Contains(item) || item.Kind != LayoutItemKind.Text)
+                    continue;
+
+                var block = ResolveLayoutBlock(item, layoutLookup);
+                if (block is null || block.Lines.Count == 0)
+                {
+                    continue;
+                }
+
+                var collapsedText = ComposeText(block.Lines, " ");
+                if (string.IsNullOrWhiteSpace(collapsedText))
+                {
+                    continue;
+                }
+
+                var classification = ClassifyTextBlock(collapsedText);
+                if (classification == TextBlockClassification.Caption)
+                {
+                    var target = FindCaptionTarget(item, captionAnchors);
+                    var caption = BuildCaptionItem(item, block, collapsedText, target);
+                    if (caption is not null)
+                    {
+                        builder.AddItem(caption, CreateTextProvenance(caption, caption.Text));
+                        emittedTextualContent = true;
+                        captionAnchors.Add(caption);
+                    }
+                }
+                else
+                {
+                    var paragraphText = ComposeText(block.Lines);
+                    var paragraph = BuildParagraphItem(item, block, paragraphText);
+                    if (paragraph is not null)
+                    {
+                        builder.AddItem(paragraph, CreateTextProvenance(paragraph, paragraph.Text));
+                        emittedTextualContent = true;
+                        captionAnchors.Add(paragraph);
+                    }
+                }
+            }
+
+            // Processa tabelle e figure
             foreach (var item in pageItems)
             {
                 switch (item.Kind)
                 {
-                    case LayoutItemKind.Text:
-                    {
-                        var block = ResolveLayoutBlock(item, layoutLookup);
-                        if (block is null || block.Lines.Count == 0)
-                        {
-                            continue;
-                        }
-
-                        var collapsedText = ComposeText(block.Lines, " ");
-                        if (string.IsNullOrWhiteSpace(collapsedText))
-                        {
-                            continue;
-                        }
-
-                        var classification = ClassifyTextBlock(collapsedText);
-                        if (classification == TextBlockClassification.Caption)
-                        {
-                            var target = FindCaptionTarget(item, captionAnchors);
-                            var caption = BuildCaptionItem(item, block, collapsedText, target);
-                            if (caption is not null)
-                            {
-                                builder.AddItem(caption, CreateTextProvenance(caption, caption.Text));
-                                emittedTextualContent = true;
-                            }
-                        }
-                        else
-                        {
-                            var paragraphText = ComposeText(block.Lines);
-                            var paragraph = BuildParagraphItem(item, block, paragraphText);
-                            if (paragraph is not null)
-                            {
-                                builder.AddItem(paragraph, CreateTextProvenance(paragraph, paragraph.Text));
-                                emittedTextualContent = true;
-                            }
-                        }
-
-                        break;
-                    }
                     case LayoutItemKind.Table:
                     {
                         var table = BuildTableItem(
@@ -429,6 +491,222 @@ public sealed partial class PageAssemblyStage : IPipelineStage
                 .Select(text => text!));
     }
 
+    private static List<TextGroup> GroupAdjacentTextBlocks(List<LayoutItem> textItems, IReadOnlyDictionary<BoundingBox, OcrBlockResult> layoutLookup)
+    {
+        var groups = new List<TextGroup>();
+        var usedItems = new HashSet<LayoutItem>();
+
+        foreach (var item in textItems)
+        {
+            if (usedItems.Contains(item) || item.Kind != LayoutItemKind.Text)
+                continue;
+
+            var group = new TextGroup();
+            var queue = new Queue<LayoutItem>();
+            queue.Enqueue(item);
+            usedItems.Add(item);
+
+            while (queue.Count > 0)
+            {
+                var current = queue.Dequeue();
+                var block = ResolveLayoutBlock(current, layoutLookup);
+                if (block != null && block.Lines.Count > 0)
+                {
+                    var text = ComposeText(block.Lines, " ");
+                    if (!string.IsNullOrWhiteSpace(text))
+                    {
+                        group.Items.Add(current);
+                        group.Blocks.Add(block);
+                        group.Texts.Add(text);
+                        group.BoundingBoxes.Add(current.BoundingBox);
+
+                        // Trova elementi adiacenti (stessa riga o righe vicine)
+                        var adjacentItems = FindAdjacentTextItems(current, textItems, usedItems);
+                        foreach (var adjacent in adjacentItems)
+                        {
+                            if (!usedItems.Contains(adjacent))
+                            {
+                                queue.Enqueue(adjacent);
+                                usedItems.Add(adjacent);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (group.Items.Count > 0)
+            {
+                groups.Add(group);
+            }
+        }
+
+        return groups;
+    }
+
+    private static List<LayoutItem> FindAdjacentTextItems(LayoutItem current, List<LayoutItem> allItems, HashSet<LayoutItem> usedItems)
+    {
+        var adjacent = new List<LayoutItem>();
+        var currentBox = current.BoundingBox;
+
+        foreach (var item in allItems)
+        {
+            if (usedItems.Contains(item) || item.Page.PageNumber != current.Page.PageNumber || item.Kind != LayoutItemKind.Text)
+                continue;
+
+            var itemBox = item.BoundingBox;
+
+            // Calcola distanza verticale e orizzontale
+            var verticalDistance = Math.Min(
+                Math.Abs(currentBox.Top - itemBox.Bottom),
+                Math.Abs(currentBox.Bottom - itemBox.Top)
+            );
+
+            var horizontalOverlap = Math.Max(0,
+                Math.Min(currentBox.Right, itemBox.Right) - Math.Max(currentBox.Left, itemBox.Left)
+            );
+
+            // Elementi adiacenti se:
+            // 1. Si sovrappongono orizzontalmente E distanza verticale < 2 * altezza linea media
+            // 2. Oppure distanza verticale molto piccola (< 5px) e distanza orizzontale ragionevole (< 50px)
+            var avgLineHeight = Math.Min(currentBox.Height, itemBox.Height);
+            var maxVerticalDistance = Math.Max(5, avgLineHeight * 2);
+
+            if ((horizontalOverlap > 0 && verticalDistance < maxVerticalDistance) ||
+                (verticalDistance < 5 && Math.Abs(currentBox.Left - itemBox.Left) < 50))
+            {
+                adjacent.Add(item);
+            }
+        }
+
+        return adjacent;
+    }
+
+    private static string MergeTextGroupTexts(List<string> texts)
+    {
+        if (texts.Count == 0)
+            return string.Empty;
+
+        if (texts.Count == 1)
+            return texts[0];
+
+        // Unisci testi preservando la struttura
+        var merged = new List<string>();
+        var currentParagraph = new List<string>();
+
+        foreach (var text in texts)
+        {
+            // Se il testo finisce con punteggiatura da fine paragrafo, termina il paragrafo corrente
+            if (text.TrimEnd().EndsWith(".") || text.TrimEnd().EndsWith("!") || text.TrimEnd().EndsWith("?"))
+            {
+                currentParagraph.Add(text);
+                merged.Add(string.Join(" ", currentParagraph));
+                currentParagraph.Clear();
+            }
+            else
+            {
+                currentParagraph.Add(text);
+            }
+        }
+
+        // Aggiungi eventuali testi rimanenti
+        if (currentParagraph.Count > 0)
+        {
+            merged.Add(string.Join(" ", currentParagraph));
+        }
+
+        return string.Join("\n\n", merged.Where(t => !string.IsNullOrWhiteSpace(t)));
+    }
+
+    private static void ImproveReadingOrder(List<LayoutItem> items)
+    {
+        if (items.Count <= 1)
+            return;
+
+        // Separa per tipo per gestire priorità di lettura
+        var textItems = items.Where(i => i.Kind == LayoutItemKind.Text).ToList();
+        var titleItems = items.Where(i => i.Kind == LayoutItemKind.SectionHeader).ToList();
+        var tableItems = items.Where(i => i.Kind == LayoutItemKind.Table).ToList();
+        var figureItems = items.Where(i => i.Kind == LayoutItemKind.Figure).ToList();
+
+        // Ordinamento speciale per documenti accademici
+        var orderedItems = new List<LayoutItem>();
+
+        // 1. Titoli/header prima (in ordine di posizione)
+        orderedItems.AddRange(titleItems.OrderBy(i => i.BoundingBox.Top).ThenBy(i => i.BoundingBox.Left));
+
+        // 2. Figure e tabelle (in ordine di posizione)
+        var visualItems = new List<LayoutItem>();
+        visualItems.AddRange(figureItems);
+        visualItems.AddRange(tableItems);
+        orderedItems.AddRange(visualItems.OrderBy(i => i.BoundingBox.Top).ThenBy(i => i.BoundingBox.Left));
+
+        // 3. Testo rimanente (in ordine di lettura migliorato)
+        var remainingText = textItems.Where(i => !titleItems.Contains(i)).ToList();
+        orderedItems.AddRange(ImproveTextReadingOrder(remainingText));
+
+        // Sostituisci la lista originale
+        items.Clear();
+        items.AddRange(orderedItems);
+    }
+
+    private static List<LayoutItem> ImproveTextReadingOrder(List<LayoutItem> textItems)
+    {
+        if (textItems.Count <= 1)
+            return textItems;
+
+        // Crea gruppi di elementi correlati (colonne, paragrafi)
+        var columns = new List<List<LayoutItem>>();
+        var used = new HashSet<LayoutItem>();
+
+        foreach (var item in textItems)
+        {
+            if (used.Contains(item))
+                continue;
+
+            var column = new List<LayoutItem> { item };
+            used.Add(item);
+
+            // Trova elementi nella stessa colonna (posizione X simile)
+            var itemCenterX = item.BoundingBox.Left + (item.BoundingBox.Width / 2);
+
+            foreach (var other in textItems)
+            {
+                if (used.Contains(other))
+                    continue;
+
+                var otherCenterX = other.BoundingBox.Left + (other.BoundingBox.Width / 2);
+                var xDistance = Math.Abs(itemCenterX - otherCenterX);
+
+                // Se elementi sono nella stessa colonna (distanza X < 100px)
+                if (xDistance < 100)
+                {
+                    column.Add(other);
+                    used.Add(other);
+                }
+            }
+
+            // Ordina elementi nella colonna per posizione Y
+            column.Sort((a, b) =>
+            {
+                var cmp = a.BoundingBox.Top.CompareTo(b.BoundingBox.Top);
+                return cmp != 0 ? cmp : a.BoundingBox.Left.CompareTo(b.BoundingBox.Left);
+            });
+
+            columns.Add(column);
+        }
+
+        // Ordina colonne per posizione X
+        columns.Sort((a, b) =>
+        {
+            var aCenter = a[0].BoundingBox.Left + (a[0].BoundingBox.Width / 2);
+            var bCenter = b[0].BoundingBox.Left + (b[0].BoundingBox.Width / 2);
+            return aCenter.CompareTo(bCenter);
+        });
+
+        // Appiattisci colonne mantenendo l'ordine
+        return columns.SelectMany(c => c).ToList();
+    }
+
     private static OcrBlockResult? ResolveLayoutBlock(LayoutItem layoutItem, IReadOnlyDictionary<BoundingBox, OcrBlockResult> layoutLookup)
     {
         if (layoutLookup.TryGetValue(layoutItem.BoundingBox, out var block))
@@ -459,7 +737,7 @@ public sealed partial class PageAssemblyStage : IPipelineStage
     private static DocItem? FindCaptionTarget(LayoutItem caption, IReadOnlyList<DocItem> anchors)
     {
         DocItem? best = null;
-        double bestDistance = double.MaxValue;
+        double bestScore = 0;
 
         foreach (var anchor in anchors)
         {
@@ -470,22 +748,34 @@ public sealed partial class PageAssemblyStage : IPipelineStage
 
             var overlap = Math.Min(caption.BoundingBox.Right, anchor.BoundingBox.Right) -
                           Math.Max(caption.BoundingBox.Left, anchor.BoundingBox.Left);
-            if (overlap <= 0)
-            {
-                continue;
-            }
 
+            // Calcola distanza verticale
             var distance = CalculateVerticalDistance(caption.BoundingBox, anchor.BoundingBox);
-            var allowed = Math.Max(120d, anchor.BoundingBox.Height * 0.6);
-            if (distance > allowed)
-            {
-                continue;
-            }
 
-            if (distance < bestDistance)
+            // Calcola score basato su:
+            // 1. Sovrapposizione orizzontale (overlap)
+            // 2. Distanza verticale (inversamente proporzionale)
+            // 3. Larghezza relativa (caption dovrebbe essere più stretta dell'anchor)
+
+            if (overlap > 0)
             {
-                bestDistance = distance;
-                best = anchor;
+                var allowedDistance = Math.Max(120d, anchor.BoundingBox.Height * 0.8);
+                if (distance <= allowedDistance)
+                {
+                    // Score basato su distanza e overlap
+                    var distanceScore = Math.Max(0, (allowedDistance - distance) / allowedDistance);
+                    var overlapScore = overlap / Math.Max(caption.BoundingBox.Width, anchor.BoundingBox.Width);
+                    var widthRatio = Math.Min(caption.BoundingBox.Width, anchor.BoundingBox.Width) /
+                                    Math.Max(caption.BoundingBox.Width, anchor.BoundingBox.Width);
+
+                    var totalScore = (distanceScore * 0.4) + (overlapScore * 0.4) + (widthRatio * 0.2);
+
+                    if (totalScore > bestScore)
+                    {
+                        bestScore = totalScore;
+                        best = anchor;
+                    }
+                }
             }
         }
 
@@ -587,6 +877,17 @@ public sealed partial class PageAssemblyStage : IPipelineStage
     }
 
     private readonly record struct TableStructurePlacement(TableStructure Structure, int Index, BoundingBox BoundingBox);
+
+    private sealed class TextGroup
+    {
+        public List<LayoutItem> Items { get; } = new();
+        public List<OcrBlockResult> Blocks { get; } = new();
+        public List<string> Texts { get; } = new();
+        public List<BoundingBox> BoundingBoxes { get; } = new();
+
+        public BoundingBox MergedBoundingBox => BoundingBox.UnionAll(BoundingBoxes);
+        public string MergedText => MergeTextGroupTexts(Texts);
+    }
 
     private static partial class StageLogger
     {
