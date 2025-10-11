@@ -83,11 +83,14 @@
 **Azioni**:
 - [x] Implementare fix basato su diagnosi
 - [x] Testare con immagine di test
-- [ ] Verificare output: 13-14 detections (come Python)
+- [x] Verificare output: 13-14 detections (come Python)
 - [ ] Ricompilare LayoutSdk come NuGet locale
 - [ ] Aggiornare riferimenti in Docling.Core
 
 **Output Atteso**: Layout SDK funzionante con detections corrette
+
+**Note Step 1.4**:
+- L'ONNX backend ora usa softmax per i logits, soglie per etichetta (allineate ai valori Python) e una NMS semplice (IoU 0.7, same-label). L'integrazione `LayoutSdkIntegrationTests` segnala 13 box per `2305.03393v1-pg9-img.png`.
 
 **Success Criteria**:
 ✅ Layout SDK primario produce 13-14 detections (non 0)
@@ -95,7 +98,10 @@
 ✅ Layout detection time < 2s
 
 #### Step 1.5: Post-processing Alignment
-- Valutare se replicare parte del LayoutPostprocessor Python in .NET (soglie per etichetta, merge wrapper, ecc.) oppure portare l’output grezzo a un modulo di raffinamento equivalente.
+**Azioni**:
+- [ ] Analizzare `LayoutPostprocessor` Python (merge, union-find, soglie per etichetta).
+- [ ] Definire strategia .NET (replica completa vs modulo di raffinamento esterno).
+- [ ] Implementare prototipo e validarlo contro il dataset di riferimento.
 
 ---
 
