@@ -1,0 +1,25 @@
+{
+  "data": {
+    "tableCount": 2,
+    "tables": [
+      {
+        "pageNumber": 1,
+        "rowCount": 0,
+        "columnCount": 0,
+        "cellCount": 0,
+        "hasDebugArtifact": false,
+        "cells": []
+      },
+      {
+        "pageNumber": 1,
+        "rowCount": 0,
+        "columnCount": 0,
+        "cellCount": 0,
+        "hasDebugArtifact": false,
+        "cells": []
+      }
+    ]
+  },
+  "stage": "table_structure",
+  "completedAt": "2025-10-12T05:18:01.300852+00:00"
+}

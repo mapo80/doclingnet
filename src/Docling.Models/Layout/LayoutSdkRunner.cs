@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using LayoutSdk;
@@ -11,15 +10,13 @@ using LayoutSdk.Configuration;
 using LayoutSdk.Factories;
 using LayoutSdk.Processing;
 using Microsoft.Extensions.Logging;
-using Microsoft.ML.OnnxRuntime;
-using Microsoft.ML.OnnxRuntime.Tensors;
 using SkiaSharp;
 
 namespace Docling.Models.Layout;
 
 internal interface ILayoutSdkRunner : IDisposable
 {
-    Task<LayoutSdkInferenceResult> InferAsync(ReadOnlyMemory<byte> imageContent, CancellationToken cancellationToken);
+    internal Task<LayoutSdkInferenceResult> InferAsync(ReadOnlyMemory<byte> imageContent, CancellationToken cancellationToken);
 }
 
 internal readonly record struct LayoutSdkInferenceResult(
@@ -38,7 +35,6 @@ public readonly record struct LayoutSdkNormalisationMetadata(
 [ExcludeFromCodeCoverage]
 internal sealed partial class LayoutSdkRunner : ILayoutSdkRunner
 {
-    private const int ModelInputSize = 640;
 
     private readonly LayoutSdkDetectionOptions _options;
     private readonly LayoutSdk.LayoutSdk _sdk;
@@ -65,7 +61,7 @@ internal sealed partial class LayoutSdkRunner : ILayoutSdkRunner
             new Docling.Models.Layout.PassthroughOverlayRenderer(),
             new SkiaImagePreprocessor());
         _semaphore = new SemaphoreSlim(_options.MaxDegreeOfParallelism);
-        RunnerLogger.Initialized(_logger, _options.Runtime.ToString(), _options.Language.ToString(), _workingDirectory);
+        RunnerLogger.Initialized(_logger, "Onnx", _options.Language.ToString(), _workingDirectory);
     }
 
     public static ILayoutSdkRunner Create(LayoutSdkDetectionOptions options, ILogger logger)
@@ -86,7 +82,7 @@ internal sealed partial class LayoutSdkRunner : ILayoutSdkRunner
             await _semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
             try
             {
-                var result = _sdk.Process(path, _options.GenerateOverlay, _options.Runtime);
+                var result = _sdk.Process(path, _options.GenerateOverlay, LayoutRuntime.Onnx);
                 try
                 {
                     var boxes = result.Boxes ?? Array.Empty<LayoutSdk.BoundingBox>();
@@ -163,14 +159,12 @@ internal sealed partial class LayoutSdkRunner : ILayoutSdkRunner
 
     private static LayoutSdkOptions CreateSdkOptions(LayoutSdkDetectionOptions options)
     {
-        var preferOrt = options.Runtime == LayoutRuntime.Ort;
-        var preferOpenVino = options.Runtime == LayoutRuntime.OpenVino;
         if (options.ValidateModelFiles)
         {
             LayoutSdkBundledModels.EnsureAllFilesExist();
         }
 
-        var sdkOptions = LayoutSdkBundledModels.CreateOptions(options.Language, preferOrt, preferOpenVino);
+        var sdkOptions = LayoutSdkBundledModels.CreateOptions(options.Language);
         if (options.ValidateModelFiles)
         {
             sdkOptions.EnsureModelPaths();
@@ -182,55 +176,7 @@ internal sealed partial class LayoutSdkRunner : ILayoutSdkRunner
     private static LayoutBackendFactory CreateBackendFactory(LayoutSdkOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
-
-        var assembly = typeof(LayoutRuntime).Assembly;
-        var onnxBackendType = assembly.GetType("LayoutSdk.OnnxRuntimeBackend", throwOnError: true)!;
-        var onnxFormatType = assembly.GetType("LayoutSdk.OnnxModelFormat", throwOnError: true)!;
-        var onnxCtor = onnxBackendType.GetConstructor(
-            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
-            binder: null,
-            types: new[] { typeof(string), onnxFormatType },
-            modifiers: null) ?? throw new InvalidOperationException("Unable to locate OnnxRuntimeBackend constructor.");
-        var onnxValue = Enum.Parse(onnxFormatType, "Onnx");
-        var ortValue = Enum.Parse(onnxFormatType, "Ort");
-
-        LayoutSdk.ILayoutBackend CreateOnnxBackend(string modelPath)
-        {
-            ArgumentException.ThrowIfNullOrWhiteSpace(modelPath);
-            var backend = onnxCtor.Invoke(new[] { modelPath, onnxValue });
-            return (LayoutSdk.ILayoutBackend)backend!;
-        }
-
-        LayoutSdk.ILayoutBackend CreateOrtBackend(string modelPath)
-        {
-            ArgumentException.ThrowIfNullOrWhiteSpace(modelPath);
-            var backend = onnxCtor.Invoke(new[] { modelPath, ortValue });
-            return (LayoutSdk.ILayoutBackend)backend!;
-        }
-
-        var openVinoBackendType = assembly.GetType("LayoutSdk.OpenVinoBackend", throwOnError: true)!;
-        var openVinoExecutorType = assembly.GetType("LayoutSdk.OpenVinoBackend+OpenVinoExecutor", throwOnError: true)!;
-        var openVinoExecutorCtor = openVinoExecutorType.GetConstructor(
-            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
-            binder: null,
-            types: new[] { typeof(string), typeof(string) },
-            modifiers: null) ?? throw new InvalidOperationException("Unable to locate OpenVINO executor constructor.");
-        var openVinoCtor = openVinoBackendType.GetConstructor(
-            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
-            binder: null,
-            types: new[] { openVinoExecutorType },
-            modifiers: null) ?? throw new InvalidOperationException("Unable to locate OpenVINO backend constructor.");
-
-        LayoutSdk.ILayoutBackend CreateOpenVinoBackend(string xmlPath, string binPath)
-        {
-            ArgumentException.ThrowIfNullOrWhiteSpace(xmlPath);
-            ArgumentException.ThrowIfNullOrWhiteSpace(binPath);
-            var executor = openVinoExecutorCtor.Invoke(new object[] { xmlPath, binPath });
-            var backend = openVinoCtor.Invoke(new[] { executor });
-            return (LayoutSdk.ILayoutBackend)backend!;
-        }
-
-        return new LayoutBackendFactory(options, CreateOnnxBackend, CreateOrtBackend, CreateOpenVinoBackend);
+        return new LayoutBackendFactory(options);
     }
 
     private static string ResolveWorkingDirectory(string? workingDirectory)
@@ -246,106 +192,31 @@ internal sealed partial class LayoutSdkRunner : ILayoutSdkRunner
         Directory.CreateDirectory(_workingDirectory);
         var fileName = Path.Combine(_workingDirectory, Guid.NewGuid().ToString("N")) + ".png";
         var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Read, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan);
-        var normalised = NormaliseForModel(content);
-        try
-        {
-            if (normalised.UseOriginal || normalised.Image is null)
-            {
-                await stream.WriteAsync(content, cancellationToken).ConfigureAwait(false);
-            }
-            else
-            {
-                await stream.WriteAsync(normalised.Image.AsMemory(), cancellationToken).ConfigureAwait(false);
-            }
-        }
-        finally
-        {
-            await stream.DisposeAsync().ConfigureAwait(false);
-        }
 
-        return new PersistedImage(fileName, normalised.Metadata);
-    }
+        // Use original image - preprocessing is now handled by SkiaImagePreprocessor
+        await stream.WriteAsync(content, cancellationToken).ConfigureAwait(false);
 
-    [SuppressMessage("Performance", "CA1508:Avoid dead conditional code", Justification = "SKSurface.Create can return null when Skia fails to allocate a surface.")]
-    private NormalisationResult NormaliseForModel(ReadOnlyMemory<byte> content)
-    {
-        LayoutSdkNormalisationMetadata? metadata = null;
+        await stream.DisposeAsync().ConfigureAwait(false);
 
+        // Create metadata for the original image dimensions
         using var data = SKData.CreateCopy(content.Span);
         using var bitmap = SKBitmap.Decode(data);
-        if (bitmap is null)
+        LayoutSdkNormalisationMetadata? metadata = null;
+        if (bitmap is not null)
         {
-            RunnerLogger.PreprocessingFallback(_logger, "Unable to decode the input image.");
-            return new NormalisationResult(true, null, metadata);
+            metadata = new LayoutSdkNormalisationMetadata(
+                bitmap.Width,
+                bitmap.Height,
+                bitmap.Width,
+                bitmap.Height,
+                Scale: 1.0,
+                OffsetX: 0,
+                OffsetY: 0);
         }
 
-        if (bitmap.Width <= 0 || bitmap.Height <= 0)
-        {
-            RunnerLogger.PreprocessingFallback(_logger, "The input image dimensions are invalid.");
-            return new NormalisationResult(true, null, metadata);
-        }
-
-        metadata = new LayoutSdkNormalisationMetadata(
-            bitmap.Width,
-            bitmap.Height,
-            bitmap.Width,
-            bitmap.Height,
-            Scale: 1.0,
-            OffsetX: 0,
-            OffsetY: 0);
-
-        if (bitmap.Width == ModelInputSize && bitmap.Height == ModelInputSize)
-        {
-            return new NormalisationResult(true, null, metadata);
-        }
-
-        var scale = Math.Min((double)ModelInputSize / bitmap.Width, (double)ModelInputSize / bitmap.Height);
-        if (scale <= 0)
-        {
-            RunnerLogger.PreprocessingFallback(_logger, "Failed to compute a valid scaling factor.");
-            return new NormalisationResult(true, null, metadata);
-        }
-
-        var scaledWidth = Math.Clamp((float)(bitmap.Width * scale), 1f, ModelInputSize);
-        var scaledHeight = Math.Clamp((float)(bitmap.Height * scale), 1f, ModelInputSize);
-        var createdSurface = SKSurface.Create(new SKImageInfo(ModelInputSize, ModelInputSize, SKColorType.Rgba8888, SKAlphaType.Premul));
-        if (createdSurface is null)
-        {
-            RunnerLogger.PreprocessingFallback(_logger, "Unable to allocate the normalised canvas.");
-            return new NormalisationResult(true, null, metadata);
-        }
-
-        using var surface = createdSurface;
-        var canvas = surface.Canvas;
-        canvas.Clear(SKColors.Black);
-
-        var offsetX = (ModelInputSize - scaledWidth) / 2f;
-        var offsetY = (ModelInputSize - scaledHeight) / 2f;
-        var destination = SKRect.Create(offsetX, offsetY, scaledWidth, scaledHeight);
-        canvas.DrawBitmap(bitmap, destination);
-        canvas.Flush();
-
-        using var image = surface.Snapshot();
-        using var encoded = image.Encode(SKEncodedImageFormat.Png, 100);
-        if (encoded is null)
-        {
-            RunnerLogger.PreprocessingFallback(_logger, "Unable to encode the normalised image.");
-            return new NormalisationResult(true, null, metadata);
-        }
-
-        var scaledWidthInt = Math.Clamp((int)Math.Round(scaledWidth, MidpointRounding.AwayFromZero), 1, ModelInputSize);
-        var scaledHeightInt = Math.Clamp((int)Math.Round(scaledHeight, MidpointRounding.AwayFromZero), 1, ModelInputSize);
-        metadata = new LayoutSdkNormalisationMetadata(
-            bitmap.Width,
-            bitmap.Height,
-            scaledWidthInt,
-            scaledHeightInt,
-            Scale: scale,
-            OffsetX: offsetX,
-            OffsetY: offsetY);
-        RunnerLogger.ImageNormalised(_logger, bitmap.Width, bitmap.Height, scaledWidthInt, scaledHeightInt);
-        return new NormalisationResult(false, encoded.ToArray(), metadata);
+        return new PersistedImage(fileName, metadata);
     }
+
 
 
     internal static IReadOnlyList<LayoutSdk.BoundingBox> ReprojectBoundingBoxes(
@@ -477,7 +348,5 @@ internal sealed partial class LayoutSdkRunner : ILayoutSdkRunner
     }
 
     private readonly record struct PersistedImage(string Path, LayoutSdkNormalisationMetadata? Normalisation);
-
-    private readonly record struct NormalisationResult(bool UseOriginal, byte[]? Image, LayoutSdkNormalisationMetadata? Metadata);
 
 }
