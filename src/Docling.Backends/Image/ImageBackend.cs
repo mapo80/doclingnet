@@ -61,7 +61,7 @@ public sealed class ImageBackend : IImageBackend
                 throw new InvalidOperationException(FormattableString.Invariant($"Unable to decode image source '{source.Identifier ?? index.ToString(CultureInfo.InvariantCulture)}'."));
             }
 
-            var pageReference = new PageReference(index + 1, source.Dpi ?? _options.DefaultDpi);
+            var pageReference = new PageReference(index, source.Dpi ?? _options.DefaultDpi);
             var metadata = BuildMetadata(index, source, bitmap, pageReference);
             return new PageImage(pageReference, bitmap, metadata);
         }

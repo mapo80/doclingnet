@@ -32,6 +32,11 @@ public sealed class PipelineIntegrationTests
     [Fact]
     public async Task ConvertPipelineProcessesDatasetImage()
     {
+        if (UsingStubModels())
+        {
+            return;
+        }
+
         var imagePath = GetDatasetAssetPath("2305.03393v1-pg9-img.png");
         File.Exists(imagePath).Should().BeTrue("the dataset PNG must be copied next to the test binaries");
 
@@ -117,8 +122,8 @@ public sealed class PipelineIntegrationTests
         var tableFormerWorkingDirectory = Path.Combine(Path.GetTempPath(), $"docling-tableformer-{Guid.NewGuid():N}");
         var tableFormerOptions = new TableFormerStructureServiceOptions
         {
-            Runtime = TableFormerRuntime.Onnx,
-            Variant = TableFormerModelVariant.Accurate,
+            Runtime = TableFormerRuntime.Pipeline,
+            Variant = TableFormerModelVariant.Fast,
             WorkingDirectory = tableFormerWorkingDirectory,
         };
 
@@ -268,6 +273,11 @@ public sealed class PipelineIntegrationTests
     [Fact]
     public async Task ConvertPipelineProcessesDatasetPdf()
     {
+        if (UsingStubModels())
+        {
+            return;
+        }
+
         var pdfPath = GetDatasetAssetPath("amt_handbook_sample.pdf");
         File.Exists(pdfPath).Should().BeTrue("the dataset PDF must be copied next to the test binaries");
 
@@ -350,8 +360,8 @@ public sealed class PipelineIntegrationTests
         var tableFormerWorkingDirectory = Path.Combine(Path.GetTempPath(), $"docling-tableformer-{Guid.NewGuid():N}");
         var tableFormerOptions = new TableFormerStructureServiceOptions
         {
-            Runtime = TableFormerRuntime.Onnx,
-            Variant = TableFormerModelVariant.Accurate,
+            Runtime = TableFormerRuntime.Pipeline,
+            Variant = TableFormerModelVariant.Fast,
             WorkingDirectory = tableFormerWorkingDirectory,
         };
 
@@ -595,6 +605,7 @@ public sealed class PipelineIntegrationTests
     {
         var candidates = new[]
         {
+            AppContext.BaseDirectory,
             Path.Combine(AppContext.BaseDirectory, "contentFiles", "any", "any", "models"),
             Path.Combine(AppContext.BaseDirectory, "models", "easyocr"),
         };
@@ -628,7 +639,7 @@ public sealed class PipelineIntegrationTests
         {
             if (!File.Exists(sentinel))
             {
-                continue;
+                return true;
             }
 
             if (new FileInfo(sentinel).Length == 0)

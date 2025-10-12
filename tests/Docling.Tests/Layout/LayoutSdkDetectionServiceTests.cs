@@ -250,9 +250,11 @@ public sealed class LayoutSdkDetectionServiceTests
 
         public Task<LayoutSdkInferenceResult> InferAsync(LayoutPagePayload page, CancellationToken cancellationToken)
         {
-            return Task.FromResult(_results.Count > 0
+            var result = _results.Count > 0
                 ? _results.Dequeue()
-                : new LayoutSdkInferenceResult(Array.Empty<LayoutSdk.BoundingBox>(), null));
+                : new LayoutSdkInferenceResult(Array.Empty<LayoutSdk.BoundingBox>(), null);
+            var projected = LayoutSdkRunner.ReprojectBoundingBoxes(result.Boxes, result.Normalisation);
+            return Task.FromResult(new LayoutSdkInferenceResult(projected, result.Normalisation));
         }
 
         public bool IsProfilingEnabled => _profilingEnabled;

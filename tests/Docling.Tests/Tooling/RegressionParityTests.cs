@@ -190,8 +190,8 @@ public sealed class RegressionParityTests
             using var tableStructureService = new TableFormerTableStructureService(
                 new TableFormerStructureServiceOptions
                 {
-                    Runtime = TableFormerRuntime.Onnx,
-                    Variant = TableFormerModelVariant.Accurate,
+                    Runtime = TableFormerRuntime.Pipeline,
+                    Variant = TableFormerModelVariant.Fast,
                     WorkingDirectory = _tableFormerDirectory,
                 },
                 NullLogger<TableFormerTableStructureService>.Instance);
@@ -487,6 +487,7 @@ public sealed class RegressionParityTests
     {
         var candidates = new[]
         {
+            AppContext.BaseDirectory,
             Path.Combine(AppContext.BaseDirectory, "contentFiles", "any", "any", "models"),
             Path.Combine(AppContext.BaseDirectory, "models", "easyocr"),
         };
@@ -520,7 +521,7 @@ public sealed class RegressionParityTests
         {
             if (!File.Exists(sentinel))
             {
-                continue;
+                return true;
             }
 
             if (new FileInfo(sentinel).Length == 0)

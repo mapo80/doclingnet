@@ -18,7 +18,7 @@ namespace Docling.Models.Tables;
 
 public sealed class TableFormerStructureServiceOptions
 {
-    public TableFormerModelVariant Variant { get; init; } = TableFormerModelVariant.Accurate;
+    public TableFormerModelVariant Variant { get; init; } = TableFormerModelVariant.Fast;
 
     public TableFormerRuntime Runtime { get; init; } = TableFormerRuntime.Auto;
 
@@ -83,7 +83,7 @@ public sealed class TableFormerTableStructureService : ITableStructureService, I
                 encoderPath,
                 bboxDecoderPath,
                 decoderPath));
-        _tableFormer = tableFormer ?? new TableFormerInvoker(new TableFormerSdk.TableFormer(sdkOptions));
+        _tableFormer = tableFormer ?? new TableFormerInvoker(new TableFormer(sdkOptions));
     }
 
     public async Task<TableStructure> InferStructureAsync(TableStructureRequest request, CancellationToken cancellationToken = default)
@@ -286,9 +286,9 @@ internal interface ITableFormerInvoker : IDisposable
 
 internal sealed class TableFormerInvoker : ITableFormerInvoker
 {
-    private readonly TableFormerSdk.TableFormer _sdk;
+    private readonly TableFormer _sdk;
 
-    public TableFormerInvoker(TableFormerSdk.TableFormer sdk)
+    public TableFormerInvoker(TableFormer sdk)
     {
         _sdk = sdk ?? throw new ArgumentNullException(nameof(sdk));
     }
