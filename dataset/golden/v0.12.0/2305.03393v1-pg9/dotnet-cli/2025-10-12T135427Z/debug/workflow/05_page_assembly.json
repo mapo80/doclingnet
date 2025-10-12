@@ -1,0 +1,15 @@
+{
+  "data": {
+    "completed": false,
+    "documentId": "",
+    "sourceId": "",
+    "createdAt": "0001-01-01T00:00:00+00:00",
+    "pageCount": 0,
+    "pages": [],
+    "properties": {},
+    "itemCount": 0,
+    "items": []
+  },
+  "stage": "page_assembly",
+  "completedAt": "2025-10-12T13:54:49.522639+00:00"
+}

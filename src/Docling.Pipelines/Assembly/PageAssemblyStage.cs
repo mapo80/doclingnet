@@ -62,6 +62,7 @@ public sealed partial class PageAssemblyStage : IPipelineStage
 
         var document = new DoclingDocument(sourceId, pages, documentId: documentId);
         var builder = new DoclingDocumentBuilder(document);
+        var pageNumberOffset = DeterminePageNumberOffset(pages);
 
         var layoutByPage = layoutItems
             .GroupBy(item => item.Page.PageNumber)
@@ -121,7 +122,7 @@ public sealed partial class PageAssemblyStage : IPipelineStage
 
                     if (table is not null)
                     {
-                        builder.AddItem(table, CreateRegionProvenance(table));
+                        builder.AddItem(table, CreateRegionProvenance(table, pageNumberOffset));
                         captionAnchors.Add(table);
                     }
 
@@ -132,7 +133,7 @@ public sealed partial class PageAssemblyStage : IPipelineStage
                     var picture = BuildPictureItem(item);
                     if (picture is not null)
                     {
-                        builder.AddItem(picture, CreateRegionProvenance(picture));
+                        builder.AddItem(picture, CreateRegionProvenance(picture, pageNumberOffset));
                         captionAnchors.Add(picture);
                     }
 
@@ -169,7 +170,7 @@ public sealed partial class PageAssemblyStage : IPipelineStage
                     var caption = BuildCaptionItem(representativeItem, representativeBlock, mergedText, target);
                     if (caption is not null)
                     {
-                        builder.AddItem(caption, CreateTextProvenance(caption, caption.Text));
+                        builder.AddItem(caption, CreateTextProvenance(caption, caption.Text, pageNumberOffset));
                         emittedTextualContent = true;
                         // Aggiungi tutti gli elementi del gruppo come anchor per le caption
                         foreach (var groupItem in group.Items)
@@ -183,7 +184,7 @@ public sealed partial class PageAssemblyStage : IPipelineStage
                     var textItem = BuildTextItem(representativeItem, representativeBlock, mergedText, classification);
                     if (textItem is ParagraphItem paragraphItem)
                     {
-                        builder.AddItem(paragraphItem, CreateTextProvenance(paragraphItem, paragraphItem.Text));
+                        builder.AddItem(paragraphItem, CreateTextProvenance(paragraphItem, paragraphItem.Text, pageNumberOffset));
                         emittedTextualContent = true;
                         // Aggiungi tutti gli elementi del gruppo come anchor
                         foreach (var groupItem in group.Items)
@@ -222,7 +223,7 @@ public sealed partial class PageAssemblyStage : IPipelineStage
                     var caption = BuildCaptionItem(item, block, collapsedText, target);
                     if (caption is not null)
                     {
-                        builder.AddItem(caption, CreateTextProvenance(caption, caption.Text));
+                        builder.AddItem(caption, CreateTextProvenance(caption, caption.Text, pageNumberOffset));
                         emittedTextualContent = true;
                         captionAnchors.Add(caption);
                     }
@@ -233,7 +234,7 @@ public sealed partial class PageAssemblyStage : IPipelineStage
                     var textItem = BuildTextItem(item, block, paragraphText, classification);
                     if (textItem is ParagraphItem paragraphItem)
                     {
-                        builder.AddItem(paragraphItem, CreateTextProvenance(paragraphItem, paragraphItem.Text));
+                        builder.AddItem(paragraphItem, CreateTextProvenance(paragraphItem, paragraphItem.Text, pageNumberOffset));
                         emittedTextualContent = true;
                         captionAnchors.Add(paragraphItem);
                     }
@@ -248,7 +249,7 @@ public sealed partial class PageAssemblyStage : IPipelineStage
                     var fallback = BuildFallbackParagraph(page, fullPage);
                     if (fallback is not null)
                     {
-                        builder.AddItem(fallback, CreateTextProvenance(fallback, fallback.Text));
+                        builder.AddItem(fallback, CreateTextProvenance(fallback, fallback.Text, pageNumberOffset));
                     }
                 }
             }
@@ -430,15 +431,35 @@ public sealed partial class PageAssemblyStage : IPipelineStage
             metadata: metadata);
     }
 
-    private static DocItemProvenance CreateTextProvenance(DocItem item, string text)
+    private static int DeterminePageNumberOffset(IReadOnlyList<PageReference> pages)
     {
-        var length = string.IsNullOrWhiteSpace(text) ? 0 : text.Length;
-        return new DocItemProvenance(item.Page.PageNumber, item.BoundingBox, 0, length);
+        if (pages.Count == 0)
+        {
+            return 0;
+        }
+
+        var minPageNumber = pages[0].PageNumber;
+        for (var i = 1; i < pages.Count; i++)
+        {
+            var candidate = pages[i].PageNumber;
+            if (candidate < minPageNumber)
+            {
+                minPageNumber = candidate;
+            }
+        }
+
+        return minPageNumber <= 0 ? 1 - minPageNumber : 0;
     }
 
-    private static DocItemProvenance CreateRegionProvenance(DocItem item)
+    private static DocItemProvenance CreateTextProvenance(DocItem item, string text, int pageNumberOffset)
     {
-        return new DocItemProvenance(item.Page.PageNumber, item.BoundingBox);
+        var length = string.IsNullOrWhiteSpace(text) ? 0 : text.Length;
+        return new DocItemProvenance(item.Page.PageNumber + pageNumberOffset, item.BoundingBox, 0, length);
+    }
+
+    private static DocItemProvenance CreateRegionProvenance(DocItem item, int pageNumberOffset)
+    {
+        return new DocItemProvenance(item.Page.PageNumber + pageNumberOffset, item.BoundingBox);
     }
 
     private static TableStructurePlacement? SelectStructure(BoundingBox layoutBounds, List<TableStructurePlacement> structures)
