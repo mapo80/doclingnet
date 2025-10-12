@@ -182,3 +182,4 @@ public sealed class EasyOcrServiceTests
             DisposeCalled = true;
         }
     }
+}

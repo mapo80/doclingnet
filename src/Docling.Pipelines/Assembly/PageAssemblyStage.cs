@@ -111,7 +111,10 @@ public sealed partial class PageAssemblyStage : IPipelineStage
 
             foreach (var group in textGroups)
             {
-                if (group.Items.Count == 0) continue;
+                if (group.Items.Count == 0)
+                {
+                    continue;
+                }
 
                 // Usa il primo elemento come rappresentante del gruppo per posizione e classificazione
                 var representativeItem = group.Items[0];
@@ -143,14 +146,14 @@ public sealed partial class PageAssemblyStage : IPipelineStage
                 else
                 {
                     var textItem = BuildTextItem(representativeItem, representativeBlock, mergedText, classification);
-                    if (textItem is not null)
+                    if (textItem is ParagraphItem paragraphItem)
                     {
-                        builder.AddItem(textItem, CreateTextProvenance(textItem, textItem.Text));
+                        builder.AddItem(paragraphItem, CreateTextProvenance(paragraphItem, paragraphItem.Text));
                         emittedTextualContent = true;
                         // Aggiungi tutti gli elementi del gruppo come anchor
                         foreach (var groupItem in group.Items)
                         {
-                            captionAnchors.Add(textItem);
+                            captionAnchors.Add(paragraphItem);
                         }
                     }
                 }
@@ -161,7 +164,9 @@ public sealed partial class PageAssemblyStage : IPipelineStage
             foreach (var item in pageItems)
             {
                 if (processedItems.Contains(item) || item.Kind != LayoutItemKind.Text)
+                {
                     continue;
+                }
 
                 var block = ResolveLayoutBlock(item, layoutLookup);
                 if (block is null || block.Lines.Count == 0)
@@ -191,11 +196,11 @@ public sealed partial class PageAssemblyStage : IPipelineStage
                 {
                     var paragraphText = ComposeText(block.Lines);
                     var textItem = BuildTextItem(item, block, paragraphText, classification);
-                    if (textItem is not null)
+                    if (textItem is ParagraphItem paragraphItem)
                     {
-                        builder.AddItem(textItem, CreateTextProvenance(textItem, textItem.Text));
+                        builder.AddItem(paragraphItem, CreateTextProvenance(paragraphItem, paragraphItem.Text));
                         emittedTextualContent = true;
-                        captionAnchors.Add(textItem);
+                        captionAnchors.Add(paragraphItem);
                     }
                 }
             }
@@ -511,7 +516,9 @@ public sealed partial class PageAssemblyStage : IPipelineStage
         foreach (var item in textItems)
         {
             if (usedItems.Contains(item) || item.Kind != LayoutItemKind.Text)
+            {
                 continue;
+            }
 
             var group = new TextGroup();
             var queue = new Queue<LayoutItem>();
@@ -563,7 +570,9 @@ public sealed partial class PageAssemblyStage : IPipelineStage
         foreach (var item in allItems)
         {
             if (usedItems.Contains(item) || item.Page.PageNumber != current.Page.PageNumber || item.Kind != LayoutItemKind.Text)
+            {
                 continue;
+            }
 
             var itemBox = item.BoundingBox;
 
@@ -596,10 +605,14 @@ public sealed partial class PageAssemblyStage : IPipelineStage
     private static string MergeTextGroupTexts(List<string> texts)
     {
         if (texts.Count == 0)
+        {
             return string.Empty;
+        }
 
         if (texts.Count == 1)
+        {
             return texts[0];
+        }
 
         // Unisci testi preservando la struttura
         var merged = new List<string>();
@@ -608,7 +621,8 @@ public sealed partial class PageAssemblyStage : IPipelineStage
         foreach (var text in texts)
         {
             // Se il testo finisce con punteggiatura da fine paragrafo, termina il paragrafo corrente
-            if (text.TrimEnd().EndsWith(".") || text.TrimEnd().EndsWith("!") || text.TrimEnd().EndsWith("?"))
+            var trimmed = text.TrimEnd();
+            if (trimmed.EndsWith('.') || trimmed.EndsWith('!') || trimmed.EndsWith('?'))
             {
                 currentParagraph.Add(text);
                 merged.Add(string.Join(" ", currentParagraph));
@@ -632,19 +646,20 @@ public sealed partial class PageAssemblyStage : IPipelineStage
     private static void ImproveReadingOrder(List<LayoutItem> items)
     {
         if (items.Count <= 1)
+        {
             return;
+        }
 
         // Separa per tipo per gestire priorità di lettura
         var textItems = items.Where(i => i.Kind == LayoutItemKind.Text).ToList();
-        var titleItems = items.Where(i => i.Kind == LayoutItemKind.SectionHeader).ToList();
         var tableItems = items.Where(i => i.Kind == LayoutItemKind.Table).ToList();
         var figureItems = items.Where(i => i.Kind == LayoutItemKind.Figure).ToList();
 
         // Ordinamento speciale per documenti accademici
         var orderedItems = new List<LayoutItem>();
 
-        // 1. Titoli/header prima (in ordine di posizione)
-        orderedItems.AddRange(titleItems.OrderBy(i => i.BoundingBox.Top).ThenBy(i => i.BoundingBox.Left));
+        // 1. Testo prima (in ordine di posizione) - i titoli sono classificati nei metadati
+        orderedItems.AddRange(textItems.OrderBy(i => i.BoundingBox.Top).ThenBy(i => i.BoundingBox.Left));
 
         // 2. Figure e tabelle (in ordine di posizione)
         var visualItems = new List<LayoutItem>();
@@ -653,8 +668,7 @@ public sealed partial class PageAssemblyStage : IPipelineStage
         orderedItems.AddRange(visualItems.OrderBy(i => i.BoundingBox.Top).ThenBy(i => i.BoundingBox.Left));
 
         // 3. Testo rimanente (in ordine di lettura migliorato)
-        var remainingText = textItems.Where(i => !titleItems.Contains(i)).ToList();
-        orderedItems.AddRange(ImproveTextReadingOrder(remainingText));
+        orderedItems.AddRange(ImproveTextReadingOrder(textItems));
 
         // Sostituisci la lista originale
         items.Clear();
@@ -664,7 +678,9 @@ public sealed partial class PageAssemblyStage : IPipelineStage
     private static List<LayoutItem> ImproveTextReadingOrder(List<LayoutItem> textItems)
     {
         if (textItems.Count <= 1)
+        {
             return textItems;
+        }
 
         // Crea gruppi di elementi correlati (colonne, paragrafi)
         var columns = new List<List<LayoutItem>>();
@@ -673,7 +689,9 @@ public sealed partial class PageAssemblyStage : IPipelineStage
         foreach (var item in textItems)
         {
             if (used.Contains(item))
+            {
                 continue;
+            }
 
             var column = new List<LayoutItem> { item };
             used.Add(item);
@@ -684,7 +702,9 @@ public sealed partial class PageAssemblyStage : IPipelineStage
             foreach (var other in textItems)
             {
                 if (used.Contains(other))
+                {
                     continue;
+                }
 
                 var otherCenterX = other.BoundingBox.Left + (other.BoundingBox.Width / 2);
                 var xDistance = Math.Abs(itemCenterX - otherCenterX);
@@ -899,7 +919,25 @@ public sealed partial class PageAssemblyStage : IPipelineStage
         public List<string> Texts { get; } = new();
         public List<BoundingBox> BoundingBoxes { get; } = new();
 
-        public BoundingBox MergedBoundingBox => BoundingBox.UnionAll(BoundingBoxes);
+        public BoundingBox MergedBoundingBox
+        {
+            get
+            {
+                if (BoundingBoxes.Count == 0)
+                {
+                    return BoundingBox.FromSize(0, 0, 0, 0);
+                }
+
+                var result = BoundingBoxes[0];
+                for (int i = 1; i < BoundingBoxes.Count; i++)
+                {
+                    result = result.Union(BoundingBoxes[i]);
+                }
+
+                return result;
+            }
+        }
+
         public string MergedText => MergeTextGroupTexts(Texts);
     }
 

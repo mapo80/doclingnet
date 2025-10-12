@@ -71,12 +71,18 @@ public sealed class TableFormerTableStructureService : ITableStructureService, I
         _generateOverlay = options.GenerateOverlay;
         _workingDirectory = PrepareWorkingDirectory(options.WorkingDirectory);
 
+        // Default model paths - use fixed path for now
+        // TODO: Make this configurable via environment variable or config file
+        var encoderPath = "/Users/politom/Documents/Workspace/personal/doclingnet/src/submodules/ds4sd-docling-tableformer-onnx/models/encoder.onnx";
+        var bboxDecoderPath = "/Users/politom/Documents/Workspace/personal/doclingnet/src/submodules/ds4sd-docling-tableformer-onnx/models/bbox_decoder.onnx";
+        var decoderPath = "/Users/politom/Documents/Workspace/personal/doclingnet/src/submodules/ds4sd-docling-tableformer-onnx/models/decoder.onnx";
+
         var sdkOptions = options.SdkOptions ?? new TableFormerSdkOptions(
-            new TableFormerModelPaths("src/submodules/ds4sd-docling-tableformer-onnx/models/encoder.onnx", null),
+            new TableFormerModelPaths(encoderPath, null),
             pipeline: new PipelineModelPaths(
-                "src/submodules/ds4sd-docling-tableformer-onnx/models/encoder.onnx",
-                "src/submodules/ds4sd-docling-tableformer-onnx/models/bbox_decoder.onnx",
-                "src/submodules/ds4sd-docling-tableformer-onnx/models/decoder.onnx"));
+                encoderPath,
+                bboxDecoderPath,
+                decoderPath));
         _tableFormer = tableFormer ?? new TableFormerInvoker(new TableFormerSdk.TableFormer(sdkOptions));
     }
 

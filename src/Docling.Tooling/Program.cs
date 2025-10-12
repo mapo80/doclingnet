@@ -378,6 +378,7 @@ internal static class Program
             Variant = options.TableMode == TableFormerMode.Fast
                 ? TableFormerModelVariant.Fast
                 : TableFormerModelVariant.Accurate,
+            Runtime = TableFormerRuntime.Pipeline, // Use Pipeline runtime for proper preprocessing
             GenerateOverlay = options.GenerateTableDebugArtifacts,
             WorkingDirectory = Path.Combine(Path.GetTempPath(), $"docling-tableformer-{options.DocumentId}"),
         };
