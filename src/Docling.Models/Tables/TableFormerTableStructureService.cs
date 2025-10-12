@@ -358,6 +358,10 @@ private static TableFormerSdkOptions? TryCreateDefaultSdkOptions(ILogger logger)
         candidates.Add(rootOverride);
     }
 
+    // Updated path to use the new models location in submodules
+    var submoduleModelsPath = Path.GetFullPath(Path.Combine(baseDirectory, "src", "submodules", "ds4sd-docling-tableformer-onnx", "models"));
+    candidates.Add(submoduleModelsPath);
+
     if (!string.IsNullOrWhiteSpace(baseDirectory))
     {
         candidates.Add(Path.Combine(baseDirectory, "models", "tableformer-onnx"));
@@ -387,7 +391,8 @@ private static TableFormerSdkOptions? TryCreateDefaultSdkOptions(ILogger logger)
                 logger.LogInformation("Accurate TableFormer models not found in '{Directory}'. Fast variant will be used.", candidate);
             }
 
-            return new TableFormerSdkOptions(new TableFormerModelPaths(fast, accurate));
+            // For now, use a single model path - we'll need to update this for the component-based approach
+            return new TableFormerSdkOptions(new TableFormerModelPaths(fast.EncoderPath, accurate?.EncoderPath));
         }
         catch (Exception ex) when (ex is ArgumentException or FileNotFoundException or DirectoryNotFoundException)
         {
