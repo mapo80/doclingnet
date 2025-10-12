@@ -61,7 +61,7 @@ internal sealed partial class LayoutSdkRunner : ILayoutSdkRunner
             new Docling.Models.Layout.PassthroughOverlayRenderer(),
             new SkiaImagePreprocessor());
         _semaphore = new SemaphoreSlim(_options.MaxDegreeOfParallelism);
-        RunnerLogger.Initialized(_logger, "Onnx", _options.Language.ToString(), _workingDirectory);
+        RunnerLogger.Initialized(_logger, _options.Runtime.ToString(), _options.Language.ToString(), _workingDirectory);
     }
 
     public static ILayoutSdkRunner Create(LayoutSdkDetectionOptions options, ILogger logger)
@@ -82,7 +82,7 @@ internal sealed partial class LayoutSdkRunner : ILayoutSdkRunner
             await _semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
             try
             {
-                var result = _sdk.Process(path, _options.GenerateOverlay, LayoutRuntime.Onnx);
+                var result = _sdk.Process(path, _options.GenerateOverlay, _options.Runtime);
                 try
                 {
                     var boxes = result.Boxes ?? Array.Empty<LayoutSdk.BoundingBox>();
@@ -270,6 +270,210 @@ internal sealed partial class LayoutSdkRunner : ILayoutSdkRunner
         }
 
         return projected;
+    }
+
+    internal static bool ShouldAugmentWithFallback(
+        IReadOnlyList<LayoutSdk.BoundingBox> boxes,
+        LayoutSdkNormalisationMetadata metadata,
+        out double coverageRatio)
+    {
+        ArgumentNullException.ThrowIfNull(boxes);
+        var pageArea = (double)metadata.OriginalWidth * metadata.OriginalHeight;
+        if (pageArea <= 0)
+        {
+            coverageRatio = 0d;
+            return true;
+        }
+
+        coverageRatio = ComputeCoverage(boxes, metadata);
+        coverageRatio = Math.Clamp(coverageRatio, 0d, 1d);
+        return coverageRatio < 0.55d;
+    }
+
+    internal static IReadOnlyList<LayoutSdk.BoundingBox> MergeDetections(
+        IReadOnlyList<LayoutSdk.BoundingBox> primary,
+        IReadOnlyList<LayoutSdk.BoundingBox> fallback)
+    {
+        ArgumentNullException.ThrowIfNull(primary);
+        ArgumentNullException.ThrowIfNull(fallback);
+
+        var result = new List<LayoutSdk.BoundingBox>(primary.Count + fallback.Count);
+        result.AddRange(primary);
+
+        foreach (var candidate in fallback)
+        {
+            if (IsContained(candidate, result))
+            {
+                continue;
+            }
+
+            result.Add(candidate);
+        }
+
+        return result;
+    }
+
+    private static bool IsContained(LayoutSdk.BoundingBox candidate, IReadOnlyList<LayoutSdk.BoundingBox> boxes)
+    {
+        foreach (var box in boxes)
+        {
+            if (Contains(box, candidate))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool Contains(LayoutSdk.BoundingBox container, LayoutSdk.BoundingBox inner)
+    {
+        return inner.X >= container.X &&
+               inner.Y >= container.Y &&
+               inner.X + inner.Width <= container.X + container.Width &&
+               inner.Y + inner.Height <= container.Y + container.Height;
+    }
+
+    private static double ComputeCoverage(
+        IReadOnlyList<LayoutSdk.BoundingBox> boxes,
+        LayoutSdkNormalisationMetadata metadata)
+    {
+        var clipped = new List<LayoutSdk.BoundingBox>(boxes.Count);
+        foreach (var box in boxes)
+        {
+            var left = Math.Max(0f, Math.Min(box.X, metadata.OriginalWidth));
+            var top = Math.Max(0f, Math.Min(box.Y, metadata.OriginalHeight));
+            var right = Math.Max(left, Math.Min(box.X + box.Width, metadata.OriginalWidth));
+            var bottom = Math.Max(top, Math.Min(box.Y + box.Height, metadata.OriginalHeight));
+
+            var width = right - left;
+            var height = bottom - top;
+            if (width <= 0f || height <= 0f)
+            {
+                continue;
+            }
+
+            clipped.Add(new LayoutSdk.BoundingBox(left, top, width, height, box.Label));
+        }
+
+        if (clipped.Count == 0)
+        {
+            return 0d;
+        }
+
+        var unionArea = ComputeUnionArea(clipped);
+        var pageArea = (double)metadata.OriginalWidth * metadata.OriginalHeight;
+        return unionArea / Math.Max(pageArea, double.Epsilon);
+    }
+
+    private static double ComputeUnionArea(IReadOnlyList<LayoutSdk.BoundingBox> boxes)
+    {
+        var events = new List<SweepEvent>(boxes.Count * 2);
+        foreach (var box in boxes)
+        {
+            var x1 = box.X;
+            var x2 = box.X + box.Width;
+            var y1 = box.Y;
+            var y2 = box.Y + box.Height;
+
+            if (x2 <= x1 || y2 <= y1)
+            {
+                continue;
+            }
+
+            events.Add(new SweepEvent(x1, y1, y2, 1));
+            events.Add(new SweepEvent(x2, y1, y2, -1));
+        }
+
+        if (events.Count == 0)
+        {
+            return 0d;
+        }
+
+        events.Sort();
+
+        var active = new List<(double y1, double y2)>();
+        var area = 0d;
+        var previousX = events[0].X;
+
+        foreach (var sweep in events)
+        {
+            var deltaX = sweep.X - previousX;
+            if (deltaX > 0 && active.Count > 0)
+            {
+                var coveredY = ComputeCoveredLength(active);
+                area += deltaX * coveredY;
+            }
+
+            if (sweep.Type > 0)
+            {
+                active.Add((sweep.Y1, sweep.Y2));
+            }
+            else
+            {
+                var index = active.FindIndex(segment =>
+                    Math.Abs(segment.y1 - sweep.Y1) < 1e-3 &&
+                    Math.Abs(segment.y2 - sweep.Y2) < 1e-3);
+                if (index >= 0)
+                {
+                    active.RemoveAt(index);
+                }
+            }
+
+            previousX = sweep.X;
+        }
+
+        return area;
+    }
+
+    private static double ComputeCoveredLength(List<(double y1, double y2)> segments)
+    {
+        if (segments.Count == 0)
+        {
+            return 0d;
+        }
+
+        segments.Sort((a, b) =>
+        {
+            var comparison = a.y1.CompareTo(b.y1);
+            return comparison != 0 ? comparison : a.y2.CompareTo(b.y2);
+        });
+
+        var total = 0d;
+        var currentStart = segments[0].y1;
+        var currentEnd = segments[0].y2;
+
+        for (var i = 1; i < segments.Count; i++)
+        {
+            var (start, end) = segments[i];
+            if (start <= currentEnd)
+            {
+                currentEnd = Math.Max(currentEnd, end);
+            }
+            else
+            {
+                total += currentEnd - currentStart;
+                currentStart = start;
+                currentEnd = end;
+            }
+        }
+
+        total += currentEnd - currentStart;
+        return total;
+    }
+
+    private readonly record struct SweepEvent(double X, double Y1, double Y2, int Type) : IComparable<SweepEvent>
+    {
+        public int CompareTo(SweepEvent other)
+        {
+            var comparison = X.CompareTo(other.X);
+            if (comparison != 0)
+            {
+                return comparison;
+            }
+
+            return Type.CompareTo(other.Type);
+        }
     }
 
 

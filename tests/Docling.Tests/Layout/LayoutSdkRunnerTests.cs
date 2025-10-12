@@ -29,10 +29,10 @@ public sealed class LayoutSdkRunnerTests
         var projected = LayoutSdkRunner.ReprojectBoundingBoxes(boxes, metadata);
 
         projected.Should().HaveCount(2);
-        projected[0].X.Should().BeApproximately(250, 1e-3);
-        projected[0].Y.Should().BeApproximately(212.5, 1e-3);
-        projected[0].Width.Should().BeApproximately(500, 1e-3);
-        projected[0].Height.Should().BeApproximately(200, 1e-3);
+        ((double)projected[0].X).Should().BeApproximately(250, 1e-3);
+        ((double)projected[0].Y).Should().BeApproximately(212.5, 1e-3);
+        ((double)projected[0].Width).Should().BeApproximately(500, 1e-3);
+        ((double)projected[0].Height).Should().BeApproximately(200, 1e-3);
 
         projected[1].X.Should().Be(0);
         projected[1].Y.Should().Be(0);
@@ -61,10 +61,10 @@ public sealed class LayoutSdkRunnerTests
         var projected = LayoutSdkRunner.ReprojectBoundingBoxes(boxes, metadata);
 
         projected.Should().HaveCount(1);
-        projected[0].X.Should().BeApproximately(250, 1e-3);
-        projected[0].Y.Should().BeApproximately(212.5, 1e-3);
-        projected[0].Width.Should().BeApproximately(500, 1e-3);
-        projected[0].Height.Should().BeApproximately(200, 1e-3);
+        ((double)projected[0].X).Should().BeApproximately(250, 1e-3);
+        ((double)projected[0].Y).Should().BeApproximately(212.5, 1e-3);
+        ((double)projected[0].Width).Should().BeApproximately(500, 1e-3);
+        ((double)projected[0].Height).Should().BeApproximately(200, 1e-3);
     }
 
     [Fact]

@@ -53,15 +53,12 @@ public sealed class RegressionParityTests
     {
         var dataset = RegressionDatasets.Load(datasetId);
         var golden = ParityGoldenCatalog.TryResolve(dataset);
-        if (golden is null)
-        {
-            throw new SkipException($"Parity golden artefacts for dataset '{dataset.Name}' were not found. Hydrate 'dataset/golden' before running parity tests.");
-        }
+        Assert.NotNull(golden);
 
-        await using var harness = new RegressionParityHarness(dataset, golden);
+        await using var harness = new RegressionParityHarness(dataset, golden!);
         var run = await harness.ExecuteAsync(CancellationToken.None).ConfigureAwait(false);
 
-        var goldenMarkdown = await File.ReadAllTextAsync(golden.MarkdownPath, Encoding.UTF8, CancellationToken.None).ConfigureAwait(false);
+        var goldenMarkdown = await File.ReadAllTextAsync(golden!.MarkdownPath, Encoding.UTF8, CancellationToken.None).ConfigureAwait(false);
         var comparison = ParityComparison.Compare(goldenMarkdown, golden.Manifest, run.Markdown, run.Snapshot);
         if (!comparison.HasDifferences)
         {
@@ -151,7 +148,7 @@ public sealed class RegressionParityTests
                 },
                 TableStructure = new TableStructureOptions
                 {
-                    Mode = TableStructureMode.Accurate,
+                    Mode = TableFormerMode.Accurate,
                 },
                 Ocr = new EasyOcrOptions
                 {
