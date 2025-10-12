@@ -43,6 +43,12 @@ public sealed class LayoutSdkDetectionOptions
     /// </summary>
     public int MaxDegreeOfParallelism { get; init; } = 1;
 
+    /// <summary>
+    /// Selects which runtime implementation is used to execute the layout model.
+    /// Defaults to the ONNX runtime to mirror the Python pipeline.
+    /// </summary>
+    public LayoutRuntime Runtime { get; init; } = LayoutRuntime.Onnx;
+
     internal LayoutSdkDetectionOptions Clone() => new()
     {
         Language = Language,
@@ -51,6 +57,7 @@ public sealed class LayoutSdkDetectionOptions
         WorkingDirectory = WorkingDirectory,
         KeepTemporaryFiles = KeepTemporaryFiles,
         MaxDegreeOfParallelism = MaxDegreeOfParallelism,
+        Runtime = Runtime,
     };
 
     internal void EnsureValid()
