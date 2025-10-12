@@ -59,6 +59,7 @@ public sealed class ConvertCommandOptionsTests
             options.GenerateImageDebugArtifacts.Should().BeTrue();
             options.GenerateTableDebugArtifacts.Should().BeTrue();
             options.ForceFullPageOcr.Should().BeTrue();
+            options.EnableAdvancedLayoutNms.Should().BeTrue();
         }
         finally
         {
@@ -143,6 +144,28 @@ public sealed class ConvertCommandOptionsTests
 
             result.Success.Should().BeFalse();
             result.Error.Should().Contain("--assets");
+        }
+        finally
+        {
+            File.Delete(tempFile);
+        }
+    }
+
+    [Fact]
+    public void ParseWhenAdvancedNmsDisabledSetsFlag()
+    {
+        var tempFile = CreateTemporaryInput();
+        try
+        {
+            var result = ConvertCommandOptions.Parse(new[]
+            {
+                "--input", tempFile,
+                "--disable-advanced-nms",
+            });
+
+            result.Success.Should().BeTrue(result.Error);
+            result.Options.Should().NotBeNull();
+            result.Options!.EnableAdvancedLayoutNms.Should().BeFalse();
         }
         finally
         {

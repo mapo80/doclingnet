@@ -119,13 +119,11 @@ public sealed class EasyOcrService : IOcrService
                 continue;
             }
 
-            // Temporary workaround until package is properly updated
-            var confidence = 1.0d;
-            // var confidence = result.Confidence;
-            // if (double.IsNaN(confidence) || double.IsInfinity(confidence))
-            // {
-            //     confidence = 1.0d;
-            // }
+            var confidence = result.Confidence;
+            if (double.IsNaN(confidence) || double.IsInfinity(confidence))
+            {
+                confidence = 1.0d;
+            }
 
             if (_confidenceThreshold > 0d && confidence < _confidenceThreshold)
             {
@@ -223,25 +221,36 @@ public sealed class EasyOcrService : IOcrService
             return directory;
         }
 
-        var defaultDirectory = Path.Combine(AppContext.BaseDirectory, "contentFiles", "any", "any", "models");
-        if (Directory.Exists(defaultDirectory))
+        var candidates = new[]
         {
-            return defaultDirectory;
+            Path.Combine(AppContext.BaseDirectory, "contentFiles", "any", "any", "models", "easyocr"),
+            Path.Combine(AppContext.BaseDirectory, "contentFiles", "any", "any", "models"),
+        };
+
+        foreach (var candidate in candidates)
+        {
+            if (Directory.Exists(candidate))
+            {
+                return candidate;
+            }
         }
 
-        var legacyRoot = Path.Combine(AppContext.BaseDirectory, "models");
-        var legacyOnnx = Path.Combine(legacyRoot, "onnx");
-        if (Directory.Exists(legacyOnnx))
+        var legacyCandidates = new[]
         {
-            return legacyOnnx;
+            Path.Combine(AppContext.BaseDirectory, "models", "easyocr"),
+            Path.Combine(AppContext.BaseDirectory, "models", "onnx"),
+            Path.Combine(AppContext.BaseDirectory, "models"),
+        };
+
+        foreach (var legacy in legacyCandidates)
+        {
+            if (Directory.Exists(legacy))
+            {
+                return legacy;
+            }
         }
 
-        if (Directory.Exists(legacyRoot))
-        {
-            return legacyRoot;
-        }
-
-        throw new DirectoryNotFoundException($"Default EasyOCR model directory '{defaultDirectory}' not found. Ensure the EasyOcrNet package is restored.");
+        throw new DirectoryNotFoundException("EasyOCR model directory not found under the application base directory. Ensure the EasyOcrNet package is restored.");
     }
 
     private static OcrLanguage ResolveLanguage(EasyOcrOptions options, ILogger logger)

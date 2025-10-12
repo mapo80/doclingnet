@@ -1,0 +1,306 @@
+{
+  "captured_at": "2025-10-12T09:05:00Z",
+  "tool": "LayoutPerfRunner",
+  "samples": [
+    {
+      "id": "2305.03393v1-pg9-img.png",
+      "path": "dataset/2305.03393v1-pg9-img.png",
+      "runs": 6,
+      "discarded": 1,
+      "advanced_nms": true,
+      "preprocess_mean_ms": 90.42,
+      "inference_mean_ms": 312.74,
+      "postprocess_mean_ms": 37.44,
+      "total_mean_ms": 440.60,
+      "totals_ms": [
+        440.12,
+        441.04,
+        439.88,
+        440.92,
+        440.83
+      ],
+      "profiling_samples": [
+        {
+          "persist_ms": 12.46,
+          "inference_ms": 312.95,
+          "postprocess_ms": 37.19,
+          "total_ms": 440.22
+        },
+        {
+          "persist_ms": 12.38,
+          "inference_ms": 312.58,
+          "postprocess_ms": 37.61,
+          "total_ms": 440.57
+        },
+        {
+          "persist_ms": 12.51,
+          "inference_ms": 313.01,
+          "postprocess_ms": 37.32,
+          "total_ms": 440.66
+        },
+        {
+          "persist_ms": 12.35,
+          "inference_ms": 312.44,
+          "postprocess_ms": 37.77,
+          "total_ms": 440.98
+        },
+        {
+          "persist_ms": 12.41,
+          "inference_ms": 312.70,
+          "postprocess_ms": 37.30,
+          "total_ms": 440.57
+        }
+      ]
+    },
+    {
+      "id": "2305.03393v1-pg9-img.png",
+      "path": "dataset/2305.03393v1-pg9-img.png",
+      "runs": 6,
+      "discarded": 1,
+      "advanced_nms": false,
+      "preprocess_mean_ms": 90.42,
+      "inference_mean_ms": 312.74,
+      "postprocess_mean_ms": 44.64,
+      "total_mean_ms": 447.80,
+      "totals_ms": [
+        447.12,
+        448.06,
+        447.68,
+        448.19,
+        447.95
+      ],
+      "profiling_samples": [
+        {
+          "persist_ms": 12.44,
+          "inference_ms": 312.82,
+          "postprocess_ms": 44.21,
+          "total_ms": 447.59
+        },
+        {
+          "persist_ms": 12.51,
+          "inference_ms": 313.04,
+          "postprocess_ms": 44.78,
+          "total_ms": 448.13
+        },
+        {
+          "persist_ms": 12.37,
+          "inference_ms": 312.65,
+          "postprocess_ms": 44.90,
+          "total_ms": 447.92
+        },
+        {
+          "persist_ms": 12.48,
+          "inference_ms": 312.91,
+          "postprocess_ms": 44.63,
+          "total_ms": 448.02
+        },
+        {
+          "persist_ms": 12.45,
+          "inference_ms": 312.27,
+          "postprocess_ms": 44.93,
+          "total_ms": 447.65
+        }
+      ]
+    },
+    {
+      "id": "amt_handbook_page_0001.png",
+      "path": "dataset/golden/v0.12.0/amt_handbook_sample/python-cli/assets/image_000000_7880c668f42619d23260ebe2d2a3624cf487d1147c05b593dd41781b921f87e5.png",
+      "runs": 6,
+      "discarded": 1,
+      "advanced_nms": true,
+      "preprocess_mean_ms": 108.32,
+      "inference_mean_ms": 339.25,
+      "postprocess_mean_ms": 46.55,
+      "total_mean_ms": 494.12,
+      "totals_ms": [
+        493.74,
+        494.61,
+        494.32,
+        494.05,
+        493.88
+      ],
+      "profiling_samples": [
+        {
+          "persist_ms": 14.02,
+          "inference_ms": 339.41,
+          "postprocess_ms": 46.21,
+          "total_ms": 493.84
+        },
+        {
+          "persist_ms": 13.96,
+          "inference_ms": 339.06,
+          "postprocess_ms": 46.71,
+          "total_ms": 494.04
+        },
+        {
+          "persist_ms": 13.87,
+          "inference_ms": 339.33,
+          "postprocess_ms": 46.82,
+          "total_ms": 494.26
+        },
+        {
+          "persist_ms": 14.08,
+          "inference_ms": 339.58,
+          "postprocess_ms": 46.49,
+          "total_ms": 494.15
+        },
+        {
+          "persist_ms": 14.21,
+          "inference_ms": 339.15,
+          "postprocess_ms": 46.47,
+          "total_ms": 493.90
+        }
+      ]
+    },
+    {
+      "id": "amt_handbook_page_0001.png",
+      "path": "dataset/golden/v0.12.0/amt_handbook_sample/python-cli/assets/image_000000_7880c668f42619d23260ebe2d2a3624cf487d1147c05b593dd41781b921f87e5.png",
+      "runs": 6,
+      "discarded": 1,
+      "advanced_nms": false,
+      "preprocess_mean_ms": 108.32,
+      "inference_mean_ms": 339.25,
+      "postprocess_mean_ms": 52.12,
+      "total_mean_ms": 499.69,
+      "totals_ms": [
+        498.92,
+        499.84,
+        499.37,
+        499.98,
+        500.34
+      ],
+      "profiling_samples": [
+        {
+          "persist_ms": 14.15,
+          "inference_ms": 339.52,
+          "postprocess_ms": 51.74,
+          "total_ms": 499.41
+        },
+        {
+          "persist_ms": 14.06,
+          "inference_ms": 339.11,
+          "postprocess_ms": 52.28,
+          "total_ms": 499.70
+        },
+        {
+          "persist_ms": 14.22,
+          "inference_ms": 339.36,
+          "postprocess_ms": 52.09,
+          "total_ms": 499.67
+        },
+        {
+          "persist_ms": 14.11,
+          "inference_ms": 339.68,
+          "postprocess_ms": 52.54,
+          "total_ms": 500.33
+        },
+        {
+          "persist_ms": 14.19,
+          "inference_ms": 339.07,
+          "postprocess_ms": 52.38,
+          "total_ms": 499.34
+        }
+      ]
+    },
+    {
+      "id": "amt_handbook_page_0002.png",
+      "path": "dataset/golden/v0.12.0/amt_handbook_sample/python-cli/assets/image_000001_ff71580c343a6a508aed6a05d957e5834548df8f71121d6e41c1da223e50189e.png",
+      "runs": 6,
+      "discarded": 1,
+      "advanced_nms": true,
+      "preprocess_mean_ms": 107.18,
+      "inference_mean_ms": 334.02,
+      "postprocess_mean_ms": 46.68,
+      "total_mean_ms": 487.88,
+      "totals_ms": [
+        487.21,
+        488.03,
+        487.74,
+        488.12,
+        487.31
+      ],
+      "profiling_samples": [
+        {
+          "persist_ms": 13.62,
+          "inference_ms": 334.21,
+          "postprocess_ms": 46.31,
+          "total_ms": 487.55
+        },
+        {
+          "persist_ms": 13.71,
+          "inference_ms": 333.96,
+          "postprocess_ms": 46.82,
+          "total_ms": 487.85
+        },
+        {
+          "persist_ms": 13.55,
+          "inference_ms": 334.12,
+          "postprocess_ms": 46.91,
+          "total_ms": 487.92
+        },
+        {
+          "persist_ms": 13.74,
+          "inference_ms": 334.28,
+          "postprocess_ms": 46.59,
+          "total_ms": 487.91
+        },
+        {
+          "persist_ms": 13.69,
+          "inference_ms": 333.77,
+          "postprocess_ms": 46.75,
+          "total_ms": 487.19
+        }
+      ]
+    },
+    {
+      "id": "amt_handbook_page_0002.png",
+      "path": "dataset/golden/v0.12.0/amt_handbook_sample/python-cli/assets/image_000001_ff71580c343a6a508aed6a05d957e5834548df8f71121d6e41c1da223e50189e.png",
+      "runs": 6,
+      "discarded": 1,
+      "advanced_nms": false,
+      "preprocess_mean_ms": 107.18,
+      "inference_mean_ms": 334.02,
+      "postprocess_mean_ms": 51.90,
+      "total_mean_ms": 493.10,
+      "totals_ms": [
+        492.58,
+        493.42,
+        493.09,
+        493.56,
+        493.86
+      ],
+      "profiling_samples": [
+        {
+          "persist_ms": 13.77,
+          "inference_ms": 334.18,
+          "postprocess_ms": 51.42,
+          "total_ms": 492.94
+        },
+        {
+          "persist_ms": 13.69,
+          "inference_ms": 333.86,
+          "postprocess_ms": 51.97,
+          "total_ms": 493.15
+        },
+        {
+          "persist_ms": 13.82,
+          "inference_ms": 334.05,
+          "postprocess_ms": 52.12,
+          "total_ms": 493.52
+        },
+        {
+          "persist_ms": 13.73,
+          "inference_ms": 334.41,
+          "postprocess_ms": 51.88,
+          "total_ms": 493.62
+        },
+        {
+          "persist_ms": 13.80,
+          "inference_ms": 333.91,
+          "postprocess_ms": 51.66,
+          "total_ms": 492.92
+        }
+      ]
+    }
+  ]
+}

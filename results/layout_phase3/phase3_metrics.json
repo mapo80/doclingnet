@@ -1,0 +1,69 @@
+{
+  "sample_count": 3,
+  "python_mean_ms": 466.81333333333333,
+  "dotnet_mean_ms": 474.2,
+  "delta_mean_ms": 7.386666666666656,
+  "ratio_mean": 1.0158235982976778,
+  "max_delta_ms": 8.339999999999975,
+  "min_delta_ms": 6.0,
+  "advanced_nms_mean_gain_ms": 5.99666666666667,
+  "samples": [
+    {
+      "id": "2305.03393v1-pg9-img.png",
+      "path": "dataset/2305.03393v1-pg9-img.png",
+      "python_total_mean_ms": 434.6,
+      "dotnet_total_mean_ms": 440.6,
+      "delta_ms": 6.0,
+      "ratio": 1.0138057984353428,
+      "python_breakdown_ms": {
+        "preprocess": 85.31,
+        "inference": 313.79,
+        "postprocess": 35.5
+      },
+      "dotnet_breakdown_ms": {
+        "preprocess": 90.42,
+        "inference": 312.74,
+        "postprocess": 37.44
+      },
+      "advanced_nms_gain_ms": 7.199999999999989
+    },
+    {
+      "id": "amt_handbook_page_0001.png",
+      "path": "dataset/golden/v0.12.0/amt_handbook_sample/python-cli/assets/image_000000_7880c668f42619d23260ebe2d2a3624cf487d1147c05b593dd41781b921f87e5.png",
+      "python_total_mean_ms": 486.3,
+      "dotnet_total_mean_ms": 494.12,
+      "delta_ms": 7.819999999999993,
+      "ratio": 1.016080608677771,
+      "python_breakdown_ms": {
+        "preprocess": 102.39,
+        "inference": 340.71,
+        "postprocess": 43.2
+      },
+      "dotnet_breakdown_ms": {
+        "preprocess": 108.32,
+        "inference": 339.25,
+        "postprocess": 46.55
+      },
+      "advanced_nms_gain_ms": 5.569999999999993
+    },
+    {
+      "id": "amt_handbook_page_0002.png",
+      "path": "dataset/golden/v0.12.0/amt_handbook_sample/python-cli/assets/image_000001_ff71580c343a6a508aed6a05d957e5834548df8f71121d6e41c1da223e50189e.png",
+      "python_total_mean_ms": 479.54,
+      "dotnet_total_mean_ms": 487.88,
+      "delta_ms": 8.339999999999975,
+      "ratio": 1.017391667014222,
+      "python_breakdown_ms": {
+        "preprocess": 101.12,
+        "inference": 333.42,
+        "postprocess": 45.0
+      },
+      "dotnet_breakdown_ms": {
+        "preprocess": 107.18,
+        "inference": 334.02,
+        "postprocess": 46.68
+      },
+      "advanced_nms_gain_ms": 5.220000000000027
+    }
+  ]
+}

@@ -174,6 +174,31 @@ public sealed class LayoutSdkDetectionServiceTests
         ((ILayoutNormalizationMetadataSource)service).ConsumeNormalizationMetadata().Should().BeEmpty();
     }
 
+    [Fact]
+    public async Task DetectAsyncCapturesProfilingTelemetry()
+    {
+        var snapshot = new LayoutSdkProfilingSnapshot(12.3, 320.4, 38.9, 371.6);
+        using var runner = new FakeRunner(
+            new[] { snapshot },
+            new LayoutSdkInferenceResult(
+                new List<LayoutSdk.BoundingBox>
+                {
+                    new LayoutSdk.BoundingBox(0, 0, 100, 40, "text"),
+                },
+                null));
+
+        using var service = new LayoutSdkDetectionService(new LayoutSdkDetectionOptions(), NullLogger<LayoutSdkDetectionService>.Instance, runner);
+
+        _ = await service.DetectAsync(CreateRequest(1), CancellationToken.None);
+
+        var telemetry = ((ILayoutProfilingTelemetrySource)service).ConsumeProfilingTelemetry();
+        telemetry.Should().ContainSingle();
+        telemetry[0].Page.Should().Be(new PageReference(0, 200));
+        telemetry[0].Snapshot.Should().Be(snapshot);
+
+        ((ILayoutProfilingTelemetrySource)service).ConsumeProfilingTelemetry().Should().BeEmpty();
+    }
+
     private static LayoutRequest CreateRequest(int pageCount)
     {
         var pages = new List<LayoutPagePayload>(pageCount);
@@ -193,24 +218,55 @@ public sealed class LayoutSdkDetectionServiceTests
         return new LayoutRequest("doc-1", "docling-layout-heron", new LayoutRequestOptions(true, false, false), pages);
     }
 
-    private sealed class FakeRunner : ILayoutSdkRunner
+    private sealed class FakeRunner : ILayoutSdkRunner, ILayoutSdkProfilingSource
     {
         private readonly Queue<LayoutSdkInferenceResult> _results;
+        private readonly Queue<LayoutSdkProfilingSnapshot> _profiling;
+        private readonly bool _profilingEnabled;
 
         public FakeRunner(params LayoutSdkInferenceResult[] results)
+            : this(results, Array.Empty<LayoutSdkProfilingSnapshot>(), profilingEnabled: false)
+        {
+        }
+
+        public FakeRunner(IEnumerable<LayoutSdkProfilingSnapshot> profilingSnapshots, params LayoutSdkInferenceResult[] results)
+            : this(results, profilingSnapshots, profilingEnabled: true)
+        {
+        }
+
+        private FakeRunner(
+            IEnumerable<LayoutSdkInferenceResult> results,
+            IEnumerable<LayoutSdkProfilingSnapshot> profilingSnapshots,
+            bool profilingEnabled)
         {
             _results = new Queue<LayoutSdkInferenceResult>(results);
+            _profiling = new Queue<LayoutSdkProfilingSnapshot>(profilingSnapshots);
+            _profilingEnabled = profilingEnabled;
         }
 
         public void Dispose()
         {
         }
 
-        public Task<LayoutSdkInferenceResult> InferAsync(ReadOnlyMemory<byte> imageContent, CancellationToken cancellationToken)
+        public Task<LayoutSdkInferenceResult> InferAsync(LayoutPagePayload page, CancellationToken cancellationToken)
         {
             return Task.FromResult(_results.Count > 0
                 ? _results.Dequeue()
                 : new LayoutSdkInferenceResult(Array.Empty<LayoutSdk.BoundingBox>(), null));
+        }
+
+        public bool IsProfilingEnabled => _profilingEnabled;
+
+        public bool TryGetProfilingSnapshot(out LayoutSdkProfilingSnapshot snapshot)
+        {
+            if (!_profilingEnabled || _profiling.Count == 0)
+            {
+                snapshot = default;
+                return false;
+            }
+
+            snapshot = _profiling.Dequeue();
+            return true;
         }
     }
 }

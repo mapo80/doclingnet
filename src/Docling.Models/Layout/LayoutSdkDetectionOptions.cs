@@ -49,6 +49,18 @@ public sealed class LayoutSdkDetectionOptions
     /// </summary>
     public LayoutRuntime Runtime { get; init; } = LayoutRuntime.Onnx;
 
+    /// <summary>
+    /// Enables the advanced non-maximum suppression heuristic provided by the Layout SDK.
+    /// Defaults to <c>true</c> to preserve parity with the Python pipeline.
+    /// </summary>
+    public bool EnableAdvancedNonMaxSuppression { get; init; } = true;
+
+    /// <summary>
+    /// When <c>true</c> the runner captures a timing breakdown for persistence, inference, and post-processing.
+    /// Disabled by default to avoid the overhead outside of performance investigations.
+    /// </summary>
+    public bool EnableProfiling { get; init; }
+
     internal LayoutSdkDetectionOptions Clone() => new()
     {
         Language = Language,
@@ -58,6 +70,8 @@ public sealed class LayoutSdkDetectionOptions
         KeepTemporaryFiles = KeepTemporaryFiles,
         MaxDegreeOfParallelism = MaxDegreeOfParallelism,
         Runtime = Runtime,
+        EnableAdvancedNonMaxSuppression = EnableAdvancedNonMaxSuppression,
+        EnableProfiling = EnableProfiling,
     };
 
     internal void EnsureValid()

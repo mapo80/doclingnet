@@ -1,0 +1,43 @@
+{
+  "python_mean_ms": 434.6,
+  "dotnet_phase1_mean_ms": 452.99,
+  "dotnet_phase2_mean_ms": 445.04,
+  "delta_ms_phase1": 18.389999999999986,
+  "delta_ms_phase2": 10.439999999999998,
+  "ratio_phase1": 1.0423147722043258,
+  "ratio_phase2": 1.0240220892774965,
+  "total_savings_ms": 7.949999999999989,
+  "postprocess_savings_ms": 7.18,
+  "tensor_owner_savings_ms": 5.322826,
+  "tensor_benchmark": {
+    "BaselineMeanMs": 5.734102,
+    "OptimizedMeanMs": 0.411276,
+    "DeltaMs": 5.322826,
+    "Ratio": 13.936875,
+    "Iterations": 100,
+    "Warmup": 10,
+    "Elements": 1228800,
+    "Shape": [
+      1,
+      3,
+      640,
+      640
+    ]
+  },
+  "dotnet_breakdown": {
+    "iterations": 6,
+    "discarded_warmup": 1,
+    "phase1": {
+      "preprocess_mean_ms": 94.83,
+      "inference_mean_ms": 308.97,
+      "postprocess_mean_ms": 49.21,
+      "total_mean_ms": 452.99
+    },
+    "phase2": {
+      "preprocess_mean_ms": 94.3,
+      "inference_mean_ms": 308.71,
+      "postprocess_mean_ms": 42.03,
+      "total_mean_ms": 445.04
+    }
+  }
+}

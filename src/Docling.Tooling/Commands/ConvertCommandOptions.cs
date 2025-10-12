@@ -43,6 +43,7 @@ internal sealed class ConvertCommandOptions
         bool generateImageDebugArtifacts,
         bool generateTableDebugArtifacts,
         bool generateWorkflowDebugArtifacts,
+        bool enableAdvancedLayoutNms,
         bool forceFullPageOcr,
         IReadOnlyList<string> ocrLanguages,
         TableFormerMode tableMode,
@@ -63,6 +64,7 @@ internal sealed class ConvertCommandOptions
         GenerateImageDebugArtifacts = generateImageDebugArtifacts;
         GenerateTableDebugArtifacts = generateTableDebugArtifacts;
         GenerateWorkflowDebugArtifacts = generateWorkflowDebugArtifacts;
+        EnableAdvancedLayoutNms = enableAdvancedLayoutNms;
         ForceFullPageOcr = forceFullPageOcr;
         OcrLanguages = ocrLanguages;
         TableMode = tableMode;
@@ -99,6 +101,8 @@ internal sealed class ConvertCommandOptions
 
     public bool GenerateWorkflowDebugArtifacts { get; }
 
+    public bool EnableAdvancedLayoutNms { get; }
+
     public bool ForceFullPageOcr { get; }
 
     public IReadOnlyList<string> OcrLanguages { get; }
@@ -128,6 +132,7 @@ internal sealed class ConvertCommandOptions
         var generateImageDebugArtifacts = false;
         var generateTableDebugArtifacts = false;
         var generateWorkflowDebugArtifacts = false;
+        var enableAdvancedLayoutNms = true;
         var forceFullPageOcr = false;
         var languages = new List<string>();
         var tableMode = TableFormerMode.Accurate;
@@ -226,6 +231,23 @@ internal sealed class ConvertCommandOptions
 
                 case "table-debug":
                     generateTableDebugArtifacts = true;
+                    break;
+
+                case "enable-advanced-nms":
+                    enableAdvancedLayoutNms = true;
+                    break;
+
+                case "disable-advanced-nms":
+                    enableAdvancedLayoutNms = false;
+                    break;
+
+                case "advanced-nms":
+                    if (!TryReadValue(args, ref i, out var nmsRaw) ||
+                        !bool.TryParse(nmsRaw, out enableAdvancedLayoutNms))
+                    {
+                        return ParseResult.Failure("--advanced-nms requires a boolean value.");
+                    }
+
                     break;
 
                 case "workflow-debug":
@@ -384,6 +406,7 @@ internal sealed class ConvertCommandOptions
             generateImageDebugArtifacts,
             generateTableDebugArtifacts,
             generateWorkflowDebugArtifacts,
+            enableAdvancedLayoutNms,
             forceFullPageOcr,
             languages.AsReadOnly(),
             tableMode,

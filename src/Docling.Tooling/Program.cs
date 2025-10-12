@@ -187,6 +187,7 @@ internal static class Program
         {
             ValidateModelFiles = true,
             MaxDegreeOfParallelism = 1,
+            EnableAdvancedNonMaxSuppression = options.EnableAdvancedLayoutNms,
         });
         services.AddSingleton<ILayoutDetectionService>(provider => new LayoutSdkDetectionService(
             provider.GetRequiredService<LayoutSdkDetectionOptions>(),
