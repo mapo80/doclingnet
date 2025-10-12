@@ -323,8 +323,6 @@ public sealed class TableFormerTableStructureService : ITableStructureService, I
         return null;
     }
 }
-
-    private static string PrepareWorkingDirectory(string path)
     {
         if (string.IsNullOrWhiteSpace(path))
         {
