@@ -11,11 +11,6 @@ namespace Docling.Models.Layout;
 public sealed class LayoutSdkDetectionOptions
 {
     /// <summary>
-    /// Gets or sets the runtime backend used to execute the model. Defaults to ONNX Runtime.
-    /// </summary>
-    public LayoutRuntime Runtime { get; init; } = LayoutRuntime.Onnx;
-
-    /// <summary>
     /// Gets or sets the default language hint passed to the SDK. Defaults to English.
     /// </summary>
     public DocumentLanguage Language { get; init; } = DocumentLanguage.English;
@@ -50,7 +45,6 @@ public sealed class LayoutSdkDetectionOptions
 
     internal LayoutSdkDetectionOptions Clone() => new()
     {
-        Runtime = Runtime,
         Language = Language,
         GenerateOverlay = GenerateOverlay,
         ValidateModelFiles = ValidateModelFiles,
