@@ -28,6 +28,7 @@ public sealed class TableExtractionValidationTests : IDisposable
     private readonly ITestOutputHelper _output;
     private readonly string _testImagePath;
     private readonly string _outputDirectory;
+    private static readonly JsonSerializerOptions PrettyJson = new() { WriteIndented = true };
 
     public TableExtractionValidationTests(ITestOutputHelper output)
     {
@@ -78,11 +79,11 @@ public sealed class TableExtractionValidationTests : IDisposable
             pipeline: new PipelineModelPaths(encoderPath, bboxDecoderPath, decoderPath)
         );
 
-        using var sdk = new TableFormerSdk(options);
+        using var tableFormer = new TableFormer(options);
 
         // Act - Estrai tabelle dall'immagine
         var startTime = DateTime.UtcNow;
-        var result = sdk.Process(
+        var result = tableFormer.Process(
             imagePath: _testImagePath,
             overlay: true, // Genera visualizzazione overlay
             runtime: TableFormerRuntime.Pipeline,
@@ -102,7 +103,7 @@ public sealed class TableExtractionValidationTests : IDisposable
 
         // Analizza le regioni rilevate
         var regionsByType = result.Regions
-            .GroupBy(r => r.ClassLabel ?? "Unknown")
+            .GroupBy(r => r.Label)
             .OrderByDescending(g => g.Count());
 
         _output.WriteLine($"\n📋 DISTRIBUZIONE REGIONI:");
@@ -112,9 +113,7 @@ public sealed class TableExtractionValidationTests : IDisposable
         }
 
         // Conta le tabelle rilevate
-        var tableCount = result.Regions.Count(r =>
-            r.ClassLabel?.Contains("table", StringComparison.OrdinalIgnoreCase) == true
-        );
+        var tableCount = result.Regions.Count(r => r.Label.Contains("table", StringComparison.OrdinalIgnoreCase));
 
         _output.WriteLine($"\n✅ Tabelle identificate: {tableCount}");
 
@@ -160,23 +159,23 @@ public sealed class TableExtractionValidationTests : IDisposable
         }
 
         // Crea il servizio TableFormer
+        var tableFormerOptions = new TableFormerSdkOptions(
+            onnx: new TableFormerModelPaths(encoderPath, null),
+            pipeline: new PipelineModelPaths(encoderPath, bboxDecoderPath, decoderPath)
+        );
+
         var serviceOptions = new TableFormerStructureServiceOptions
         {
             Variant = TableFormerModelVariant.Fast,
             Runtime = TableFormerRuntime.Pipeline,
             WorkingDirectory = _outputDirectory,
-            GenerateOverlay = true
+            GenerateOverlay = true,
+            SdkOptions = tableFormerOptions
         };
-
-        using var tableFormerSdk = new TableFormerSdk(new TableFormerSdkOptions(
-            onnx: new TableFormerModelPaths(encoderPath, null),
-            pipeline: new PipelineModelPaths(encoderPath, bboxDecoderPath, decoderPath)
-        ));
 
         using var service = new TableFormerTableStructureService(
             serviceOptions,
-            NullLogger<TableFormerTableStructureService>.Instance,
-            tableFormerSdk
+            NullLogger<TableFormerTableStructureService>.Instance
         );
 
         // Carica immagine completa
@@ -237,11 +236,11 @@ public sealed class TableExtractionValidationTests : IDisposable
             detections = new
             {
                 total_regions = result.Regions.Count,
-                table_count = result.Regions.Count(r => r.ClassLabel?.Contains("table", StringComparison.OrdinalIgnoreCase) == true),
+                table_count = result.Regions.Count(r => r.Label.Contains("table", StringComparison.OrdinalIgnoreCase)),
                 regions = result.Regions.Select((region, index) => new
                 {
                     id = index,
-                    class_label = region.ClassLabel ?? "Unknown",
+                    class_label = region.Label,
                     bbox = new
                     {
                         x = region.X,
@@ -259,8 +258,7 @@ public sealed class TableExtractionValidationTests : IDisposable
             }
         };
 
-        var options = new JsonSerializerOptions { WriteIndented = true };
-        File.WriteAllText(resultsFile, JsonSerializer.Serialize(jsonData, options));
+        File.WriteAllText(resultsFile, JsonSerializer.Serialize(jsonData, PrettyJson));
 
         _output.WriteLine($"\n💾 Risultati dettagliati salvati: {resultsFile}");
     }
@@ -283,17 +281,16 @@ public sealed class TableExtractionValidationTests : IDisposable
 
         var jsonData = new
         {
-            page = structure.Page.Number,
+            page = structure.Page.PageNumber,
             dpi = structure.Page.Dpi,
             dimensions = new
             {
                 rows = structure.RowCount,
                 columns = structure.ColumnCount
             },
-            cells = structure.Cells.Select(cell => new
+            cells = structure.Cells.Select((cell, index) => new
             {
-                row = cell.RowIndex,
-                column = cell.ColumnIndex,
+                index,
                 row_span = cell.RowSpan,
                 column_span = cell.ColumnSpan,
                 bbox = new
@@ -308,8 +305,7 @@ public sealed class TableExtractionValidationTests : IDisposable
             }).ToArray()
         };
 
-        var options = new JsonSerializerOptions { WriteIndented = true };
-        File.WriteAllText(structureFile, JsonSerializer.Serialize(jsonData, options));
+        File.WriteAllText(structureFile, JsonSerializer.Serialize(jsonData, PrettyJson));
 
         _output.WriteLine($"📊 Struttura tabella salvata: {structureFile}");
     }

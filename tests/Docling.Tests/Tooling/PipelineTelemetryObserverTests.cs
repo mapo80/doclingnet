@@ -25,7 +25,7 @@ public sealed class PipelineTelemetryObserverTests
         var snapshot = observer.CreateSnapshot();
         snapshot.Should().HaveCount(1);
         snapshot[0].Stage.Should().Be("stage-a");
-        snapshot[0].DurationMilliseconds.Should().BeGreaterOrEqualTo(0);
+        snapshot[0].DurationMilliseconds.Should().BeGreaterThanOrEqualTo(0);
     }
 
     [Fact]

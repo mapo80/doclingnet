@@ -28,7 +28,7 @@ internal sealed record LayoutPerfSampleResult(
     double InferenceMeanMs,
     double PostprocessMeanMs,
     IReadOnlyList<double> TotalsMs,
-    IReadOnlyList<LayoutPerfRunTelemetry> Runs);
+    IReadOnlyList<LayoutPerfRunTelemetry> RunTelemetry);
 
 internal sealed record LayoutPerfOutput(
     string Runtime,
@@ -105,11 +105,11 @@ internal static class Program
 
             pageIndex++;
             var payload = CreatePayload(input, pageIndex);
-            var request = new LayoutRequest(
-                documentId: Path.GetFileNameWithoutExtension(input) ?? $"document_{pageIndex:0000}",
-                modelIdentifier: "docling-layout-heron",
-                options: new LayoutRequestOptions(createOrphanClusters: true, keepEmptyClusters: false, skipCellAssignment: false),
-                pages: new[] { payload });
+        var request = new LayoutRequest(
+            documentId: Path.GetFileNameWithoutExtension(input) ?? $"document_{pageIndex:0000}",
+            modelIdentifier: "docling-layout-heron",
+            options: new LayoutRequestOptions(CreateOrphanClusters: true, KeepEmptyClusters: false, SkipCellAssignment: false),
+            pages: new[] { payload });
 
             var runs = new List<LayoutPerfRunTelemetry>(options.Runs);
             for (var iteration = 0; iteration < options.Runs; iteration++)
@@ -182,7 +182,8 @@ internal static class Program
     {
         var bytes = File.ReadAllBytes(path);
         using var stream = new SKMemoryStream(bytes);
-        using var codec = SKCodec.Create(stream) ?? throw new InvalidOperationException($"Failed to decode '{path}'.");
+        using var codec = SKCodec.Create(stream);
+        ArgumentNullException.ThrowIfNull(codec);
         var width = codec.Info.Width;
         var height = codec.Info.Height;
         var dpi = 300d;
@@ -206,13 +207,13 @@ internal static class Program
 
     private static string DetectMediaType(string path)
     {
-        return Path.GetExtension(path).ToLowerInvariant() switch
+        return Path.GetExtension(path).ToUpperInvariant() switch
         {
-            ".jpg" or ".jpeg" => "image/jpeg",
-            ".bmp" => "image/bmp",
-            ".gif" => "image/gif",
-            ".webp" => "image/webp",
-            ".tif" or ".tiff" => "image/tiff",
+            ".JPG" or ".JPEG" => "image/jpeg",
+            ".BMP" => "image/bmp",
+            ".GIF" => "image/gif",
+            ".WEBP" => "image/webp",
+            ".TIF" or ".TIFF" => "image/tiff",
             _ => "image/png",
         };
     }
@@ -324,6 +325,8 @@ internal static class Program
 
     private static void PrintUsage()
     {
+#pragma warning disable CA1303
         Console.WriteLine("Usage: dotnet run --project tools/LayoutPerfRunner -- --input <path> [--runs <n>] [--discard <n>] [--output <file>] [--advanced-nms <true|false>] [--enable-advanced-nms] [--disable-advanced-nms]");
+#pragma warning restore CA1303
     }
 }

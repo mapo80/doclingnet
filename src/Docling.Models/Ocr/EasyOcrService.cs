@@ -221,6 +221,18 @@ public sealed class EasyOcrService : IOcrService
             return directory;
         }
 
+        var detectionFiles = new[]
+        {
+            "detection.onnx",
+            "detection.xml",
+            "EasyOCRDetector.onnx"
+        };
+
+        if (ContainsDetectionModel(AppContext.BaseDirectory, detectionFiles))
+        {
+            return AppContext.BaseDirectory;
+        }
+
         var candidates = new[]
         {
             Path.Combine(AppContext.BaseDirectory, "contentFiles", "any", "any", "models", "easyocr"),
@@ -229,7 +241,7 @@ public sealed class EasyOcrService : IOcrService
 
         foreach (var candidate in candidates)
         {
-            if (Directory.Exists(candidate))
+            if (Directory.Exists(candidate) && ContainsDetectionModel(candidate, detectionFiles))
             {
                 return candidate;
             }
@@ -240,17 +252,31 @@ public sealed class EasyOcrService : IOcrService
             Path.Combine(AppContext.BaseDirectory, "models", "easyocr"),
             Path.Combine(AppContext.BaseDirectory, "models", "onnx"),
             Path.Combine(AppContext.BaseDirectory, "models"),
+            AppContext.BaseDirectory,
         };
 
         foreach (var legacy in legacyCandidates)
         {
-            if (Directory.Exists(legacy))
+            if (Directory.Exists(legacy) && ContainsDetectionModel(legacy, detectionFiles))
             {
                 return legacy;
             }
         }
 
         throw new DirectoryNotFoundException("EasyOCR model directory not found under the application base directory. Ensure the EasyOcrNet package is restored.");
+    }
+
+    private static bool ContainsDetectionModel(string directory, IEnumerable<string> detectionFiles)
+    {
+        foreach (var file in detectionFiles)
+        {
+            if (File.Exists(Path.Combine(directory, file)))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static OcrLanguage ResolveLanguage(EasyOcrOptions options, ILogger logger)
