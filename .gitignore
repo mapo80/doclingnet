@@ -6,3 +6,4 @@ obj/
 **/.vs/
 TestResults/
 packages/custom/
+**/packages/custom/
