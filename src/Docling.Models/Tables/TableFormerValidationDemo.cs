@@ -1,3 +1,4 @@
+#if false
 using System;
 using System.IO;
 
@@ -230,3 +231,4 @@ internal static class TableFormerValidationDemo
         Console.WriteLine();
     }
 }
+#endif

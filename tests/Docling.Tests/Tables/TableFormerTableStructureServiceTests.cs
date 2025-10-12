@@ -161,6 +161,90 @@ public sealed class TableFormerTableStructureServiceTests : IDisposable
         }
     }
 
+    [Fact]
+    public async Task InferStructureAsyncUpdatesMetrics()
+    {
+        var imageBytes = CreateImageBytes(24, 24);
+        var request = new TableStructureRequest(new PageReference(4, 300), BoundingBox.FromSize(0, 0, 120, 120), imageBytes);
+
+        var regions = new List<TableRegion> { new(5f, 5f, 15f, 15f, "cell") };
+        var snapshot = new TableFormerPerformanceSnapshot(TableFormerRuntime.Onnx, TableFormerModelVariant.Fast, 1, 1, 1, 1, 1);
+        var result = new TableStructureResult(regions, overlay: null, TableFormerLanguage.English, TableFormerRuntime.Onnx, TimeSpan.FromMilliseconds(12), snapshot);
+
+        using var invoker = new RecordingInvoker(result);
+        var options = new TableFormerStructureServiceOptions { WorkingDirectory = _workingDirectory };
+
+        using var service = new TableFormerTableStructureService(options, NullLogger<TableFormerTableStructureService>.Instance, invoker);
+        await service.InferStructureAsync(request);
+
+        var metrics = service.GetMetrics();
+        Assert.Equal(1, metrics.TotalInferences);
+        Assert.Equal(1, metrics.SuccessfulInferences);
+        Assert.Equal(0, metrics.FailedInferences);
+        Assert.Equal(1, metrics.TotalCellsDetected);
+        Assert.Contains("stub", metrics.BackendUsage.Keys);
+        Assert.Equal(1, metrics.BackendUsage["stub"]);
+    }
+
+    [Fact]
+    public async Task InferStructureAsyncRecordsFailuresWhenInvokerThrows()
+    {
+        var imageBytes = CreateImageBytes(16, 16);
+        var request = new TableStructureRequest(new PageReference(5, 300), BoundingBox.FromSize(0, 0, 32, 32), imageBytes);
+
+        using var invoker = new ThrowingInvoker();
+        var options = new TableFormerStructureServiceOptions { WorkingDirectory = _workingDirectory };
+        using var service = new TableFormerTableStructureService(options, NullLogger<TableFormerTableStructureService>.Instance, invoker);
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => service.InferStructureAsync(request));
+
+        var metrics = service.GetMetrics();
+        Assert.Equal(1, metrics.TotalInferences);
+        Assert.Equal(0, metrics.SuccessfulInferences);
+        Assert.Equal(1, metrics.FailedInferences);
+    }
+
+    [Fact]
+    public async Task InferStructureBatchAsyncProcessesAllRequests()
+    {
+        var imageBytes = CreateImageBytes(20, 20);
+        var requests = new List<TableStructureRequest>();
+        for (var i = 0; i < 3; i++)
+        {
+            var bounds = BoundingBox.FromSize(0, 0, 20 + i, 20 + i);
+            requests.Add(new TableStructureRequest(new PageReference(i + 1, 300), bounds, imageBytes));
+        }
+
+        var regions = new List<TableRegion> { new(2f, 2f, 6f, 6f, "cell") };
+        var snapshot = new TableFormerPerformanceSnapshot(TableFormerRuntime.Onnx, TableFormerModelVariant.Fast, 1, 1, 1, 1, 1);
+        var result = new TableStructureResult(regions, null, TableFormerLanguage.English, TableFormerRuntime.Onnx, TimeSpan.FromMilliseconds(5), snapshot);
+
+        using var invoker = new RecordingInvoker(result);
+        var options = new TableFormerStructureServiceOptions { WorkingDirectory = _workingDirectory };
+
+        using var service = new TableFormerTableStructureService(options, NullLogger<TableFormerTableStructureService>.Instance, invoker);
+        var structures = await service.InferStructureBatchAsync(requests);
+
+        Assert.Equal(3, structures.Count);
+        Assert.All(structures, structure => Assert.Single(structure.Cells));
+
+        var metrics = service.GetMetrics();
+        Assert.Equal(3, metrics.TotalInferences);
+        Assert.Equal(3, metrics.SuccessfulInferences);
+    }
+
+    [Fact]
+    public void GetPerformanceRecommendationsReturnsMessageWhenDataInsufficient()
+    {
+        using var invoker = new RecordingInvoker(new TableStructureResult(Array.Empty<TableRegion>(), null, TableFormerLanguage.English, TableFormerRuntime.Onnx, TimeSpan.Zero, new TableFormerPerformanceSnapshot(TableFormerRuntime.Onnx, TableFormerModelVariant.Fast, 0, 0, 0, 0, 0)));
+        var options = new TableFormerStructureServiceOptions { WorkingDirectory = _workingDirectory };
+        using var service = new TableFormerTableStructureService(options, NullLogger<TableFormerTableStructureService>.Instance, invoker);
+
+        var recommendations = service.GetPerformanceRecommendations();
+        Assert.Single(recommendations.Recommendations);
+        Assert.Contains("Insufficient data", recommendations.Recommendations[0], StringComparison.OrdinalIgnoreCase);
+    }
+
     private static ReadOnlyMemory<byte> CreateImageBytes(int width, int height)
     {
         using var bitmap = new SKBitmap(width, height);
@@ -201,6 +285,18 @@ public sealed class TableFormerTableStructureServiceTests : IDisposable
         public void Dispose()
         {
             Disposed = true;
+        }
+    }
+
+    private sealed class ThrowingInvoker : ITableFormerInvoker
+    {
+        public TableStructureResult Process(string imagePath, bool overlay, TableFormerModelVariant variant, TableFormerRuntime runtime = TableFormerRuntime.Auto, TableFormerLanguage? language = null)
+        {
+            throw new InvalidOperationException("Simulated failure.");
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

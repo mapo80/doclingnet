@@ -1,3 +1,4 @@
+#if false
 using SkiaSharp;
 using System;
 using System.IO;
@@ -207,3 +208,4 @@ internal static class TableFormerPerformanceDemo
         }
     }
 }
+#endif

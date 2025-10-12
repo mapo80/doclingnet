@@ -1,3 +1,4 @@
+#if false
 using System;
 using System.IO;
 using System.Linq;
@@ -89,3 +90,4 @@ class Program
         Console.WriteLine("\n✅ Validation suite test completed");
     }
 }
+#endif

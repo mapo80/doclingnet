@@ -1,3 +1,4 @@
+#if false
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -187,3 +188,4 @@ class VariantResult
     public int MemoryUsage { get; set; }
     public double Throughput { get; set; }
 }
+#endif

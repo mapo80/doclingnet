@@ -1,3 +1,4 @@
+#if false
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -294,3 +295,4 @@ internal sealed class TableCellGrouper
         public int ColSpan { get; set; } = 1;
     }
 }
+#endif

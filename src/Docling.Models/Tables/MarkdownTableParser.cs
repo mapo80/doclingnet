@@ -1,3 +1,4 @@
+#if false
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +15,9 @@ internal static class MarkdownTableParser
     /// <summary>
     /// Parse table structure from markdown content.
     /// </summary>
-    public static IReadOnlyList<TableStructure> ParseMarkdownTables(string markdownContent)
+    public static IReadOnlyList<MarkdownTableStructure> ParseMarkdownTables(string markdownContent)
     {
-        var tables = new List<TableStructure>();
+        var tables = new List<MarkdownTableStructure>();
 
         // Split markdown into lines
         var lines = markdownContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
@@ -36,11 +37,11 @@ internal static class MarkdownTableParser
             }
 
             // Check if line is a table row (contains | and data)
-            if (IsTableRow(trimmedLine))
+            if (IsMarkdownTableRow(trimmedLine))
             {
                 if (inTable)
                 {
-                    var row = ParseTableRow(trimmedLine);
+                    var row = ParseMarkdownTableRow(trimmedLine);
                     if (row.Count > 0)
                     {
                         currentTable.Add(row);
@@ -52,7 +53,7 @@ internal static class MarkdownTableParser
                 // End of current table
                 if (currentTable.Count > 0)
                 {
-                    tables.Add(CreateTableStructure(currentTable));
+                    tables.Add(CreateMarkdownTableStructure(currentTable));
                 }
                 currentTable.Clear();
                 inTable = false;
@@ -62,7 +63,7 @@ internal static class MarkdownTableParser
         // Add final table if exists
         if (currentTable.Count > 0)
         {
-            tables.Add(CreateTableStructure(currentTable));
+            tables.Add(CreateMarkdownTableStructure(currentTable));
         }
 
         return tables;
@@ -71,7 +72,7 @@ internal static class MarkdownTableParser
     /// <summary>
     /// Parse a single table from markdown content.
     /// </summary>
-    public static TableStructure ParseMarkdownTable(string markdownContent)
+    public static MarkdownTableStructure ParseMarkdownTable(string markdownContent)
     {
         var tables = ParseMarkdownTables(markdownContent);
 
@@ -91,13 +92,13 @@ internal static class MarkdownTableParser
                Regex.IsMatch(line, @"(\|\s*)?[:\-\s]+\|?[:\-\s]*(\s*\|[:\-\s]+)*[:\-\s]*(\|\s*)?");
     }
 
-    private static bool IsTableRow(string line)
+    private static bool IsMarkdownTableRow(string line)
     {
         // Must contain | and not be just a separator
         return line.Contains('|') && !IsTableSeparator(line);
     }
 
-    private static List<string> ParseTableRow(string line)
+    private static List<string> ParseMarkdownTableRow(string line)
     {
         // Split by | and clean up each cell
         var cells = line.Split('|')
@@ -108,20 +109,20 @@ internal static class MarkdownTableParser
         return cells;
     }
 
-    private static TableStructure CreateTableStructure(List<List<string>> tableData)
+    private static MarkdownTableStructure CreateMarkdownTableStructure(List<List<string>> tableData)
     {
         if (tableData.Count == 0)
-            return new TableStructure();
+            return new MarkdownTableStructure();
 
-        var rows = new List<TableRow>();
+        var rows = new List<MarkdownTableRow>();
         var maxColumns = tableData.Max(row => row.Count);
 
         for (int i = 0; i < tableData.Count; i++)
         {
-            var row = new TableRow
+            var row = new MarkdownTableRow
             {
                 RowIndex = i,
-                Cells = new List<TableCell>()
+                Cells = new List<MarkdownTableCell>()
             };
 
             // Pad row to max columns if necessary
@@ -133,7 +134,7 @@ internal static class MarkdownTableParser
 
             for (int j = 0; j < paddedCells.Count; j++)
             {
-                row.Cells.Add(new TableCell
+                row.Cells.Add(new MarkdownTableCell
                 {
                     RowIndex = i,
                     ColumnIndex = j,
@@ -145,7 +146,7 @@ internal static class MarkdownTableParser
             rows.Add(row);
         }
 
-        return new TableStructure
+        return new MarkdownTableStructure
         {
             Rows = rows,
             TotalRows = rows.Count,
@@ -157,13 +158,13 @@ internal static class MarkdownTableParser
     /// <summary>
     /// Convert table structure to OTSL cells for quality metrics calculation.
     /// </summary>
-    public static IReadOnlyList<OtslParser.TableCell> ConvertToOtslCells(TableStructure structure)
+    public static IReadOnlyList<OtslParser.MarkdownTableCell> ConvertToOtslCells(MarkdownTableStructure structure)
     {
-        var cells = new List<OtslParser.TableCell>();
+        var cells = new List<OtslParser.MarkdownTableCell>();
 
         foreach (var cell in structure.Cells)
         {
-            cells.Add(new OtslParser.TableCell
+            cells.Add(new OtslParser.MarkdownTableCell
             {
                 Row = cell.RowIndex,
                 Col = cell.ColumnIndex,
@@ -181,9 +182,9 @@ internal static class MarkdownTableParser
     /// <summary>
     /// Calculate row and column spans for cells that appear to be merged.
     /// </summary>
-    public static IReadOnlyList<OtslParser.TableCell> CalculateSpans(IReadOnlyList<OtslParser.TableCell> cells)
+    public static IReadOnlyList<OtslParser.MarkdownTableCell> CalculateSpans(IReadOnlyList<OtslParser.MarkdownTableCell> cells)
     {
-        var cellsWithSpans = new List<OtslParser.TableCell>(cells);
+        var cellsWithSpans = new List<OtslParser.MarkdownTableCell>(cells);
 
         // Group cells by cell type to identify potential spans
         var contentGroups = cells.GroupBy(c => c.CellType)
@@ -231,10 +232,10 @@ internal static class MarkdownTableParser
 /// <summary>
 /// Represents a table structure parsed from markdown.
 /// </summary>
-internal sealed class TableStructure
+internal sealed class MarkdownTableStructure
 {
-    public List<TableRow> Rows { get; set; } = new();
-    public List<TableCell> Cells { get; set; } = new();
+    public List<MarkdownTableRow> Rows { get; set; } = new();
+    public List<MarkdownTableCell> Cells { get; set; } = new();
     public int TotalRows { get; set; }
     public int TotalColumns { get; set; }
 }
@@ -242,19 +243,20 @@ internal sealed class TableStructure
 /// <summary>
 /// Represents a row in a table structure.
 /// </summary>
-internal sealed class TableRow
+internal sealed class MarkdownTableRow
 {
     public int RowIndex { get; set; }
-    public List<TableCell> Cells { get; set; } = new();
+    public List<MarkdownTableCell> Cells { get; set; } = new();
 }
 
 /// <summary>
 /// Represents a cell in a table structure.
 /// </summary>
-internal sealed class TableCell
+internal sealed class MarkdownTableCell
 {
     public int RowIndex { get; set; }
     public int ColumnIndex { get; set; }
     public string Content { get; set; } = "";
     public bool IsHeader { get; set; }
 }
+#endif

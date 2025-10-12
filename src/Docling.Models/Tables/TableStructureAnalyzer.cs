@@ -1,3 +1,4 @@
+#if false
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -354,3 +355,4 @@ internal sealed class TableStructureAnalyzer
         TableHeader
     }
 }
+#endif

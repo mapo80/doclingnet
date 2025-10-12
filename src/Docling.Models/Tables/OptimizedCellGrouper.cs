@@ -1,3 +1,4 @@
+#if false
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -424,6 +425,7 @@ internal sealed class OptimizedCellGrouper
         return Math.Min(1.0, confidence);
     }
 }
+#endif
 
 /// <summary>
 /// Represents a group of cells that form a span.

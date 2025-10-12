@@ -1,272 +1,371 @@
-using Microsoft.ML.OnnxRuntime.Tensors;
+#if false
+using Microsoft.Extensions.Logging;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
-namespace Docling.Core.Models.Tables;
+namespace Docling.Models.Tables;
 
 /// <summary>
-/// Performance benchmarking suite for TableFormer models.
-/// Measures latency, throughput, memory usage, and compares Fast vs Accurate variants.
+/// Comprehensive benchmarking tool for TableFormer performance analysis.
+/// Compares Fast vs Accurate models and provides detailed performance metrics.
 /// </summary>
-internal sealed class TableFormerBenchmark
+public sealed class TableFormerBenchmark : IDisposable
 {
-    private readonly string _modelsDirectory;
-    private readonly int _warmupIterations = 5;
-    private readonly int _benchmarkIterations = 50;
+    private readonly ILogger<TableFormerBenchmark> _logger;
+    private readonly TableFormerTableStructureService _fastService;
+    private readonly TableFormerTableStructureService _accurateService;
+    private readonly List<SKBitmap> _testImages = new();
+    private bool _disposed;
 
-    public TableFormerBenchmark(string modelsDirectory)
+    public TableFormerBenchmark(ILogger<TableFormerBenchmark>? logger = null)
     {
-        _modelsDirectory = modelsDirectory ?? throw new ArgumentNullException(nameof(modelsDirectory));
+        _logger = logger ?? CreateDefaultLogger();
+
+        _fastService = new TableFormerTableStructureService(
+            new TableFormerStructureServiceOptions { Variant = TableFormerModelVariant.Fast },
+            _logger);
+
+        _accurateService = new TableFormerTableStructureService(
+            new TableFormerStructureServiceOptions { Variant = TableFormerModelVariant.Accurate },
+            _logger);
     }
 
     /// <summary>
-    /// Run comprehensive benchmark comparing Fast vs Accurate variants.
+    /// Generate test images with different table complexities.
     /// </summary>
-    public BenchmarkResults RunComprehensiveBenchmark(SKBitmap sampleImage)
+    public void GenerateTestImages(int count = 10)
     {
-        Console.WriteLine("🚀 Starting TableFormer Performance Benchmark");
-        Console.WriteLine($"Models Directory: {_modelsDirectory}");
-        Console.WriteLine($"Sample Image: {sampleImage.Width}x{sampleImage.Height}");
-        Console.WriteLine($"Warmup Iterations: {_warmupIterations}");
-        Console.WriteLine($"Benchmark Iterations: {_benchmarkIterations}");
-        Console.WriteLine(new string('-', 80));
+        _logger.LogInformation("Generating {Count} test images for benchmarking", count);
 
-        var results = new BenchmarkResults();
+        var random = new Random(42); // Deterministic seed for reproducible results
 
-        try
+        for (int i = 0; i < count; i++)
         {
-            // Benchmark Fast variant
-            Console.WriteLine("📊 Benchmarking Fast Variant...");
-            results.FastResults = BenchmarkVariant("Fast", sampleImage);
-
-            // Benchmark Accurate variant
-            Console.WriteLine("📊 Benchmarking Accurate Variant...");
-            results.AccurateResults = BenchmarkVariant("Accurate", sampleImage);
-
-            // Calculate comparison metrics
-            CalculateComparisonMetrics(results);
-
-            // Print results
-            PrintBenchmarkResults(results);
-
-            return results;
+            var width = random.Next(200, 800);
+            var height = random.Next(150, 600);
+            var image = GenerateTestTableImage(width, height, random);
+            _testImages.Add(image);
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"❌ Benchmark failed: {ex.Message}");
-            throw;
-        }
+
+        _logger.LogInformation("Generated {Count} test images", _testImages.Count);
     }
 
-    private VariantBenchmarkResult BenchmarkVariant(string variant, SKBitmap sampleImage)
+    /// <summary>
+    /// Load test images from a directory.
+    /// </summary>
+    public void LoadTestImages(string directoryPath)
     {
-        var preprocessor = new ImagePreprocessor();
-        var components = new TableFormerOnnxComponents(_modelsDirectory.Replace("fast", variant.ToLower(), StringComparison.Ordinal));
-
-        var result = new VariantBenchmarkResult
+        if (!Directory.Exists(directoryPath))
         {
-            Variant = variant,
-            ModelSizes = GetModelSizes(variant)
+            throw new DirectoryNotFoundException($"Test images directory not found: {directoryPath}");
+        }
+
+        var imageFiles = Directory.GetFiles(directoryPath, "*.*")
+            .Where(f => f.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
+                       f.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                       f.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+
+        _logger.LogInformation("Loading {Count} test images from {Path}", imageFiles.Length, directoryPath);
+
+        foreach (var file in imageFiles)
+        {
+            try
+            {
+                using var imageData = SKData.Create(file);
+                var bitmap = SKBitmap.Decode(imageData);
+                if (bitmap != null)
+                {
+                    _testImages.Add(bitmap);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to load test image: {File}", file);
+            }
+        }
+
+        _logger.LogInformation("Loaded {Count} test images", _testImages.Count);
+    }
+
+    /// <summary>
+    /// Run comprehensive benchmark comparing Fast vs Accurate models.
+    /// </summary>
+    public async Task<BenchmarkResults> RunBenchmarkAsync(int iterationsPerImage = 3)
+    {
+        if (!_testImages.Any())
+        {
+            throw new InvalidOperationException("No test images available. Call GenerateTestImages() or LoadTestImages() first.");
+        }
+
+        _logger.LogInformation("Starting benchmark with {ImageCount} images, {IterationsPerImage} iterations each",
+            _testImages.Count, iterationsPerImage);
+
+        var results = new BenchmarkResults
+        {
+            Timestamp = DateTime.UtcNow,
+            TestImageCount = _testImages.Count,
+            IterationsPerImage = iterationsPerImage
         };
 
-        try
+        // Benchmark Fast model
+        _logger.LogInformation("Benchmarking Fast model...");
+        var fastResults = await BenchmarkModelAsync(_fastService, "Fast", iterationsPerImage);
+        results.FastModelResults = fastResults;
+
+        // Benchmark Accurate model
+        _logger.LogInformation("Benchmarking Accurate model...");
+        var accurateResults = await BenchmarkModelAsync(_accurateService, "Accurate", iterationsPerImage);
+        results.AccurateModelResults = accurateResults;
+
+        // Calculate comparisons
+        CalculateComparisons(results);
+
+        _logger.LogInformation("Benchmark completed successfully");
+        return results;
+    }
+
+    private async Task<ModelBenchmarkResults> BenchmarkModelAsync(
+        TableFormerTableStructureService service,
+        string modelName,
+        int iterationsPerImage)
+    {
+        var results = new ModelBenchmarkResults { ModelName = modelName };
+        var stopwatch = new Stopwatch();
+
+        foreach (var image in _testImages)
         {
-            // Warmup phase
-            Console.WriteLine($"  Warming up {variant} variant...");
-            for (int i = 0; i < _warmupIterations; i++)
+            var imageResults = new List<InferenceResult>();
+
+            for (int i = 0; i < iterationsPerImage; i++)
             {
-                var input = preprocessor.PreprocessImage(sampleImage);
-                _ = components.RunEncoder(input);
-                input.Dispose();
-            }
-
-            // Actual benchmarking
-            Console.WriteLine($"  Running {variant} benchmark ({_benchmarkIterations} iterations)...");
-            var stopwatch = new Stopwatch();
-            var inferenceTimes = new List<long>();
-            var memoryUsages = new List<long>();
-
-            for (int i = 0; i < _benchmarkIterations; i++)
-            {
-                // Force garbage collection before measurement
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-
-                var initialMemory = GC.GetTotalMemory(true);
+                var request = CreateBenchmarkRequest(image);
 
                 stopwatch.Restart();
-                var input = preprocessor.PreprocessImage(sampleImage);
-                var output = components.RunEncoder(input);
-                stopwatch.Stop();
 
-                var finalMemory = GC.GetTotalMemory(true);
-                var memoryUsed = finalMemory - initialMemory;
+                try
+                {
+                    var tableResult = await service.InferStructureAsync(request);
+                    stopwatch.Stop();
 
-                inferenceTimes.Add(stopwatch.ElapsedMilliseconds);
-                memoryUsages.Add(memoryUsed);
+                    imageResults.Add(new InferenceResult
+                    {
+                        Success = true,
+                        InferenceTime = stopwatch.Elapsed,
+                        CellsDetected = tableResult.Cells.Count,
+                        RowsDetected = tableResult.RowCount,
+                        ColumnsDetected = tableResult.ColumnCount
+                    });
+                }
+                catch (Exception ex)
+                {
+                    stopwatch.Stop();
+                    _logger.LogWarning(ex, "Inference failed for {Model} on image {ImageIndex}, iteration {Iteration}",
+                        modelName, _testImages.IndexOf(image), i);
 
-                // DenseTensor doesn't implement IDisposable
+                    imageResults.Add(new InferenceResult
+                    {
+                        Success = false,
+                        InferenceTime = stopwatch.Elapsed,
+                        Error = ex.Message
+                    });
+                }
             }
 
-            // Calculate statistics
-            result.AverageInferenceTime = inferenceTimes.Average();
-            result.MinInferenceTime = inferenceTimes.Min();
-            result.MaxInferenceTime = inferenceTimes.Max();
-            result.StdDevInferenceTime = CalculateStdDev(inferenceTimes);
-            result.AverageMemoryUsage = (long)memoryUsages.Average();
-            result.PeakMemoryUsage = memoryUsages.Max();
-
-            // Calculate throughput (images per second)
-            result.Throughput = 1000.0 / result.AverageInferenceTime;
-
-            Console.WriteLine($"  ✅ {variant} Results:");
-            Console.WriteLine($"     Average Latency: {result.AverageInferenceTime:F2}ms");
-            Console.WriteLine($"     Throughput: {result.Throughput:F2} images/sec");
-            Console.WriteLine($"     Memory Usage: {result.AverageMemoryUsage / 1024:F2} KB avg, {result.PeakMemoryUsage / 1024:F2} KB peak");
-
-            return result;
+            results.ImageResults.Add(imageResults);
         }
-        finally
+
+        // Calculate aggregated metrics
+        var allResults = results.ImageResults.SelectMany(r => r).ToList();
+        var successfulResults = allResults.Where(r => r.Success).ToList();
+
+        results.TotalInferences = allResults.Count;
+        results.SuccessfulInferences = successfulResults.Count;
+        results.FailedInferences = allResults.Count - successfulResults.Count;
+        results.SuccessRate = allResults.Count > 0 ? (double)successfulResults.Count / allResults.Count : 0;
+
+        if (successfulResults.Any())
         {
-            components.Dispose();
-            preprocessor.Dispose();
+            results.AverageInferenceTime = TimeSpan.FromTicks((long)successfulResults.Average(r => r.InferenceTime.Ticks));
+            results.MinInferenceTime = successfulResults.Min(r => r.InferenceTime);
+            results.MaxInferenceTime = successfulResults.Max(r => r.InferenceTime);
+            results.TotalInferenceTime = TimeSpan.FromTicks((long)successfulResults.Sum(r => r.InferenceTime.Ticks));
+
+            results.AverageCellsDetected = successfulResults.Average(r => r.CellsDetected);
+            results.TotalCellsDetected = successfulResults.Sum(r => r.CellsDetected);
+        }
+
+        return results;
+    }
+
+    private void CalculateComparisons(BenchmarkResults results)
+    {
+        if (results.FastModelResults.SuccessfulInferences > 0 && results.AccurateModelResults.SuccessfulInferences > 0)
+        {
+            results.PerformanceComparison = new PerformanceComparison
+            {
+                FastIsFaster = results.FastModelResults.AverageInferenceTime < results.AccurateModelResults.AverageInferenceTime,
+                SpeedRatio = results.AccurateModelResults.AverageInferenceTime.TotalMilliseconds / results.FastModelResults.AverageInferenceTime.TotalMilliseconds,
+                AccuracyComparison = results.AccurateModelResults.AverageCellsDetected / results.FastModelResults.AverageCellsDetected
+            };
         }
     }
 
-    private Dictionary<string, long> GetModelSizes(string variant)
+    private static TableStructureRequest CreateBenchmarkRequest(SKBitmap image)
     {
-        var sizes = new Dictionary<string, long>();
-        var variantLower = variant.ToUpperInvariant();
+        using var imageData = image.Encode(SKEncodedImageFormat.Png, 90);
+        using var stream = new MemoryStream();
+        imageData.SaveTo(stream);
 
-        var modelFiles = new[]
+        return new TableStructureRequest(
+            Page: new(1),
+            BoundingBox: new(0, 0, image.Width, image.Height),
+            RasterizedImage: stream.ToArray()
+        );
+    }
+
+    private static SKBitmap GenerateTestTableImage(int width, int height, Random random)
+    {
+        var bitmap = new SKBitmap(width, height);
+
+        using var canvas = new SKCanvas(bitmap);
+        canvas.Clear(SKColors.White);
+
+        var paint = new SKPaint
         {
-            $"{variantLower}_encoder.onnx",
-            $"{variantLower}_tag_transformer_encoder.onnx",
-            $"{variantLower}_tag_transformer_decoder_step.onnx",
-            $"{variantLower}_bbox_decoder.onnx"
+            Color = SKColors.Black,
+            StrokeWidth = 1,
+            IsStroke = true
         };
 
-        foreach (var file in modelFiles)
+        // Generate random table structure
+        var rows = random.Next(2, 8);
+        var cols = random.Next(2, 6);
+
+        var cellWidth = (width - 100) / cols;
+        var cellHeight = (height - 100) / rows;
+
+        // Draw table grid
+        for (int row = 0; row <= rows; row++)
         {
-            var path = Path.Combine(_modelsDirectory.Replace("fast", variantLower, StringComparison.Ordinal), file);
-            if (File.Exists(path))
+            var y = 50 + (row * cellHeight);
+            canvas.DrawLine(50, y, width - 50, y, paint);
+        }
+
+        for (int col = 0; col <= cols; col++)
+        {
+            var x = 50 + (col * cellWidth);
+            canvas.DrawLine(x, 50, x, height - 50, paint);
+        }
+
+        // Add some random content in cells
+        for (int row = 0; row < rows; row++)
+        {
+            for (int col = 0; col < cols; col++)
             {
-                sizes[file] = new FileInfo(path).Length;
+                if (random.NextDouble() < 0.7) // 70% chance of content
+                {
+                    var textPaint = new SKPaint
+                    {
+                        Color = SKColors.DarkGray,
+                        TextSize = 12,
+                        IsAntialias = true
+                    };
+
+                    var cellX = 50 + (col * cellWidth) + 5;
+                    var cellY = 50 + (row * cellHeight) + 15;
+                    canvas.DrawText($"R{row}C{col}", cellX, cellY, textPaint);
+                }
             }
         }
 
-        return sizes;
+        return bitmap;
     }
 
-    private void CalculateComparisonMetrics(BenchmarkResults results)
+    private static ILogger<TableFormerBenchmark> CreateDefaultLogger()
     {
-        if (results.FastResults == null || results.AccurateResults == null)
-            return;
-
-        var fast = results.FastResults;
-        var accurate = results.AccurateResults;
-
-        // Speed comparison
-        results.SpeedRatio = accurate.AverageInferenceTime / fast.AverageInferenceTime;
-        results.FastIsFaster = fast.AverageInferenceTime < accurate.AverageInferenceTime;
-
-        // Memory comparison
-        results.MemoryRatio = accurate.AverageMemoryUsage / fast.AverageMemoryUsage;
-
-        // Model size comparison
-        var fastTotalSize = fast.ModelSizes.Values.Sum();
-        var accurateTotalSize = accurate.ModelSizes.Values.Sum();
-        results.SizeRatio = (double)accurateTotalSize / fastTotalSize;
-    }
-
-    private void PrintBenchmarkResults(BenchmarkResults results)
-    {
-        Console.WriteLine("\n" + new string('=', 80));
-        Console.WriteLine("📈 BENCHMARK RESULTS SUMMARY");
-        Console.WriteLine(new string('=', 80));
-
-        if (results.FastResults != null && results.AccurateResults != null)
+        return LoggerFactory.Create(builder =>
         {
-            var fast = results.FastResults;
-            var accurate = results.AccurateResults;
+            builder.AddConsole();
+            builder.SetMinimumLevel(LogLevel.Information);
+        }).CreateLogger<TableFormerBenchmark>();
+    }
 
-            Console.WriteLine("⚡ PERFORMANCE COMPARISON:");
-            Console.WriteLine($"   Fast → Accurate Speed Ratio: {results.SpeedRatio:F2}x");
-            Console.WriteLine($"   Fast → Accurate Memory Ratio: {results.MemoryRatio:F2}x");
-            Console.WriteLine($"   Fast → Accurate Size Ratio: {results.SizeRatio:F2}x");
-            Console.WriteLine($"   Winner: {(results.FastIsFaster ? "⚡ FAST (Speed)" : "🎯 ACCURATE (Quality)")}");
+    public void Dispose()
+    {
+        if (!_disposed)
+        {
+            _fastService.Dispose();
+            _accurateService.Dispose();
 
-            Console.WriteLine("\n📊 DETAILED RESULTS:");
-            Console.WriteLine($"   {"Variant",-10} {"Latency(ms)",-12} {"Throughput",-12} {"Memory(KB)",-12} {"Model Size",-12}");
-            Console.WriteLine($"   {"",-10} {"",-12} {"(img/sec)",-12} {"",-12} {"(MB)",-12}");
+            foreach (var image in _testImages)
+            {
+                image.Dispose();
+            }
 
-            PrintVariantResult("Fast", fast);
-            PrintVariantResult("Accurate", accurate);
-
-            Console.WriteLine("\n💡 RECOMMENDATIONS:");
-            if (results.SpeedRatio > 2.0)
-            {
-                Console.WriteLine("   • Fast variant is significantly faster - use for real-time applications");
-            }
-            if (results.SizeRatio > 1.5)
-            {
-                Console.WriteLine("   • Accurate variant uses significantly more memory - consider resource constraints");
-            }
-            if (results.FastIsFaster)
-            {
-                Console.WriteLine("   • Fast variant recommended for most use cases");
-            }
-            else
-            {
-                Console.WriteLine("   • Accurate variant recommended for highest quality results");
-            }
+            _testImages.Clear();
+            _disposed = true;
         }
-
-        Console.WriteLine(new string('=', 80));
-    }
-
-    private static void PrintVariantResult(string name, VariantBenchmarkResult result)
-    {
-        var totalSizeMB = result.ModelSizes.Values.Sum() / 1024.0 / 1024.0;
-        Console.WriteLine($"   {name,-10} {result.AverageInferenceTime,10:F2} {result.Throughput,10:F2} {result.AverageMemoryUsage / 1024,10:F2} {totalSizeMB,10:F2}");
-    }
-
-    private static double CalculateStdDev(IEnumerable<long> values)
-    {
-        var average = values.Average();
-        var sumOfSquares = values.Sum(v => Math.Pow(v - average, 2));
-        return Math.Sqrt(sumOfSquares / values.Count());
-    }
-
-    /// <summary>
-    /// Results of comprehensive benchmark run.
-    /// </summary>
-    public sealed class BenchmarkResults
-    {
-        public VariantBenchmarkResult? FastResults { get; set; }
-        public VariantBenchmarkResult? AccurateResults { get; set; }
-        public double SpeedRatio { get; set; } = 1.0;
-        public double MemoryRatio { get; set; } = 1.0;
-        public double SizeRatio { get; set; } = 1.0;
-        public bool FastIsFaster { get; set; }
-    }
-
-    /// <summary>
-    /// Results for a single variant benchmark.
-    /// </summary>
-    public sealed class VariantBenchmarkResult
-    {
-        public string Variant { get; set; } = "";
-        public double AverageInferenceTime { get; set; }
-        public double MinInferenceTime { get; set; }
-        public double MaxInferenceTime { get; set; }
-        public double StdDevInferenceTime { get; set; }
-        public double Throughput { get; set; }
-        public long AverageMemoryUsage { get; set; }
-        public long PeakMemoryUsage { get; set; }
-        public Dictionary<string, long> ModelSizes { get; set; } = new();
     }
 }
+
+/// <summary>
+/// Results of a complete benchmark run.
+/// </summary>
+public sealed class BenchmarkResults
+{
+    public DateTime Timestamp { get; init; }
+    public int TestImageCount { get; init; }
+    public int IterationsPerImage { get; init; }
+    public ModelBenchmarkResults FastModelResults { get; init; } = new();
+    public ModelBenchmarkResults AccurateModelResults { get; init; } = new();
+    public PerformanceComparison? PerformanceComparison { get; init; }
+}
+
+/// <summary>
+/// Results for a single model benchmark.
+/// </summary>
+public sealed class ModelBenchmarkResults
+{
+    public string ModelName { get; init; } = string.Empty;
+    public int TotalInferences { get; init; }
+    public int SuccessfulInferences { get; init; }
+    public int FailedInferences { get; init; }
+    public double SuccessRate { get; init; }
+    public TimeSpan TotalInferenceTime { get; init; }
+    public TimeSpan AverageInferenceTime { get; init; }
+    public TimeSpan MinInferenceTime { get; init; }
+    public TimeSpan MaxInferenceTime { get; init; }
+    public double AverageCellsDetected { get; init; }
+    public int TotalCellsDetected { get; init; }
+    public List<List<InferenceResult>> ImageResults { get; init; } = new();
+}
+
+/// <summary>
+/// Result of a single inference operation.
+/// </summary>
+public sealed class InferenceResult
+{
+    public bool Success { get; init; }
+    public TimeSpan InferenceTime { get; init; }
+    public int CellsDetected { get; init; }
+    public int RowsDetected { get; init; }
+    public int ColumnsDetected { get; init; }
+    public string? Error { get; init; }
+}
+
+/// <summary>
+/// Performance comparison between Fast and Accurate models.
+/// </summary>
+public sealed class PerformanceComparison
+{
+    public bool FastIsFaster { get; init; }
+    public double SpeedRatio { get; init; } // Accurate time / Fast time
+    public double AccuracyComparison { get; init; } // Accurate cells / Fast cells
+}
+#endif

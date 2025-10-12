@@ -1,7 +1,9 @@
+#if false
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Docling.Core.Geometry;
 
 namespace Docling.Core.Models.Tables;
 
@@ -19,7 +21,7 @@ internal sealed class AdvancedHeaderDetector
         @"^(table|fig|figure|algorithm|equation)\s*\d*\.?\s*:?",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-    public List<HeaderLevel> DetectMultiLevelHeaders(List<TableCell> cells)
+    public List<HeaderLevel> DetectMultiLevelHeaders(List<HeaderCandidateCell> cells)
     {
         Console.WriteLine($"🔍 Analyzing {cells.Count} cells for header detection...");
 
@@ -40,9 +42,9 @@ internal sealed class AdvancedHeaderDetector
         return headerHierarchy;
     }
 
-    private List<TableCell> IdentifyHeaderCandidates(List<TableCell> cells)
+    private List<HeaderCandidateCell> IdentifyHeaderCandidates(List<HeaderCandidateCell> cells)
     {
-        var candidates = new List<TableCell>();
+        var candidates = new List<HeaderCandidateCell>();
 
         foreach (var cell in cells)
         {
@@ -57,7 +59,7 @@ internal sealed class AdvancedHeaderDetector
         return candidates.OrderByDescending(c => c.HeaderScore).ToList();
     }
 
-    private double CalculateHeaderScore(TableCell cell)
+    private double CalculateHeaderScore(HeaderCandidateCell cell)
     {
         var score = 0.0;
 
@@ -79,7 +81,7 @@ internal sealed class AdvancedHeaderDetector
         return Math.Min(1.0, score);
     }
 
-    private Dictionary<string, double> AnalyzeTextPatterns(List<TableCell> cells)
+    private Dictionary<string, double> AnalyzeTextPatterns(List<HeaderCandidateCell> cells)
     {
         var patterns = new Dictionary<string, double>();
 
@@ -104,17 +106,17 @@ internal sealed class AdvancedHeaderDetector
         return patterns;
     }
 
-    private List<PositionCluster> ClusterByPosition(List<TableCell> cells)
+    private List<PositionCluster> ClusterByPosition(List<HeaderCandidateCell> cells)
     {
         var clusters = new List<PositionCluster>();
-        var processed = new HashSet<TableCell>();
+        var processed = new HashSet<HeaderCandidateCell>();
 
         foreach (var cell in cells.Where(c => !processed.Contains(c)))
         {
             var cluster = new PositionCluster
             {
                 RepresentativeCell = cell,
-                Cells = new List<TableCell> { cell },
+                Cells = new List<HeaderCandidateCell> { cell },
                 AvgRow = cell.RowIndex,
                 AvgCol = cell.ColumnIndex
             };
@@ -150,7 +152,7 @@ internal sealed class AdvancedHeaderDetector
     }
 
     private List<HeaderClassification> ClassifyHeaders(
-        List<TableCell> candidates,
+        List<HeaderCandidateCell> candidates,
         Dictionary<string, double> textPatterns,
         List<PositionCluster> positionClusters)
     {
@@ -173,7 +175,7 @@ internal sealed class AdvancedHeaderDetector
     }
 
     private int PredictHeaderLevel(
-        TableCell cell,
+        HeaderCandidateCell cell,
         Dictionary<string, double> textPatterns,
         List<PositionCluster> positionClusters)
     {
@@ -190,7 +192,7 @@ internal sealed class AdvancedHeaderDetector
     }
 
     private HeaderType DetermineHeaderType(
-        TableCell cell,
+        HeaderCandidateCell cell,
         Dictionary<string, double> textPatterns)
     {
         var content = cell.Content ?? "";
@@ -210,7 +212,7 @@ internal sealed class AdvancedHeaderDetector
         return HeaderType.Generic;
     }
 
-    private double AnalyzeStylePatterns(TableCell cell)
+    private double AnalyzeStylePatterns(HeaderCandidateCell cell)
     {
         var score = 0.0;
 
@@ -272,7 +274,7 @@ internal sealed class HeaderLevel
 /// </summary>
 internal sealed class HeaderClassification
 {
-    public TableCell Cell { get; set; } = new();
+    public HeaderCandidateCell Cell { get; set; } = new();
     public double Confidence { get; set; }
     public int Level { get; set; }
     public HeaderType Type { get; set; }
@@ -295,16 +297,16 @@ internal enum HeaderType
 /// </summary>
 internal sealed class PositionCluster
 {
-    public TableCell RepresentativeCell { get; set; } = new();
-    public List<TableCell> Cells { get; set; } = new();
+    public HeaderCandidateCell RepresentativeCell { get; set; } = new();
+    public List<HeaderCandidateCell> Cells { get; set; } = new();
     public double AvgRow { get; set; }
     public double AvgCol { get; set; }
 }
 
 /// <summary>
-/// Extended TableCell with header analysis properties.
+/// Extended HeaderCandidateCell with header analysis properties.
 /// </summary>
-internal sealed class TableCell
+internal sealed class HeaderCandidateCell
 {
     public int RowIndex { get; set; }
     public int ColumnIndex { get; set; }
@@ -313,12 +315,13 @@ internal sealed class TableCell
     public BoundingBox BoundingBox { get; set; } = new BoundingBox(0, 0, 0, 0);
 
     // Constructor for easy creation
-    public TableCell() { }
+    public HeaderCandidateCell() { }
 
-    public TableCell(int row, int col, string? content = null)
+    public HeaderCandidateCell(int row, int col, string? content = null)
     {
         RowIndex = row;
         ColumnIndex = col;
         Content = content;
     }
 }
+#endif

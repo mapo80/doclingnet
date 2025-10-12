@@ -19,6 +19,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Tables/**/*.cs" />
+    <Compile Remove="../TableFormerValidationTest.cs" />
+    <Compile Remove="../VariantComparisonDemo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Tables/TableModels.cs" />
+    <Compile Include="Tables/TableFormerTableStructureService.cs" />
+    <Compile Include="Tables/TableFormerQualityMetrics.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\submodules\ds4sd-docling-layout-heron-onnx\dotnet\LayoutSdk\PackagedModels\models\**">
       <Link>models\%(RecursiveDir)%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

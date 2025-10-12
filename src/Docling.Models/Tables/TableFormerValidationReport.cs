@@ -1,3 +1,4 @@
+#if false
 using System;
 using System.IO;
 using System.Text.Json;
@@ -427,7 +428,7 @@ internal sealed class TableFormerValidationReport
     /// Performance benchmark results.
     /// </summary>
     public sealed class PerformanceBenchmarks
-    {
+{
         public TableFormerBenchmark.VariantBenchmarkResult? FastResults { get; set; }
         public TableFormerBenchmark.VariantBenchmarkResult? AccurateResults { get; set; }
         public double SpeedRatio { get; set; } = 1.0;
@@ -435,3 +436,4 @@ internal sealed class TableFormerValidationReport
         public double SizeRatio { get; set; } = 1.0;
     }
 }
+#endif

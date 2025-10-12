@@ -382,7 +382,7 @@ def main():
 
     # Setup paths
     base_dir = Path(__file__).parent.parent
-    model_dir = base_dir / "models" / "tableformer" / args.model / "model_artifacts" / "tableformer" / args.model
+    model_dir = base_dir / "models" / "model_artifacts" / "tableformer" / args.model
     model_path = model_dir / f"tableformer_{args.model}.safetensors"
     config_path = model_dir / "tm_config.json"
 

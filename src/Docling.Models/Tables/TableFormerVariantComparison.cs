@@ -1,3 +1,4 @@
+#if false
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -309,3 +310,4 @@ internal sealed class VariantTestResult
     public double QualityScore { get; set; }
     public int ModelSize { get; set; }
 }
+#endif
