@@ -42,25 +42,6 @@ public sealed class TableFormerTableStructureService : ITableStructureService, I
     private readonly string _workingDirectory;
     private readonly ITableFormerInvoker _tableFormer;
     private bool _disposed;
-    private static readonly Action<ILogger, string, Exception?> LogDeleteFailed = LoggerMessage.Define<string>(
-        LogLevel.Warning,
-        new EventId(1, nameof(TryDelete)),
-        "Failed to delete temporary TableFormer image '{Path}'.");
-
-    private static readonly Action<ILogger, Exception?> LogOverlayEncodeFailed = LoggerMessage.Define(
-        LogLevel.Warning,
-        new EventId(2, nameof(TryCreateDebugArtifact)),
-        "Failed to encode TableFormer overlay image; skipping debug artifact.");
-
-    private static readonly Action<ILogger, Exception?> LogBackendUnavailable = LoggerMessage.Define(
-        LogLevel.Information,
-        new EventId(3, nameof(CreateTableFormerInvoker)),
-        "TableFormer backend unavailable; falling back to stub invoker.");
-
-    private static readonly Action<ILogger, Exception?> LogBackendInitializationFailed = LoggerMessage.Define(
-        LogLevel.Warning,
-        new EventId(4, nameof(CreateTableFormerInvoker)),
-        "Failed to initialize TableFormer backend; falling back to stub invoker.");
 
     public TableFormerTableStructureService(
         TableFormerStructureServiceOptions? options = null,
@@ -140,6 +121,208 @@ public sealed class TableFormerTableStructureService : ITableStructureService, I
         _tableFormer.Dispose();
         _disposed = true;
     }
+
+    private static string PrepareWorkingDirectory(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            path = Path.GetTempPath();
+        }
+
+        Directory.CreateDirectory(path);
+        return path;
+    }
+
+    private void EnsureNotDisposed()
+    {
+        ObjectDisposedException.ThrowIf(_disposed, nameof(TableFormerTableStructureService));
+    }
+
+    private static IReadOnlyList<TableCell> ConvertRegions(BoundingBox tableBounds, int imageWidth, int imageHeight, IReadOnlyList<TableRegion> regions)
+    {
+        if (imageWidth <= 0 || imageHeight <= 0 || regions.Count == 0)
+        {
+            return Array.Empty<TableCell>();
+        }
+
+        var scaleX = tableBounds.Width / imageWidth;
+        var scaleY = tableBounds.Height / imageHeight;
+        if (double.IsNaN(scaleX) || double.IsInfinity(scaleX) || double.IsNaN(scaleY) || double.IsInfinity(scaleY))
+        {
+            return Array.Empty<TableCell>();
+        }
+
+        var cells = new List<TableCell>(regions.Count);
+        foreach (var region in regions)
+        {
+            if (region.Width <= 0 || region.Height <= 0)
+            {
+                continue;
+            }
+
+            var left = tableBounds.Left + (region.X * scaleX);
+            var top = tableBounds.Top + (region.Y * scaleY);
+            var right = left + (region.Width * scaleX);
+            var bottom = top + (region.Height * scaleY);
+
+            left = Math.Max(tableBounds.Left, left);
+            top = Math.Max(tableBounds.Top, top);
+            right = Math.Min(tableBounds.Right, right);
+            bottom = Math.Min(tableBounds.Bottom, bottom);
+
+            if (!BoundingBox.TryCreate(left, top, right, bottom, out var boundingBox) || boundingBox.IsEmpty)
+            {
+                continue;
+            }
+
+            cells.Add(new TableCell(boundingBox, RowSpan: 1, ColumnSpan: 1, Text: null));
+        }
+
+        return cells.Count == 0
+            ? Array.Empty<TableCell>()
+            : cells;
+    }
+
+    private static int CountAxisGroups(IReadOnlyList<TableCell> cells, Func<TableCell, (double Origin, double Length)> selector)
+    {
+        if (cells.Count == 0)
+        {
+            return 0;
+        }
+
+        var centers = new List<double>();
+        foreach (var cell in cells.OrderBy(c => selector(c).Origin))
+        {
+            var (origin, length) = selector(cell);
+            var size = Math.Max(length, 1d);
+            var center = origin + (size / 2d);
+            var tolerance = Math.Max(size * 0.5d, 1d);
+
+            var match = centers.FindIndex(existing => Math.Abs(existing - center) <= tolerance);
+            if (match < 0)
+            {
+                centers.Add(center);
+            }
+        }
+
+        return centers.Count;
+    }
+
+    private void TryDelete(string path)
+    {
+        try
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
+        catch (IOException ex)
+        {
+            _logger.LogWarning(ex, "Failed to delete temporary TableFormer image '{Path}'.", path);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            _logger.LogWarning(ex, "Failed to delete temporary TableFormer image '{Path}'.", path);
+        }
+    }
+
+    private TableStructureDebugArtifact? TryCreateDebugArtifact(PageReference page, TableStructureResult result)
+    {
+        using var overlay = result.OverlayImage;
+        if (overlay is null)
+        {
+            return null;
+        }
+
+        try
+        {
+            using var snapshot = SKImage.FromBitmap(overlay);
+            if (snapshot is null)
+            {
+                return null;
+            }
+
+            using var encoded = snapshot.Encode(SKEncodedImageFormat.Png, 90);
+            if (encoded is null || encoded.Size == 0)
+            {
+                return null;
+            }
+
+            return new TableStructureDebugArtifact(page, encoded.ToArray());
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or ObjectDisposedException)
+        {
+            _logger.LogWarning(ex, "Failed to encode TableFormer overlay image; skipping debug artifact.");
+            return null;
+        }
+    }
+
+    private ITableFormerInvoker CreateTableFormerInvoker(TableFormerSdkOptions? sdkOptions)
+    {
+        sdkOptions ??= TryCreateDefaultSdkOptions(_logger);
+
+        if (sdkOptions is null)
+        {
+            _logger.LogInformation("TableFormer backend unavailable; falling back to stub invoker.");
+            return NullTableFormerInvoker.Instance;
+        }
+
+        try
+        {
+            return new TableFormerInvoker(new TableFormer(sdkOptions));
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or FileNotFoundException or DirectoryNotFoundException)
+        {
+            _logger.LogWarning(ex, "Failed to initialize TableFormer backend; falling back to stub invoker.");
+            return NullTableFormerInvoker.Instance;
+        }
+    }
+
+    private static TableFormerSdkOptions? TryCreateDefaultSdkOptions(ILogger logger)
+    {
+        var rootOverride = Environment.GetEnvironmentVariable("TABLEFORMER_MODELS_ROOT");
+        var baseDirectory = AppContext.BaseDirectory;
+
+        var candidates = new List<string>();
+        if (!string.IsNullOrWhiteSpace(rootOverride))
+        {
+            candidates.Add(rootOverride);
+        }
+
+        // Updated path to use the new models location in submodules
+        var submoduleModelsPath = Path.GetFullPath(Path.Combine(baseDirectory, "src", "submodules", "ds4sd-docling-tableformer-onnx", "models"));
+        candidates.Add(submoduleModelsPath);
+
+        if (!string.IsNullOrWhiteSpace(baseDirectory))
+        {
+            candidates.Add(Path.Combine(baseDirectory, "models", "tableformer-onnx"));
+            candidates.Add(Path.GetFullPath(Path.Combine(baseDirectory, "..", "..", "..", "..", "models", "tableformer-onnx")));
+        }
+
+        candidates.Add(Path.Combine(Environment.CurrentDirectory, "models", "tableformer-onnx"));
+
+        foreach (var candidate in candidates.Select(c => Path.GetFullPath(c)))
+        {
+            if (!Directory.Exists(candidate))
+            {
+                continue;
+            }
+
+            try
+            {
+                // For now, use a simple approach - we'll need to update this for the component-based approach
+                return new TableFormerSdkOptions();
+            }
+            catch (Exception ex) when (ex is ArgumentException or FileNotFoundException or DirectoryNotFoundException)
+            {
+                logger.LogDebug(ex, "Failed to initialize TableFormer models from '{Directory}'.", candidate);
+            }
+        }
+
+        return null;
+    }
+}
 
     private static string PrepareWorkingDirectory(string path)
     {

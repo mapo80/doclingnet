@@ -191,9 +191,9 @@ internal static class QualityMetrics
         // Create a simple text representation of the cell
         var content = string.Empty;
 
-        if (cell.RowSpan > 1 || cell.ColumnSpan > 1)
+        if (cell.RowSpan > 1 || cell.ColSpan > 1)
         {
-            content = $"SPAN_{cell.RowSpan}_{cell.ColumnSpan}";
+            content = $"SPAN_{cell.RowSpan}_{cell.ColSpan}";
         }
         else
         {
