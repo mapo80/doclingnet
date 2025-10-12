@@ -21,7 +21,15 @@
       "Bash(git switch:*)",
       "Bash(OUTPUT_DIR=\"dataset/test-fase3-validation\")",
       "Bash(echo \"Output directory: $OUTPUT_DIR\")",
-      "Read(//private/var/folders/09/zgb8cky974d49wxs8m6ttlzr0000gn/T/**)"
+      "Read(//private/var/folders/09/zgb8cky974d49wxs8m6ttlzr0000gn/T/**)",
+      "Bash(TABLEFORMER_DEBUG=1 dotnet run:*)",
+      "Bash(dotnet-script:*)",
+      "Bash(/dev/null)",
+      "Bash(huggingface-cli download:*)",
+      "Bash(hf download:*)",
+      "Bash(chmod:*)",
+      "Bash(pip3 install:*)",
+      "Bash(pkill:*)"
     ],
     "deny": [],
     "ask": []

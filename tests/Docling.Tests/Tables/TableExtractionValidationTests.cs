@@ -61,13 +61,11 @@ public sealed class TableExtractionValidationTests : IDisposable
         }
 
         // Carica modelli TableFormer (assumendo che siano nella directory models/)
-        var modelsDir = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "..", "models"));
-        var encoderPath = Path.Combine(modelsDir, "encoder.onnx");
-        var bboxDecoderPath = Path.Combine(modelsDir, "bbox_decoder.onnx");
-        var decoderPath = Path.Combine(modelsDir, "decoder.onnx");
+        var modelsDir = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "..", "models", "tableformer-onnx"));
+        var fastEncoderPath = Path.Combine(modelsDir, "tableformer_fast_encoder.onnx");
 
         // Verifica che i modelli esistano
-        if (!File.Exists(encoderPath) || !File.Exists(bboxDecoderPath) || !File.Exists(decoderPath))
+        if (!File.Exists(fastEncoderPath))
         {
             _output.WriteLine($"⚠️ Modelli TableFormer non trovati in: {modelsDir}");
             _output.WriteLine("Saltando il test - i modelli devono essere scaricati prima.");
@@ -75,8 +73,9 @@ public sealed class TableExtractionValidationTests : IDisposable
         }
 
         var options = new TableFormerSdkOptions(
-            onnx: new TableFormerModelPaths(encoderPath, null),
-            pipeline: new PipelineModelPaths(encoderPath, bboxDecoderPath, decoderPath)
+            onnx: new TableFormerModelPaths(
+                TableFormerVariantModelPaths.FromDirectory(modelsDir, "tableformer_fast"),
+                accurate: null)
         );
 
         using var tableFormer = new TableFormer(options);
@@ -86,7 +85,7 @@ public sealed class TableExtractionValidationTests : IDisposable
         var result = tableFormer.Process(
             imagePath: _testImagePath,
             overlay: true, // Genera visualizzazione overlay
-            runtime: TableFormerRuntime.Pipeline,
+            runtime: TableFormerRuntime.Onnx,
             variant: TableFormerModelVariant.Fast
         );
         var processingTime = DateTime.UtcNow - startTime;
@@ -147,12 +146,10 @@ public sealed class TableExtractionValidationTests : IDisposable
             throw new FileNotFoundException($"Test image not found: {_testImagePath}");
         }
 
-        var modelsDir = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "..", "models"));
-        var encoderPath = Path.Combine(modelsDir, "encoder.onnx");
-        var bboxDecoderPath = Path.Combine(modelsDir, "bbox_decoder.onnx");
-        var decoderPath = Path.Combine(modelsDir, "decoder.onnx");
+        var modelsDir = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "..", "models", "tableformer-onnx"));
+        var fastEncoderPath = Path.Combine(modelsDir, "tableformer_fast_encoder.onnx");
 
-        if (!File.Exists(encoderPath))
+        if (!File.Exists(fastEncoderPath))
         {
             _output.WriteLine("⚠️ Modelli non disponibili - saltando test");
             return;
@@ -160,14 +157,15 @@ public sealed class TableExtractionValidationTests : IDisposable
 
         // Crea il servizio TableFormer
         var tableFormerOptions = new TableFormerSdkOptions(
-            onnx: new TableFormerModelPaths(encoderPath, null),
-            pipeline: new PipelineModelPaths(encoderPath, bboxDecoderPath, decoderPath)
+            onnx: new TableFormerModelPaths(
+                TableFormerVariantModelPaths.FromDirectory(modelsDir, "tableformer_fast"),
+                accurate: null)
         );
 
         var serviceOptions = new TableFormerStructureServiceOptions
         {
             Variant = TableFormerModelVariant.Fast,
-            Runtime = TableFormerRuntime.Pipeline,
+            Runtime = TableFormerRuntime.Onnx,
             WorkingDirectory = _outputDirectory,
             GenerateOverlay = true,
             SdkOptions = tableFormerOptions

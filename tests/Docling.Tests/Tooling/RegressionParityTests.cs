@@ -190,7 +190,7 @@ public sealed class RegressionParityTests
             using var tableStructureService = new TableFormerTableStructureService(
                 new TableFormerStructureServiceOptions
                 {
-                    Runtime = TableFormerRuntime.Pipeline,
+                    Runtime = TableFormerRuntime.Onnx,
                     Variant = TableFormerModelVariant.Fast,
                     WorkingDirectory = _tableFormerDirectory,
                 },

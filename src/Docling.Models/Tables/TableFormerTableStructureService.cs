@@ -13,6 +13,7 @@ using TableFormerSdk;
 using TableFormerSdk.Configuration;
 using TableFormerSdk.Enums;
 using TableFormerSdk.Models;
+using TableFormerSdk.Performance;
 
 namespace Docling.Models.Tables;
 
@@ -51,6 +52,16 @@ public sealed class TableFormerTableStructureService : ITableStructureService, I
         new EventId(2, nameof(TryCreateDebugArtifact)),
         "Failed to encode TableFormer overlay image; skipping debug artifact.");
 
+    private static readonly Action<ILogger, Exception?> LogBackendUnavailable = LoggerMessage.Define(
+        LogLevel.Information,
+        new EventId(3, nameof(CreateTableFormerInvoker)),
+        "TableFormer backend unavailable; falling back to stub invoker.");
+
+    private static readonly Action<ILogger, Exception?> LogBackendInitializationFailed = LoggerMessage.Define(
+        LogLevel.Warning,
+        new EventId(4, nameof(CreateTableFormerInvoker)),
+        "Failed to initialize TableFormer backend; falling back to stub invoker.");
+
     public TableFormerTableStructureService(
         TableFormerStructureServiceOptions? options = null,
         ILogger<TableFormerTableStructureService>? logger = null)
@@ -71,19 +82,7 @@ public sealed class TableFormerTableStructureService : ITableStructureService, I
         _generateOverlay = options.GenerateOverlay;
         _workingDirectory = PrepareWorkingDirectory(options.WorkingDirectory);
 
-        // Default model paths - use fixed path for now
-        // TODO: Make this configurable via environment variable or config file
-        var encoderPath = "/Users/politom/Documents/Workspace/personal/doclingnet/src/submodules/ds4sd-docling-tableformer-onnx/models/encoder.onnx";
-        var bboxDecoderPath = "/Users/politom/Documents/Workspace/personal/doclingnet/src/submodules/ds4sd-docling-tableformer-onnx/models/bbox_decoder.onnx";
-        var decoderPath = "/Users/politom/Documents/Workspace/personal/doclingnet/src/submodules/ds4sd-docling-tableformer-onnx/models/decoder.onnx";
-
-        var sdkOptions = options.SdkOptions ?? new TableFormerSdkOptions(
-            new TableFormerModelPaths(encoderPath, null),
-            pipeline: new PipelineModelPaths(
-                encoderPath,
-                bboxDecoderPath,
-                decoderPath));
-        _tableFormer = tableFormer ?? new TableFormerInvoker(new TableFormer(sdkOptions));
+        _tableFormer = tableFormer ?? CreateTableFormerInvoker(options.SdkOptions);
     }
 
     public async Task<TableStructure> InferStructureAsync(TableStructureRequest request, CancellationToken cancellationToken = default)
@@ -277,6 +276,27 @@ public sealed class TableFormerTableStructureService : ITableStructureService, I
             return null;
         }
     }
+
+    private ITableFormerInvoker CreateTableFormerInvoker(TableFormerSdkOptions? sdkOptions)
+    {
+        sdkOptions ??= TryCreateDefaultSdkOptions(_logger);
+
+        if (sdkOptions is null)
+        {
+            LogBackendUnavailable(_logger, null);
+            return NullTableFormerInvoker.Instance;
+        }
+
+        try
+        {
+            return new TableFormerInvoker(new TableFormer(sdkOptions));
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or FileNotFoundException or DirectoryNotFoundException)
+        {
+            LogBackendInitializationFailed(_logger, ex);
+            return NullTableFormerInvoker.Instance;
+        }
+    }
 }
 
 internal interface ITableFormerInvoker : IDisposable
@@ -297,4 +317,83 @@ internal sealed class TableFormerInvoker : ITableFormerInvoker
         => _sdk.Process(imagePath, overlay, variant, runtime, language);
 
     public void Dispose() => _sdk.Dispose();
+}
+
+internal sealed class NullTableFormerInvoker : ITableFormerInvoker
+{
+    public static NullTableFormerInvoker Instance { get; } = new();
+
+    private NullTableFormerInvoker()
+    {
+    }
+
+    public TableStructureResult Process(string imagePath, bool overlay, TableFormerModelVariant variant, TableFormerRuntime runtime = TableFormerRuntime.Auto, TableFormerLanguage? language = null)
+    {
+        var resolvedLanguage = language ?? TableFormerLanguage.English;
+        var resolvedRuntime = runtime switch
+        {
+            TableFormerRuntime.Auto => TableFormerRuntime.Onnx,
+            TableFormerRuntime.Pipeline => TableFormerRuntime.Onnx,
+            TableFormerRuntime.OptimizedPipeline => TableFormerRuntime.Onnx,
+            _ => runtime
+        };
+        var snapshot = new TableFormerPerformanceSnapshot(resolvedRuntime, variant, 0, 0, 0, 0, 0);
+        return new TableStructureResult(Array.Empty<TableRegion>(), null, resolvedLanguage, resolvedRuntime, TimeSpan.Zero, snapshot);
+    }
+
+    public void Dispose()
+    {
+        // Nothing to dispose
+    }
+}
+
+private static TableFormerSdkOptions? TryCreateDefaultSdkOptions(ILogger logger)
+{
+    var rootOverride = Environment.GetEnvironmentVariable("TABLEFORMER_MODELS_ROOT");
+    var baseDirectory = AppContext.BaseDirectory;
+
+    var candidates = new List<string>();
+    if (!string.IsNullOrWhiteSpace(rootOverride))
+    {
+        candidates.Add(rootOverride);
+    }
+
+    if (!string.IsNullOrWhiteSpace(baseDirectory))
+    {
+        candidates.Add(Path.Combine(baseDirectory, "models", "tableformer-onnx"));
+        candidates.Add(Path.GetFullPath(Path.Combine(baseDirectory, "..", "..", "..", "..", "models", "tableformer-onnx")));
+    }
+
+    candidates.Add(Path.Combine(Environment.CurrentDirectory, "models", "tableformer-onnx"));
+
+    foreach (var candidate in candidates.Select(c => Path.GetFullPath(c)))
+    {
+        if (!Directory.Exists(candidate))
+        {
+            continue;
+        }
+
+        try
+        {
+            var fast = TableFormerVariantModelPaths.FromDirectory(candidate, "tableformer_fast");
+            TableFormerVariantModelPaths? accurate = null;
+
+            try
+            {
+                accurate = TableFormerVariantModelPaths.FromDirectory(candidate, "tableformer_accurate");
+            }
+            catch (FileNotFoundException)
+            {
+                logger.LogInformation("Accurate TableFormer models not found in '{Directory}'. Fast variant will be used.", candidate);
+            }
+
+            return new TableFormerSdkOptions(new TableFormerModelPaths(fast, accurate));
+        }
+        catch (Exception ex) when (ex is ArgumentException or FileNotFoundException or DirectoryNotFoundException)
+        {
+            logger.LogDebug(ex, "Failed to initialize TableFormer models from '{Directory}'.", candidate);
+        }
+    }
+
+    return null;
 }

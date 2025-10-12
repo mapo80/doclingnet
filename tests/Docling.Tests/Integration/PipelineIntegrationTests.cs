@@ -122,7 +122,7 @@ public sealed class PipelineIntegrationTests
         var tableFormerWorkingDirectory = Path.Combine(Path.GetTempPath(), $"docling-tableformer-{Guid.NewGuid():N}");
         var tableFormerOptions = new TableFormerStructureServiceOptions
         {
-            Runtime = TableFormerRuntime.Pipeline,
+            Runtime = TableFormerRuntime.Onnx,
             Variant = TableFormerModelVariant.Fast,
             WorkingDirectory = tableFormerWorkingDirectory,
         };
@@ -360,7 +360,7 @@ public sealed class PipelineIntegrationTests
         var tableFormerWorkingDirectory = Path.Combine(Path.GetTempPath(), $"docling-tableformer-{Guid.NewGuid():N}");
         var tableFormerOptions = new TableFormerStructureServiceOptions
         {
-            Runtime = TableFormerRuntime.Pipeline,
+            Runtime = TableFormerRuntime.Onnx,
             Variant = TableFormerModelVariant.Fast,
             WorkingDirectory = tableFormerWorkingDirectory,
         };
