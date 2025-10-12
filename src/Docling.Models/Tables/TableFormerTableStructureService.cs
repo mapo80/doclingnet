@@ -77,7 +77,7 @@ public sealed class TableFormerTableStructureService : ITableStructureService, I
                 "src/submodules/ds4sd-docling-tableformer-onnx/models/encoder.onnx",
                 "src/submodules/ds4sd-docling-tableformer-onnx/models/bbox_decoder.onnx",
                 "src/submodules/ds4sd-docling-tableformer-onnx/models/decoder.onnx"));
-        _tableFormer = tableFormer ?? new TableFormerInvoker(new TableFormerSdk.TableFormerSdk(sdkOptions));
+        _tableFormer = tableFormer ?? new TableFormerInvoker(new TableFormerSdk.TableFormer(sdkOptions));
     }
 
     public async Task<TableStructure> InferStructureAsync(TableStructureRequest request, CancellationToken cancellationToken = default)
@@ -275,14 +275,14 @@ public sealed class TableFormerTableStructureService : ITableStructureService, I
 
 internal interface ITableFormerInvoker : IDisposable
 {
-    TableStructureResult Process(string imagePath, bool overlay, TableFormerModelVariant variant, TableFormerRuntime runtime = TableFormerRuntime.Auto, TableFormerLanguage? language = null);
+    internal TableStructureResult Process(string imagePath, bool overlay, TableFormerModelVariant variant, TableFormerRuntime runtime = TableFormerRuntime.Auto, TableFormerLanguage? language = null);
 }
 
 internal sealed class TableFormerInvoker : ITableFormerInvoker
 {
-    private readonly TableFormerSdk.TableFormerSdk _sdk;
+    private readonly TableFormerSdk.TableFormer _sdk;
 
-    public TableFormerInvoker(TableFormerSdk.TableFormerSdk sdk)
+    public TableFormerInvoker(TableFormerSdk.TableFormer sdk)
     {
         _sdk = sdk ?? throw new ArgumentNullException(nameof(sdk));
     }
