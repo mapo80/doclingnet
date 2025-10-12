@@ -103,11 +103,46 @@ public sealed partial class PageAssemblyStage : IPipelineStage
                 ? structures
                 : new List<TableStructurePlacement>();
 
-            var emittedTextualContent = false;
-            var captionAnchors = new List<DocItem>();
+        var emittedTextualContent = false;
+        var captionAnchors = new List<DocItem>();
 
-            // Raggruppa elementi di testo adiacenti per migliorare la struttura
-            var textGroups = GroupAdjacentTextBlocks(pageItems, layoutLookup);
+        // Pre-elabora tabelle e figure così che le caption possano agganciarsi correttamente
+        foreach (var item in pageItems)
+        {
+            switch (item.Kind)
+            {
+                case LayoutItemKind.Table:
+                {
+                    var table = BuildTableItem(
+                        item,
+                        page,
+                        pageTableStructures,
+                        tableCellTexts);
+
+                    if (table is not null)
+                    {
+                        builder.AddItem(table, CreateRegionProvenance(table));
+                        captionAnchors.Add(table);
+                    }
+
+                    break;
+                }
+                case LayoutItemKind.Figure:
+                {
+                    var picture = BuildPictureItem(item);
+                    if (picture is not null)
+                    {
+                        builder.AddItem(picture, CreateRegionProvenance(picture));
+                        captionAnchors.Add(picture);
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        // Raggruppa elementi di testo adiacenti per migliorare la struttura
+        var textGroups = GroupAdjacentTextBlocks(pageItems, layoutLookup);
 
             foreach (var group in textGroups)
             {
@@ -201,41 +236,6 @@ public sealed partial class PageAssemblyStage : IPipelineStage
                         builder.AddItem(paragraphItem, CreateTextProvenance(paragraphItem, paragraphItem.Text));
                         emittedTextualContent = true;
                         captionAnchors.Add(paragraphItem);
-                    }
-                }
-            }
-
-            // Processa tabelle e figure
-            foreach (var item in pageItems)
-            {
-                switch (item.Kind)
-                {
-                    case LayoutItemKind.Table:
-                    {
-                        var table = BuildTableItem(
-                            item,
-                            page,
-                            pageTableStructures,
-                            tableCellTexts);
-
-                        if (table is not null)
-                        {
-                            builder.AddItem(table, CreateRegionProvenance(table));
-                            captionAnchors.Add(table);
-                        }
-
-                        break;
-                    }
-                    case LayoutItemKind.Figure:
-                    {
-                        var picture = BuildPictureItem(item);
-                        if (picture is not null)
-                        {
-                            builder.AddItem(picture, CreateRegionProvenance(picture));
-                            captionAnchors.Add(picture);
-                        }
-
-                        break;
                     }
                 }
             }

@@ -25,9 +25,31 @@ public interface ILayoutNormalizationMetadataSource
 }
 
 /// <summary>
+/// Exposes profiling telemetry captured while executing layout inference.
+/// </summary>
+public interface ILayoutProfilingTelemetrySource
+{
+    IReadOnlyList<LayoutInferenceProfilingTelemetry> ConsumeProfilingTelemetry();
+}
+
+/// <summary>
 /// Represents the normalization parameters applied to a specific page before invoking the layout model.
 /// </summary>
 public sealed record LayoutNormalizationTelemetry(PageReference Page, LayoutSdkNormalisationMetadata Metadata);
+
+/// <summary>
+/// Timing breakdown collected while running layout inference for a single page.
+/// </summary>
+public readonly record struct LayoutSdkProfilingSnapshot(
+    double PersistMilliseconds,
+    double InferenceMilliseconds,
+    double PostprocessMilliseconds,
+    double TotalMilliseconds);
+
+/// <summary>
+/// Associates a profiling snapshot with the originating page.
+/// </summary>
+public sealed record LayoutInferenceProfilingTelemetry(PageReference Page, LayoutSdkProfilingSnapshot Snapshot);
 
 /// <summary>
 /// Defines the input payload for layout detection.

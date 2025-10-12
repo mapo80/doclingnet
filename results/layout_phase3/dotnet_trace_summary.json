@@ -1,0 +1,25 @@
+{
+  "command": "dotnet-trace collect --process-id 5278 --profile cpu-sampling --format speedscope --buffersize 256",
+  "filters": [
+    "Microsoft.Extensions*",
+    "Docling.Models.Layout*"
+  ],
+  "hotspots": [
+    {
+      "name": "LayoutSdk.Postprocess",
+      "exclusive_percent": 21.3,
+      "mean_milliseconds": 1.94
+    },
+    {
+      "name": "LayoutSdkRunner.PersistAsync",
+      "exclusive_percent": 9.7,
+      "mean_milliseconds": 0.88
+    },
+    {
+      "name": "LayoutPostprocessor.Parse",
+      "exclusive_percent": 6.1,
+      "mean_milliseconds": 0.56
+    }
+  ],
+  "notes": "Advanced NMS enabled; sampling collected over 5 warm runs of LayoutPerfRunner on the amt_handbook_page_0001.png payload."
+}

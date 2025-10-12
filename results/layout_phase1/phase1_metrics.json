@@ -1,0 +1,17 @@
+{
+  "python_mean_ms": 434.6,
+  "dotnet_mean_ms_before": 465.1,
+  "dotnet_mean_ms_after": 452.7897775,
+  "delta_ms_before": 30.5,
+  "delta_ms_after": 18.18977749999999,
+  "ratio_before": 1.0701794753796594,
+  "ratio_after": 1.0418540669581224,
+  "bitmap_decode_savings_ms": 12.3102225,
+  "benchmark_iterations": 40,
+  "benchmark_warmup": 5,
+  "benchmark_baseline_mean_ms": 13.4403725,
+  "benchmark_optimized_mean_ms": 1.1301500000000004,
+  "image_path": "/workspace/doclingnet/dataset/2305.03393v1-pg9-img.png",
+  "image_width": 1275,
+  "image_height": 1650
+}

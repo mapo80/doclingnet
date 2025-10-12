@@ -1,0 +1,10 @@
+{
+  "BaselineMeanMs": 5.734102,
+  "OptimizedMeanMs": 0.411276,
+  "DeltaMs": 5.322826,
+  "Ratio": 13.936875,
+  "Iterations": 100,
+  "Warmup": 10,
+  "Elements": 1228800,
+  "Shape": [1, 3, 640, 640]
+}

@@ -1,0 +1,46 @@
+{
+  "canonical_sample_id": "2305.03393v1-pg9-img.png",
+  "timeline": [
+    {
+      "label": "Baseline (pre Phase 1)",
+      "python_mean_ms": 434.6,
+      "dotnet_mean_ms": 465.1,
+      "delta_ms": 30.5,
+      "ratio": 1.0701794753796594,
+      "incremental_delta_reduction_ms": null
+    },
+    {
+      "label": "Phase 1",
+      "python_mean_ms": 434.6,
+      "dotnet_mean_ms": 452.7897775,
+      "delta_ms": 18.18977749999999,
+      "ratio": 1.0418540669581224,
+      "incremental_delta_reduction_ms": 12.310222500000009
+    },
+    {
+      "label": "Phase 2",
+      "python_mean_ms": 434.6,
+      "dotnet_mean_ms": 445.04,
+      "delta_ms": 10.439999999999998,
+      "ratio": 1.0240220892774965,
+      "incremental_delta_reduction_ms": 7.749777499999993
+    },
+    {
+      "label": "Phase 3",
+      "python_mean_ms": 434.6,
+      "dotnet_mean_ms": 440.6,
+      "delta_ms": 6.0,
+      "ratio": 1.0138057984353428,
+      "incremental_delta_reduction_ms": 4.439999999999998
+    }
+  ],
+  "total_delta_reduction_ms": 24.5,
+  "phase3_multi_sample_mean": {
+    "sample_count": 3,
+    "python_mean_ms": 466.81333333333333,
+    "dotnet_mean_ms": 474.2,
+    "delta_mean_ms": 7.386666666666656,
+    "ratio_mean": 1.0158235982976778,
+    "advanced_nms_mean_gain_ms": 5.99666666666667
+  }
+}

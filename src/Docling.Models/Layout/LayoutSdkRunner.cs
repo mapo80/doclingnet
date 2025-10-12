@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using LayoutSdk;
@@ -10,13 +12,19 @@ using LayoutSdk.Configuration;
 using LayoutSdk.Factories;
 using LayoutSdk.Processing;
 using Microsoft.Extensions.Logging;
-using SkiaSharp;
 
 namespace Docling.Models.Layout;
 
 internal interface ILayoutSdkRunner : IDisposable
 {
-    internal Task<LayoutSdkInferenceResult> InferAsync(ReadOnlyMemory<byte> imageContent, CancellationToken cancellationToken);
+    internal Task<LayoutSdkInferenceResult> InferAsync(LayoutPagePayload page, CancellationToken cancellationToken);
+}
+
+internal interface ILayoutSdkProfilingSource
+{
+    bool IsProfilingEnabled { get; }
+
+    bool TryGetProfilingSnapshot(out LayoutSdkProfilingSnapshot snapshot);
 }
 
 internal readonly record struct LayoutSdkInferenceResult(
@@ -33,7 +41,7 @@ public readonly record struct LayoutSdkNormalisationMetadata(
     double OffsetY);
 
 [ExcludeFromCodeCoverage]
-internal sealed partial class LayoutSdkRunner : ILayoutSdkRunner
+internal sealed partial class LayoutSdkRunner : ILayoutSdkRunner, ILayoutSdkProfilingSource
 {
 
     private readonly LayoutSdkDetectionOptions _options;
@@ -42,6 +50,9 @@ internal sealed partial class LayoutSdkRunner : ILayoutSdkRunner
     private readonly SemaphoreSlim _semaphore;
     private readonly string _workingDirectory;
     private bool _disposed;
+    private readonly bool _captureProfiling;
+    private LayoutSdkProfilingSnapshot _profilingSnapshot;
+    private int _profilingSnapshotFlag;
 
     private LayoutSdkRunner(LayoutSdkDetectionOptions options, ILogger logger)
     {
@@ -61,6 +72,7 @@ internal sealed partial class LayoutSdkRunner : ILayoutSdkRunner
             new Docling.Models.Layout.PassthroughOverlayRenderer(),
             new SkiaImagePreprocessor());
         _semaphore = new SemaphoreSlim(_options.MaxDegreeOfParallelism);
+        _captureProfiling = options.EnableProfiling;
         RunnerLogger.Initialized(_logger, _options.Runtime.ToString(), _options.Language.ToString(), _workingDirectory);
     }
 
@@ -70,53 +82,75 @@ internal sealed partial class LayoutSdkRunner : ILayoutSdkRunner
         return new LayoutSdkRunner(options.Clone(), logger);
     }
 
-    public async Task<LayoutSdkInferenceResult> InferAsync(ReadOnlyMemory<byte> imageContent, CancellationToken cancellationToken)
+    public async Task<LayoutSdkInferenceResult> InferAsync(LayoutPagePayload page, CancellationToken cancellationToken)
     {
         ThrowIfDisposed();
         cancellationToken.ThrowIfCancellationRequested();
 
-        var persisted = await PersistAsync(imageContent, cancellationToken).ConfigureAwait(false);
+        var totalStopwatch = Stopwatch.StartNew();
+        var persistStopwatch = Stopwatch.StartNew();
+        Volatile.Write(ref _profilingSnapshotFlag, 0);
+        var persisted = await PersistAsync(page, cancellationToken).ConfigureAwait(false);
+        persistStopwatch.Stop();
         var path = persisted.Path;
         try
         {
             await _semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
             try
             {
+                var inferenceStopwatch = Stopwatch.StartNew();
                 var result = _sdk.Process(path, _options.GenerateOverlay, _options.Runtime);
+                inferenceStopwatch.Stop();
                 try
                 {
+                    var postprocessStopwatch = Stopwatch.StartNew();
                     var boxes = result.Boxes ?? Array.Empty<LayoutSdk.BoundingBox>();
                     RunnerLogger.RawDetections(_logger, boxes.Count);
 
-                    // Throw exception if Layout SDK returned no detections
+                    IReadOnlyList<LayoutSdk.BoundingBox> projected;
                     if (boxes.Count == 0)
                     {
-                        throw new LayoutServiceException(
-                            "Layout SDK failed to detect any layout elements. " +
-                            "This usually indicates a problem with the ONNX model output parsing or the image preprocessing. " +
-                            "Ensure the LayoutSdk backend (OnnxRuntimeBackend/OpenVinoBackend) correctly implements the ParseOutputs method.");
-                    }
-
-                    var projected = ReprojectBoundingBoxes(boxes, persisted.Normalisation);
-                    if (persisted.Normalisation is LayoutSdkNormalisationMetadata normalisation)
-                    {
-                        RunnerLogger.DenormalisedDetections(
-                            _logger,
-                            normalisation.OriginalWidth,
-                            normalisation.OriginalHeight,
-                            normalisation.ScaledWidth,
-                            normalisation.ScaledHeight,
-                            normalisation.Scale,
-                            normalisation.OffsetX,
-                            normalisation.OffsetY,
-                            projected.Count);
+                        projected = Array.Empty<LayoutSdk.BoundingBox>();
                     }
                     else
                     {
-                        RunnerLogger.DenormalisationSkipped(_logger, projected.Count);
+                        projected = ReprojectBoundingBoxes(boxes, persisted.Normalisation);
+                        if (persisted.Normalisation is LayoutSdkNormalisationMetadata normalisation)
+                        {
+                            RunnerLogger.DenormalisedDetections(
+                                _logger,
+                                normalisation.OriginalWidth,
+                                normalisation.OriginalHeight,
+                                normalisation.ScaledWidth,
+                                normalisation.ScaledHeight,
+                                normalisation.Scale,
+                                normalisation.OffsetX,
+                                normalisation.OffsetY,
+                                projected.Count);
+                        }
+                        else
+                        {
+                            RunnerLogger.DenormalisationSkipped(_logger, projected.Count);
+                        }
                     }
 
-                    return new LayoutSdkInferenceResult(projected, persisted.Normalisation);
+                    var inferenceResult = new LayoutSdkInferenceResult(projected, persisted.Normalisation);
+                    postprocessStopwatch.Stop();
+                    if (totalStopwatch.IsRunning)
+                    {
+                        totalStopwatch.Stop();
+                    }
+                    if (_captureProfiling)
+                    {
+                        var snapshot = new LayoutSdkProfilingSnapshot(
+                            persistStopwatch.Elapsed.TotalMilliseconds,
+                            inferenceStopwatch.Elapsed.TotalMilliseconds,
+                            postprocessStopwatch.Elapsed.TotalMilliseconds,
+                            totalStopwatch.Elapsed.TotalMilliseconds);
+                        _profilingSnapshot = snapshot;
+                        Volatile.Write(ref _profilingSnapshotFlag, 1);
+                    }
+                    return inferenceResult;
                 }
                 finally
                 {
@@ -138,6 +172,10 @@ internal sealed partial class LayoutSdkRunner : ILayoutSdkRunner
         }
         finally
         {
+            if (totalStopwatch.IsRunning)
+            {
+                totalStopwatch.Stop();
+            }
             if (!_options.KeepTemporaryFiles)
             {
                 TryDelete(path);
@@ -170,7 +208,22 @@ internal sealed partial class LayoutSdkRunner : ILayoutSdkRunner
             sdkOptions.EnsureModelPaths();
         }
 
+        ApplyAdvancedNonMaxSuppression(sdkOptions, options);
+
         return sdkOptions;
+    }
+
+    private static void ApplyAdvancedNonMaxSuppression(LayoutSdkOptions sdkOptions, LayoutSdkDetectionOptions options)
+    {
+        var property = sdkOptions.GetType().GetProperty(
+            "EnableAdvancedNonMaxSuppression",
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        if (property is null || !property.CanWrite || property.PropertyType != typeof(bool))
+        {
+            return;
+        }
+
+        property.SetValue(sdkOptions, options.EnableAdvancedNonMaxSuppression);
     }
 
     private static LayoutBackendFactory CreateBackendFactory(LayoutSdkOptions options)
@@ -187,34 +240,47 @@ internal sealed partial class LayoutSdkRunner : ILayoutSdkRunner
         return root;
     }
 
-    private async Task<PersistedImage> PersistAsync(ReadOnlyMemory<byte> content, CancellationToken cancellationToken)
+    private async Task<PersistedImage> PersistAsync(LayoutPagePayload page, CancellationToken cancellationToken)
     {
         Directory.CreateDirectory(_workingDirectory);
         var fileName = Path.Combine(_workingDirectory, Guid.NewGuid().ToString("N")) + ".png";
         var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Read, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan);
 
-        // Use original image - preprocessing is now handled by SkiaImagePreprocessor
-        await stream.WriteAsync(content, cancellationToken).ConfigureAwait(false);
+        await stream.WriteAsync(page.ImageContent, cancellationToken).ConfigureAwait(false);
 
         await stream.DisposeAsync().ConfigureAwait(false);
 
-        // Create metadata for the original image dimensions
-        using var data = SKData.CreateCopy(content.Span);
-        using var bitmap = SKBitmap.Decode(data);
-        LayoutSdkNormalisationMetadata? metadata = null;
-        if (bitmap is not null)
-        {
-            metadata = new LayoutSdkNormalisationMetadata(
-                bitmap.Width,
-                bitmap.Height,
-                bitmap.Width,
-                bitmap.Height,
-                Scale: 1.0,
-                OffsetX: 0,
-                OffsetY: 0);
-        }
+        var metadata = new LayoutSdkNormalisationMetadata(
+            page.Width,
+            page.Height,
+            page.Width,
+            page.Height,
+            Scale: 1.0,
+            OffsetX: 0,
+            OffsetY: 0);
 
         return new PersistedImage(fileName, metadata);
+    }
+
+    bool ILayoutSdkProfilingSource.IsProfilingEnabled => _captureProfiling;
+
+    bool ILayoutSdkProfilingSource.TryGetProfilingSnapshot(out LayoutSdkProfilingSnapshot snapshot)
+    {
+        if (!_captureProfiling)
+        {
+            snapshot = default;
+            return false;
+        }
+
+        if (Volatile.Read(ref _profilingSnapshotFlag) == 0)
+        {
+            snapshot = default;
+            return false;
+        }
+
+        snapshot = _profilingSnapshot;
+        Volatile.Write(ref _profilingSnapshotFlag, 0);
+        return true;
     }
 
 

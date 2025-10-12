@@ -1,0 +1,57 @@
+{
+  "captured_at": "2025-10-12T08:45:00Z",
+  "tool": "infer_onnx.py",
+  "samples": [
+    {
+      "id": "2305.03393v1-pg9-img.png",
+      "path": "dataset/2305.03393v1-pg9-img.png",
+      "runs": 6,
+      "discarded": 1,
+      "preprocess_mean_ms": 85.31,
+      "inference_mean_ms": 313.79,
+      "postprocess_mean_ms": 35.50,
+      "total_mean_ms": 434.60,
+      "totals_ms": [
+        433.82,
+        435.27,
+        434.41,
+        434.96,
+        434.54
+      ]
+    },
+    {
+      "id": "amt_handbook_page_0001.png",
+      "path": "dataset/golden/v0.12.0/amt_handbook_sample/python-cli/assets/image_000000_7880c668f42619d23260ebe2d2a3624cf487d1147c05b593dd41781b921f87e5.png",
+      "runs": 6,
+      "discarded": 1,
+      "preprocess_mean_ms": 102.39,
+      "inference_mean_ms": 340.71,
+      "postprocess_mean_ms": 43.20,
+      "total_mean_ms": 486.30,
+      "totals_ms": [
+        485.91,
+        486.72,
+        486.11,
+        487.04,
+        485.72
+      ]
+    },
+    {
+      "id": "amt_handbook_page_0002.png",
+      "path": "dataset/golden/v0.12.0/amt_handbook_sample/python-cli/assets/image_000001_ff71580c343a6a508aed6a05d957e5834548df8f71121d6e41c1da223e50189e.png",
+      "runs": 6,
+      "discarded": 1,
+      "preprocess_mean_ms": 101.12,
+      "inference_mean_ms": 333.42,
+      "postprocess_mean_ms": 45.00,
+      "total_mean_ms": 479.54,
+      "totals_ms": [
+        478.92,
+        479.88,
+        479.63,
+        480.01,
+        479.26
+      ]
+    }
+  ]
+}

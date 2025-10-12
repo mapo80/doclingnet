@@ -12,13 +12,19 @@ namespace Docling.Models.Layout;
 /// <summary>
 /// Implementation of <see cref="ILayoutDetectionService"/> backed by the Docling Layout SDK (Heron ONNX models).
 /// </summary>
-public sealed partial class LayoutSdkDetectionService : ILayoutDetectionService, ILayoutNormalizationMetadataSource, IDisposable
+public sealed partial class LayoutSdkDetectionService :
+    ILayoutDetectionService,
+    ILayoutNormalizationMetadataSource,
+    ILayoutProfilingTelemetrySource,
+    IDisposable
 {
     private readonly ILogger<LayoutSdkDetectionService> _logger;
     private readonly ILayoutSdkRunner _runner;
     private bool _disposed;
     private readonly object _telemetrySync = new();
     private readonly List<LayoutNormalizationTelemetry> _normalisations = new();
+    private readonly object _profilingSync = new();
+    private readonly List<LayoutInferenceProfilingTelemetry> _profiling = new();
 
     public LayoutSdkDetectionService(LayoutSdkDetectionOptions options, ILogger<LayoutSdkDetectionService> logger)
         : this(options, logger, LayoutSdkRunner.Create(options, logger))
@@ -47,6 +53,14 @@ public sealed partial class LayoutSdkDetectionService : ILayoutDetectionService,
             _normalisations.Clear();
         }
 
+        lock (_profilingSync)
+        {
+            _profiling.Clear();
+        }
+
+        var profilingSource = _runner as ILayoutSdkProfilingSource;
+        var captureProfiling = profilingSource?.IsProfilingEnabled ?? false;
+
         var items = new List<LayoutItem>();
         foreach (var page in request.Pages)
         {
@@ -54,7 +68,7 @@ public sealed partial class LayoutSdkDetectionService : ILayoutDetectionService,
             LayoutSdkInferenceResult inferenceResult;
             try
             {
-                inferenceResult = await _runner.InferAsync(page.ImageContent, cancellationToken).ConfigureAwait(false);
+                inferenceResult = await _runner.InferAsync(page, cancellationToken).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -105,6 +119,14 @@ public sealed partial class LayoutSdkDetectionService : ILayoutDetectionService,
             }
 
             ServiceLogger.PageProcessed(_logger, page.Page.PageNumber, boxes.Count);
+
+            if (captureProfiling && profilingSource!.TryGetProfilingSnapshot(out var snapshot))
+            {
+                lock (_profilingSync)
+                {
+                    _profiling.Add(new LayoutInferenceProfilingTelemetry(page.Page, snapshot));
+                }
+            }
         }
 
         ServiceLogger.DetectionCompleted(_logger, request.Pages.Count, items.Count);
@@ -122,6 +144,21 @@ public sealed partial class LayoutSdkDetectionService : ILayoutDetectionService,
 
             var snapshot = _normalisations.ToArray();
             _normalisations.Clear();
+            return snapshot;
+        }
+    }
+
+    public IReadOnlyList<LayoutInferenceProfilingTelemetry> ConsumeProfilingTelemetry()
+    {
+        lock (_profilingSync)
+        {
+            if (_profiling.Count == 0)
+            {
+                return Array.Empty<LayoutInferenceProfilingTelemetry>();
+            }
+
+            var snapshot = _profiling.ToArray();
+            _profiling.Clear();
             return snapshot;
         }
     }

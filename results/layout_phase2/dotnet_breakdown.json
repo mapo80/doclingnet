@@ -1,0 +1,16 @@
+{
+  "iterations": 6,
+  "discarded_warmup": 1,
+  "phase1": {
+    "preprocess_mean_ms": 94.83,
+    "inference_mean_ms": 308.97,
+    "postprocess_mean_ms": 49.21,
+    "total_mean_ms": 452.99
+  },
+  "phase2": {
+    "preprocess_mean_ms": 94.30,
+    "inference_mean_ms": 308.71,
+    "postprocess_mean_ms": 42.03,
+    "total_mean_ms": 445.04
+  }
+}

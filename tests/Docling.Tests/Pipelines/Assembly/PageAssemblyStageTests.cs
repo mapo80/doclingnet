@@ -45,7 +45,7 @@ public sealed class PageAssemblyStageTests
         document.SourceId.Should().Be("doc-source");
         document.Items.Should().HaveCount(1);
         var paragraph = document.Items[0].Should().BeOfType<ParagraphItem>().Subject;
-        paragraph.Text.Should().Be("Hello\nworld");
+        paragraph.Text.Should().Be("Hello world");
         paragraph.Metadata.Should().ContainKey("docling:source");
         paragraph.Provenance.Should().ContainSingle();
         var provenance = paragraph.Provenance[0];

@@ -1,0 +1,11 @@
+{
+  "BaselineMeanMs": 13.4403725,
+  "OptimizedMeanMs": 1.1301500000000004,
+  "DeltaMs": 12.3102225,
+  "Ratio": 11.892556297836567,
+  "Iterations": 40,
+  "Warmup": 5,
+  "ImagePath": "/workspace/doclingnet/dataset/2305.03393v1-pg9-img.png",
+  "Width": 1275,
+  "Height": 1650
+}
