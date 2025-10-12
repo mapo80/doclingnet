@@ -1,0 +1,17 @@
+{
+  "data": {
+    "tableCount": 1,
+    "tables": [
+      {
+        "pageNumber": 0,
+        "rowCount": 0,
+        "columnCount": 0,
+        "cellCount": 0,
+        "hasDebugArtifact": false,
+        "cells": []
+      }
+    ]
+  },
+  "stage": "table_structure",
+  "completedAt": "2025-10-12T13:54:38.32858+00:00"
+}

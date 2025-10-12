@@ -1,0 +1,20 @@
+{
+  "data": {
+    "completed": true,
+    "pageCount": 1,
+    "pages": [
+      {
+        "pageNumber": 0,
+        "dpi": 300,
+        "cached": true,
+        "width": 1275,
+        "height": 1650,
+        "scaleFactor": "1.0000",
+        "colorMode": "Preserve",
+        "deskewAngle": "0.00"
+      }
+    ]
+  },
+  "stage": "page_preprocessing",
+  "completedAt": "2025-10-12T13:54:36.817558+00:00"
+}
