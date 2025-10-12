@@ -17,7 +17,11 @@
       "Bash(git checkout:*)",
       "Bash(git pull:*)",
       "Bash(git fetch)",
-      "Read(//Users/politom/**)"
+      "Read(//Users/politom/**)",
+      "Bash(git switch:*)",
+      "Bash(OUTPUT_DIR=\"dataset/test-fase3-validation\")",
+      "Bash(echo \"Output directory: $OUTPUT_DIR\")",
+      "Read(//private/var/folders/09/zgb8cky974d49wxs8m6ttlzr0000gn/T/**)"
     ],
     "deny": [],
     "ask": []
