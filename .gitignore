@@ -7,9 +7,3 @@ obj/
 TestResults/
 packages/custom/
 **/packages/custom/
-
-# Model files (usually large binary files)
-*.onnx
-*.bin
-*.ort
-*.parquet
