@@ -315,8 +315,14 @@ public sealed class TableFormerTableStructureService : ITableStructureService, I
             var newInvoker = new TableFormerInvoker(new TableFormer(sdkOptions));
             _currentSdkOptions = sdkOptions;
 
+            var fastModelPaths = new List<string> { sdkOptions.Onnx.Fast.ModelPath };
+            if (!string.IsNullOrWhiteSpace(sdkOptions.Onnx.Fast.MetadataPath))
+            {
+                fastModelPaths.Add(sdkOptions.Onnx.Fast.MetadataPath!);
+            }
+
             _logger.LogInformation("TableFormer backend initialized successfully with models from: {Paths}",
-                string.Join(", ", new[] { sdkOptions.Onnx.Fast.EncoderPath, sdkOptions.Onnx.Fast.TagEncoderPath }));
+                string.Join(", ", fastModelPaths));
 
             return newInvoker;
         }
@@ -359,9 +365,9 @@ public sealed class TableFormerTableStructureService : ITableStructureService, I
         if (_currentSdkOptions?.Onnx != null)
         {
             return (
-                _currentSdkOptions.Onnx.Fast.EncoderPath,
-                _currentSdkOptions.Onnx.Fast.TagEncoderPath,
-                _currentSdkOptions.Onnx.Accurate?.EncoderPath
+                _currentSdkOptions.Onnx.Fast.ModelPath,
+                _currentSdkOptions.Onnx.Fast.MetadataPath,
+                _currentSdkOptions.Onnx.Accurate?.ModelPath
             );
         }
 
