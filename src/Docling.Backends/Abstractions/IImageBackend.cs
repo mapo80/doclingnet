@@ -9,5 +9,5 @@ namespace Docling.Backends.Abstractions;
 /// </summary>
 public interface IImageBackend
 {
-    IAsyncEnumerable<PageImage> LoadAsync(CancellationToken cancellationToken);
+    public IAsyncEnumerable<PageImage> LoadAsync(CancellationToken cancellationToken);
 }

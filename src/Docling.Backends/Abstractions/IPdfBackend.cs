@@ -8,5 +8,5 @@ namespace Docling.Backends.Abstractions;
 /// </summary>
 public interface IPdfBackend : IImageBackend
 {
-    Task<int> GetPageCountAsync(CancellationToken cancellationToken);
+    public Task<int> GetPageCountAsync(CancellationToken cancellationToken);
 }

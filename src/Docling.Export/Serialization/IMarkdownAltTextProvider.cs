@@ -14,5 +14,5 @@ public interface IMarkdownAltTextProvider
     /// </summary>
     /// <param name="context">The serialization context describing the current artefact.</param>
     /// <returns>An alternative text value or <see langword="null"/> to fall back to defaults.</returns>
-    string? GetAltText(MarkdownAltTextContext context);
+    public string? GetAltText(MarkdownAltTextContext context);
 }

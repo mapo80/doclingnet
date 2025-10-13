@@ -516,31 +516,6 @@ public sealed class TableFormerTableStructureService : ITableStructureService, I
 
         return recommendations;
     }
-}
-
-/// <summary>
-/// Collection of performance recommendations.
-/// </summary>
-public sealed class PerformanceRecommendations
-{
-    private readonly List<string> _recommendations = new();
-
-    public IReadOnlyList<string> Recommendations => _recommendations.AsReadOnly();
-
-    public bool HasRecommendations => _recommendations.Any();
-
-    public void Add(string recommendation)
-    {
-        _recommendations.Add(recommendation);
-    }
-
-    public override string ToString()
-    {
-        return HasRecommendations
-            ? string.Join(Environment.NewLine, _recommendations.Select((r, i) => $"{i + 1}. {r}"))
-            : "No recommendations available.";
-    }
-}
 
     private static TableFormerSdkOptions? TryCreateDefaultSdkOptions(ILogger logger)
     {
@@ -624,5 +599,29 @@ public sealed class PerformanceRecommendations
 
         logger.LogWarning("No TableFormer models found in any of the configured paths");
         return null;
+    }
+}
+
+/// <summary>
+/// Collection of performance recommendations.
+/// </summary>
+public sealed class PerformanceRecommendations
+{
+    private readonly List<string> _recommendations = new();
+
+    public IReadOnlyList<string> Recommendations => _recommendations.AsReadOnly();
+
+    public bool HasRecommendations => _recommendations.Any();
+
+    public void Add(string recommendation)
+    {
+        _recommendations.Add(recommendation);
+    }
+
+    public override string ToString()
+    {
+        return HasRecommendations
+            ? string.Join(Environment.NewLine, _recommendations.Select((r, i) => $"{i + 1}. {r}"))
+            : "No recommendations available.";
     }
 }

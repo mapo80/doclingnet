@@ -11,5 +11,5 @@ namespace Docling.Export.Abstractions;
 /// </summary>
 public interface IImageCropService
 {
-    Task<CroppedImage> CropAsync(PageImage source, BoundingBox region, CancellationToken cancellationToken = default);
+    public Task<CroppedImage> CropAsync(PageImage source, BoundingBox region, CancellationToken cancellationToken = default);
 }
