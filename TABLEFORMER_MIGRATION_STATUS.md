@@ -327,7 +327,7 @@ if (cell.CellType == "ucel") {
 - ⚠️ Triggered `dotnet test`; build currently blocked by legacy demo utilities under `src/Docling.Models/Tables` (xUnit attributes and duplicate helper types). Left untouched pending clean-up guidance.
 
 **Next steps**:
-- [ ] Move or neutralise demo files (`TableFormerOnnxBackendTests.cs`, `AdvancedHeaderDetector.cs`, `MarkdownTableParser.cs`, …) so they no longer participate in the build.
+- [x] Move or neutralise demo files (`TableFormerOnnxBackendTests.cs`, `AdvancedHeaderDetector.cs`, `MarkdownTableParser.cs`, …) so they no longer participate in the build (archived under `docs/archive/tableformer-demos`).
 - [ ] Re-run `dotnet test` and confirm Coverlet ≥90% once the build blockers are resolved.
 - [ ] Extend the validation suite and markdown comparisons once the pipeline compiles end-to-end.
 

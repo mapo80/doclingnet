@@ -1,0 +1,14 @@
+{
+  "model": "models/heron-int8-dynamic.onnx",
+  "images": "./dataset",
+  "synthetic": false,
+  "variant_name": "onnx-int8-dynamic",
+  "output": "results",
+  "target_h": 1024,
+  "target_w": 1024,
+  "warmup": 1,
+  "runs_per_image": 1,
+  "threads_intra": 0,
+  "threads_inter": 1,
+  "sequential": false
+}

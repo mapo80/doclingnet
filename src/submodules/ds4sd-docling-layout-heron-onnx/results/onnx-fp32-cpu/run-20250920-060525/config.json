@@ -1,0 +1,13 @@
+{
+  "model": "models/heron-optimized.onnx",
+  "images": "./dataset",
+  "variant_name": "onnx-fp32-cpu",
+  "output": "results",
+  "target_h": 640,
+  "target_w": 640,
+  "warmup": 1,
+  "runs_per_image": 1,
+  "threads_intra": 0,
+  "threads_inter": 1,
+  "sequential": true
+}

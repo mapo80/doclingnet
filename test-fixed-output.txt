@@ -1,0 +1,154 @@
+[12:22:45 INF] Initialised layout SDK runner (runtime: Onnx, language: English, workspace: /var/folders/09/zgb8cky974d49wxs8m6ttlzr0000gn/T/docling-layout-sdk).
+[12:22:45 INF] Using TableFormer fast models from environment variable: /Users/politom/Documents/Workspace/personal/doclingnet/src/submodules/ds4sd-docling-tableformer-onnx/models
+[12:22:45 INF] TableFormer performance settings - CUDA: False, Quantization: False, Optimizations: True
+[12:22:45 INF] TableFormer backend initialized successfully with models from: /Users/politom/Documents/Workspace/personal/doclingnet/src/submodules/ds4sd-docling-tableformer-onnx/models/tableformer_fast_encoder.onnx, /Users/politom/Documents/Workspace/personal/doclingnet/src/submodules/ds4sd-docling-tableformer-onnx/models/tableformer_fast_tag_transformer_encoder.onnx
+[12:22:45 INF] Starting Docling conversion for /Users/politom/Documents/Workspace/personal/doclingnet/dataset/2305.03393v1-pg9-img.png (document id: 2305.03393v1-pg9-img). Configuration: DPI=300, OCR languages=en, TableMode=Fast, ImageMode=Referenced, PageImages=True, PictureImages=True.
+[12:22:45 INF] Configuration snapshot:
+{
+  "documentId": "2305.03393v1-pg9-img",
+  "sourcePath": "/Users/politom/Documents/Workspace/personal/doclingnet/dataset/2305.03393v1-pg9-img.png",
+  "inputKind": "Image",
+  "sourceName": "2305.03393v1-pg9-img.png",
+  "outputDirectory": "/Users/politom/Documents/Workspace/personal/doclingnet/test-output-fixed",
+  "markdownFileName": "docling.md",
+  "assetsDirectoryName": "assets",
+  "preprocessingDpi": 300,
+  "renderDpi": 300,
+  "forceFullPageOcr": false,
+  "tableMode": "Fast",
+  "imageMode": "Referenced",
+  "ocrLanguages": [
+    "en"
+  ],
+  "generatePageImages": true,
+  "generatePictureImages": true,
+  "generateLayoutDebugArtifacts": false,
+  "generateImageDebugArtifacts": false,
+  "generateTableDebugArtifacts": true,
+  "pipelineStages": [
+    "page_preprocessing",
+    "layout_analysis",
+    "table_structure",
+    "ocr",
+    "page_assembly",
+    "image_export",
+    "markdown_serialization"
+  ]
+}
+[12:22:45 INF] Loaded 1 page(s) from input document.
+[12:22:45 DBG] Stage page_preprocessing starting.
+[12:22:45 INF] Starting pipeline stage page_preprocessing.
+[12:22:45 INF] Preprocessing page 0 (media: image/png, dpi: 300).
+[12:22:45 INF] Completed preprocessing for page 0 in 17 ms.
+[12:22:45 INF] Completed pipeline stage page_preprocessing in 26 ms.
+[12:22:45 DBG] Stage page_preprocessing completed.
+[12:22:45 DBG] Stage layout_analysis starting.
+[12:22:45 INF] Starting pipeline stage layout_analysis.
+[12:22:45 INF] Prepared page 0 for layout analysis (media: image/png, dpi: 300, size: 1275x1650).
+[12:22:46 DBG] Layout SDK returned 12 raw detections before reprojection.
+[12:22:46 DBG] Reprojected 12 layout detections to 1275x1650 (scaled 1275x1650, scale 1.000, offsets 0.00,0.00).
+[12:22:46 DBG] Page 0 applied layout normalisation (original 1275x1650, scaled 1275x1650, scale 1.000, offsets 0.00,0.00).
+[12:22:46 WRN] Encountered unknown layout label 'Section-header'. Falling back to text kind.
+[12:22:46 WRN] Encountered unknown layout label 'Page-header'. Falling back to text kind.
+[12:22:46 WRN] Encountered unknown layout label 'Section-header'. Falling back to text kind.
+[12:22:46 WRN] Encountered unknown layout label 'Page-header'. Falling back to text kind.
+[12:22:46 INF] Processed page 0 with 12 layout predictions.
+[12:22:46 INF] Layout SDK produced 12 items across 1 pages.
+[12:22:46 INF] Layout detection produced 12 items in 903 ms.
+[12:22:46 INF] Completed pipeline stage layout_analysis in 974 ms.
+[12:22:46 DBG] Stage layout_analysis completed.
+[12:22:46 DBG] Stage table_structure starting.
+[12:22:46 INF] Starting pipeline stage table_structure.
+2025-10-13 12:22:46.952 Docling.Tooling[32877:4223790] 2025-10-13 12:22:46.952857 [E:onnxruntime:, sequential_executor.cc:572 ExecuteKernel] Non-zero status code returned while running Reshape node. Name:'/_decoder/layers.0/self_attn/Reshape_4' Status Message: /Users/runner/work/1/s/onnxruntime/core/providers/cpu/tensor/reshape_helper.h:47 onnxruntime::ReshapeHelper::ReshapeHelper(const TensorShape &, TensorShapeVector &, bool) input_shape_size == size was false. The input tensor cannot be reshaped to the requested shape. Input shape:{2,1,512}, requested shape:{1,8,64}
+TableFormer inference error: [ErrorCode:RuntimeException] Non-zero status code returned while running Reshape node. Name:'/_decoder/layers.0/self_attn/Reshape_4' Status Message: /Users/runner/work/1/s/onnxruntime/core/providers/cpu/tensor/reshape_helper.h:47 onnxruntime::ReshapeHelper::ReshapeHelper(const TensorShape &, TensorShapeVector &, bool) input_shape_size == size was false. The input tensor cannot be reshaped to the requested shape. Input shape:{2,1,512}, requested shape:{1,8,64}
+
+[12:22:46 INF] Table structure inferred for page 0 with 0 cells.
+[12:22:46 INF] Completed pipeline stage table_structure in 459 ms.
+[12:22:46 DBG] Stage table_structure completed.
+[12:22:46 DBG] Stage ocr starting.
+[12:22:46 INF] Starting pipeline stage ocr.
+[12:22:46 DBG] Configuring EasyOCR.NET: requested languages en resolved to English, backend Onnx, device CPU.
+[12:22:47 INF] Initialised EasyOCR.NET backend Onnx (CPU) with language English using models in /Users/politom/Documents/Workspace/personal/doclingnet/src/Docling.Tooling/bin/Debug/net9.0/.
+[12:22:48 INF] Recognised 11 lines on page 0 (layout:Table) in 1370 ms.
+[12:22:49 INF] Recognised 6 lines on page 0 (layout:Text) in 1078 ms.
+[12:22:50 INF] Recognised 8 lines on page 0 (layout:Text) in 1156 ms.
+[12:22:51 INF] Recognised 4 lines on page 0 (layout:Text) in 968 ms.
+[12:22:52 INF] Recognised 3 lines on page 0 (layout:Text) in 879 ms.
+[12:22:53 INF] Recognised 5 lines on page 0 (layout:Text) in 1079 ms.
+[12:22:54 INF] Recognised 1 lines on page 0 (layout:Text) in 809 ms.
+[12:22:55 INF] Recognised 1 lines on page 0 (layout:Text) in 823 ms.
+[12:22:56 INF] Recognised 1 lines on page 0 (layout:Text) in 840 ms.
+[12:22:56 DBG] Skipping OCR for region on page 0 due to area ratio 6.964214196339011E-05.
+[12:22:56 INF] Recognised 4 lines on page 0 (layout:Text) in 919 ms.
+[12:22:57 INF] Recognised 4 lines on page 0 (layout:Text) in 966 ms.
+[12:22:57 INF] Completed pipeline stage ocr in 10984 ms.
+[12:22:57 DBG] Stage ocr completed.
+[12:22:57 DBG] Stage page_assembly starting.
+[12:22:57 INF] Starting pipeline stage page_assembly.
+[12:22:57 INF] Assembled document with 2 items.
+[12:22:57 INF] Completed pipeline stage page_assembly in 21 ms.
+[12:22:57 DBG] Stage page_assembly completed.
+[12:22:57 DBG] Stage image_export starting.
+[12:22:57 INF] Starting pipeline stage image_export.
+[12:22:58 INF] Exported 1 image artefacts.
+[12:22:58 INF] Completed pipeline stage image_export in 71 ms.
+[12:22:58 DBG] Stage image_export completed.
+[12:22:58 DBG] Stage markdown_serialization starting.
+[12:22:58 INF] Starting pipeline stage markdown_serialization.
+[12:22:58 INF] Completed pipeline stage markdown_serialization in 0 ms.
+[12:22:58 DBG] Stage markdown_serialization completed.
+[12:22:58 INF] Telemetry summary:
+{
+  "documentId": "2305.03393v1-pg9-img",
+  "sourcePath": "/Users/politom/Documents/Workspace/personal/doclingnet/dataset/2305.03393v1-pg9-img.png",
+  "pageCount": 1,
+  "documentItemCount": 2,
+  "paragraphCount": 2,
+  "headingCount": 0,
+  "pictureCount": 0,
+  "tableCount": 0,
+  "captionCount": 0,
+  "documentPropertyCount": 0,
+  "metadataPropertyCount": 0,
+  "markdownLength": 2512,
+  "assetCount": 0,
+  "exportedImageCount": 1,
+  "layoutDebugCount": 0,
+  "imageDebugCount": 0,
+  "tableDebugCount": 0,
+  "workflowDebugCount": 0,
+  "imageExportCount": 1,
+  "elapsedMilliseconds": 12679,
+  "generatedAt": "2025-10-13T10:22:58.03973+00:00",
+  "stages": [
+    {
+      "stage": "page_preprocessing",
+      "durationMilliseconds": 30
+    },
+    {
+      "stage": "layout_analysis",
+      "durationMilliseconds": 974
+    },
+    {
+      "stage": "table_structure",
+      "durationMilliseconds": 459
+    },
+    {
+      "stage": "ocr",
+      "durationMilliseconds": 10984
+    },
+    {
+      "stage": "page_assembly",
+      "durationMilliseconds": 21
+    },
+    {
+      "stage": "image_export",
+      "durationMilliseconds": 71
+    },
+    {
+      "stage": "markdown_serialization",
+      "durationMilliseconds": 0
+    }
+  ]
+}
+[12:22:58 INF] Conversion completed in 12679 ms. Markdown written to docling.md with 0 asset(s).

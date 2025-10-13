@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors></WarningsAsErrors>
+    <NoWarn>NU1701</NoWarn>
+    <PackageId>Docling.LayoutSdk</PackageId>
+    <Version>1.0.2</Version>
+    <Authors>Docling</Authors>
+    <Company>Docling</Company>
+    <Description>High-level SDK for running Docling Layout Heron ONNX models on .NET.</Description>
+    <PackageProjectUrl>https://github.com/mapo80/ds4sd-docling-layout-heron-onnx</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/mapo80/ds4sd-docling-layout-heron-onnx.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>docling;layout;onnx;computer-vision</PackageTags>
+    <PackageOutputPath>../../artifacts</PackageOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.23.1" />
+    <PackageReference Include="SkiaSharp" Version="3.119.1" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="3.119.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="System.Runtime.Loader.UseRidGraph">
+      <Value>true</Value>
+    </RuntimeHostConfigurationOption>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="PackagedModels/models/**">
+      <Pack>true</Pack>
+      <PackagePath>contentFiles/any/any/models/%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      <PackageCopyToOutput>true</PackageCopyToOutput>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

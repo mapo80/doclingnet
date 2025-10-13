@@ -1,0 +1,1 @@
+RUN dotnet-onnx-fp32-cpu ok, N=2

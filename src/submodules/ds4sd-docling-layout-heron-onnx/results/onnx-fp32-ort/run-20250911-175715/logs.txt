@@ -1,0 +1,1 @@
+RUN onnx-fp32-ort ok, N=20

@@ -1,0 +1,16 @@
+{
+  "ModelPath": "../models/heron-optimized.onnx",
+  "ImagesFolder": "../dataset",
+  "OutputBase": "../results",
+  "VariantName": "onnx-optimized",
+  "TargetH": 1024,
+  "TargetW": 1024,
+  "Warmup": 1,
+  "RunsPerImage": 1,
+  "IntraOpNumThreads": 0,
+  "InterOpNumThreads": 1,
+  "SequentialExecution": true,
+  "ExecutionProvider": "OpenVINO",
+  "OpenVINODevice": "CPU_FP32",
+  "UseSynthetic": false
+}

@@ -18,8 +18,8 @@ public sealed class TableFormerQualityMetricsTests
             new TableCell(BoundingBox.FromSize(50, 0, 50, 50), RowSpan: 1, ColumnSpan: 1, Text: null)
         };
 
-        var groundTruth = new TableStructure(page, groundTruthCells, rowCount: 1, columnCount: 2);
-        var predicted = new TableStructure(page, new List<TableCell>(groundTruthCells), rowCount: 1, columnCount: 2);
+        var groundTruth = new TableStructure(page, groundTruthCells, RowCount: 1, ColumnCount: 2);
+        var predicted = new TableStructure(page, new List<TableCell>(groundTruthCells), RowCount: 1, ColumnCount: 2);
 
         var teds = TableFormerQualityMetrics.CalculateTEDS(predicted, groundTruth);
         var map = TableFormerQualityMetrics.CalculateMAP(predicted.Cells, groundTruth.Cells);
@@ -60,8 +60,8 @@ public sealed class TableFormerQualityMetricsTests
             new TableCell(BoundingBox.FromSize(0, 0, 40, 40), 1, 1, null)
         };
 
-        var groundTruth = new TableStructure(page, groundTruthCells, rowCount: 1, columnCount: 2);
-        var predicted = new TableStructure(page, predictedCells, rowCount: 1, columnCount: 1);
+        var groundTruth = new TableStructure(page, groundTruthCells, RowCount: 1, ColumnCount: 2);
+        var predicted = new TableStructure(page, predictedCells, RowCount: 1, ColumnCount: 1);
 
         var teds = TableFormerQualityMetrics.CalculateTEDS(predicted, groundTruth);
         var map = TableFormerQualityMetrics.CalculateMAP(predicted.Cells, groundTruth.Cells);

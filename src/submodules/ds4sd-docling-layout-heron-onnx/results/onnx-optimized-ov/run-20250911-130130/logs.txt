@@ -1,0 +1,3 @@
+2025-09-11 13:01:30,222 INFO starting benchmark
+2025-09-11 13:01:30,735 INFO 2d0fbcc50e88065a040a537b717620e964fb4453314b71d83f3ed3425addcef6.png 7.019 ms
+2025-09-11 13:01:30,895 INFO gazette_de_france.jpg 7.631 ms

@@ -1,0 +1,7 @@
+{
+  "model_path": "models/heron-converted.xml",
+  "model_size_bytes": 87109832,
+  "ep": "CPU",
+  "device": "CPU",
+  "precision": "fp32"
+}

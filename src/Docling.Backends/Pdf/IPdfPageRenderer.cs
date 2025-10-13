@@ -10,7 +10,7 @@ namespace Docling.Backends.Pdf;
 /// </summary>
 public interface IPdfPageRenderer
 {
-    Task<int> GetPageCountAsync(Stream pdfStream, CancellationToken cancellationToken);
+    public Task<int> GetPageCountAsync(Stream pdfStream, CancellationToken cancellationToken);
 
-    IAsyncEnumerable<PageImage> RenderAsync(Stream pdfStream, IReadOnlyCollection<int>? pages, PdfRenderSettings settings, CancellationToken cancellationToken);
+    public IAsyncEnumerable<PageImage> RenderAsync(Stream pdfStream, IReadOnlyCollection<int>? pages, PdfRenderSettings settings, CancellationToken cancellationToken);
 }

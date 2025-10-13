@@ -1,0 +1,15 @@
+{
+  "model": "models/heron-optimized.onnx",
+  "images": "./dataset",
+  "synthetic": false,
+  "variant_name": "onnx-optimized",
+  "output": "results",
+  "target_h": 1024,
+  "target_w": 1024,
+  "warmup": 1,
+  "runs_per_image": 1,
+  "threads_intra": 0,
+  "threads_inter": 1,
+  "sequential": true,
+  "device": "CPU_FP32"
+}

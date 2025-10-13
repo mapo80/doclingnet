@@ -1,0 +1,6 @@
+Model: /workspace/ds4sd-docling-layout-heron-onnx/models/ov-ir-fp16/heron-optimized.xml
+Run 0: 0.051 ms
+Run 1: 0.064 ms
+Run 2: 0.019 ms
+Run 3: 0.013 ms
+Run 4: 0.015 ms

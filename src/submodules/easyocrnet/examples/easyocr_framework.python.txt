@@ -1,0 +1,1 @@
+EasyOCR Framework IMAGE Pre-Process CRAFT Mid-Process ResNet+LSTM+CTC Greedy -Process Output Decoder Other Other Othor Detection Models Recognition Models Decoders Data Generator Training Pipeline Post-

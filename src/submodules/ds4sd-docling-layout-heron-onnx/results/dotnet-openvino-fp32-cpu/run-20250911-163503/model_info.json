@@ -1,0 +1,7 @@
+{
+  "model_path": "models/ov-ir/heron-optimized.xml",
+  "model_size_bytes": 1513517,
+  "ep": "CPU",
+  "device": "CPU",
+  "precision": "fp32"
+}
