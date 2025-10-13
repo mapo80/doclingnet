@@ -291,54 +291,6 @@ public sealed class TableFormerTableStructureService : ITableStructureService, I
             return null;
         }
     }
-    
-    internal interface ITableFormerInvoker : IDisposable
-    {
-        internal TableStructureResult Process(string imagePath, bool overlay, TableFormerModelVariant variant, TableFormerRuntime runtime = TableFormerRuntime.Auto, TableFormerLanguage? language = null);
-    }
-    
-    internal sealed class TableFormerInvoker : ITableFormerInvoker
-    {
-        private readonly TableFormer _sdk;
-    
-        public TableFormerInvoker(TableFormer sdk)
-        {
-            _sdk = sdk ?? throw new ArgumentNullException(nameof(sdk));
-        }
-    
-        public TableStructureResult Process(string imagePath, bool overlay, TableFormerModelVariant variant, TableFormerRuntime runtime = TableFormerRuntime.Auto, TableFormerLanguage? language = null)
-            => _sdk.Process(imagePath, overlay, variant, runtime, language);
-    
-        public void Dispose() => _sdk.Dispose();
-    }
-    
-    internal sealed class NullTableFormerInvoker : ITableFormerInvoker
-    {
-        public static NullTableFormerInvoker Instance { get; } = new();
-    
-        private NullTableFormerInvoker()
-        {
-        }
-    
-        public TableStructureResult Process(string imagePath, bool overlay, TableFormerModelVariant variant, TableFormerRuntime runtime = TableFormerRuntime.Auto, TableFormerLanguage? language = null)
-        {
-            var resolvedLanguage = language ?? TableFormerLanguage.English;
-            var resolvedRuntime = runtime switch
-            {
-                TableFormerRuntime.Auto => TableFormerRuntime.Onnx,
-                TableFormerRuntime.Pipeline => TableFormerRuntime.Onnx,
-                TableFormerRuntime.OptimizedPipeline => TableFormerRuntime.Onnx,
-                _ => runtime
-            };
-            var snapshot = new TableFormerPerformanceSnapshot(resolvedRuntime, variant, 0, 0, 0, 0, 0);
-            return new TableStructureResult(Array.Empty<TableRegion>(), null, resolvedLanguage, resolvedRuntime, TimeSpan.Zero, snapshot);
-        }
-    
-        public void Dispose()
-        {
-            // Nothing to dispose
-        }
-    }
 
     private ITableFormerInvoker CreateTableFormerInvoker(TableFormerSdkOptions? sdkOptions)
     {
@@ -599,6 +551,54 @@ public sealed class TableFormerTableStructureService : ITableStructureService, I
 
         logger.LogWarning("No TableFormer models found in any of the configured paths");
         return null;
+    }
+}
+
+internal interface ITableFormerInvoker : IDisposable
+{
+    TableStructureResult Process(string imagePath, bool overlay, TableFormerModelVariant variant, TableFormerRuntime runtime = TableFormerRuntime.Auto, TableFormerLanguage? language = null);
+}
+
+internal sealed class TableFormerInvoker : ITableFormerInvoker
+{
+    private readonly TableFormer _sdk;
+
+    public TableFormerInvoker(TableFormer sdk)
+    {
+        _sdk = sdk ?? throw new ArgumentNullException(nameof(sdk));
+    }
+
+    public TableStructureResult Process(string imagePath, bool overlay, TableFormerModelVariant variant, TableFormerRuntime runtime = TableFormerRuntime.Auto, TableFormerLanguage? language = null)
+        => _sdk.Process(imagePath, overlay, variant, runtime, language);
+
+    public void Dispose() => _sdk.Dispose();
+}
+
+internal sealed class NullTableFormerInvoker : ITableFormerInvoker
+{
+    public static NullTableFormerInvoker Instance { get; } = new();
+
+    private NullTableFormerInvoker()
+    {
+    }
+
+    public TableStructureResult Process(string imagePath, bool overlay, TableFormerModelVariant variant, TableFormerRuntime runtime = TableFormerRuntime.Auto, TableFormerLanguage? language = null)
+    {
+        var resolvedLanguage = language ?? TableFormerLanguage.English;
+        var resolvedRuntime = runtime switch
+        {
+            TableFormerRuntime.Auto => TableFormerRuntime.Onnx,
+            TableFormerRuntime.Pipeline => TableFormerRuntime.Onnx,
+            TableFormerRuntime.OptimizedPipeline => TableFormerRuntime.Onnx,
+            _ => runtime
+        };
+        var snapshot = new TableFormerPerformanceSnapshot(resolvedRuntime, variant, 0, 0, 0, 0, 0);
+        return new TableStructureResult(Array.Empty<TableRegion>(), null, resolvedLanguage, resolvedRuntime, TimeSpan.Zero, snapshot);
+    }
+
+    public void Dispose()
+    {
+        // Nothing to dispose
     }
 }
 

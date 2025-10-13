@@ -26,8 +26,10 @@
 
   <ItemGroup>
     <Compile Include="Tables/TableModels.cs" />
+    <Compile Include="Tables/TableBuilder.cs" />
     <Compile Include="Tables/TableFormerTableStructureService.cs" />
     <Compile Include="Tables/TableFormerQualityMetrics.cs" />
+    <Compile Include="Tables/TableFormerMetrics.cs" />
   </ItemGroup>
 
   <ItemGroup>
