@@ -1,0 +1,11 @@
+numpy
+pillow
+torch
+transformers
+onnx
+onnxruntime>=1.18
+onnxruntime-tools
+opencv-python-headless
+tqdm
+pandas
+matplotlib

@@ -1,0 +1,7 @@
+{
+  "model_path": "/workspace/ds4sd-docling-layout-heron-onnx/models/heron-int8-dynamic.onnx",
+  "model_size_bytes": 136,
+  "ep": "CPU",
+  "device": "CPU",
+  "precision": "int8"
+}

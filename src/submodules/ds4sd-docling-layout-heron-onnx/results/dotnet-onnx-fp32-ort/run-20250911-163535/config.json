@@ -1,0 +1,9 @@
+{
+  "engine": "Ort",
+  "images": "dataset",
+  "variant": "dotnet-onnx-fp32-ort",
+  "warmup": 1,
+  "runs_per_image": 1,
+  "target_h": 640,
+  "target_w": 640
+}

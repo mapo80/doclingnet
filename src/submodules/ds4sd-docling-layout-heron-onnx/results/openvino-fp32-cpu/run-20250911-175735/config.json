@@ -1,0 +1,12 @@
+{
+  "model": "models/heron-converted.xml",
+  "images": "dataset/doclaynet_parquet",
+  "variant_name": "openvino-fp32-cpu",
+  "output": "results",
+  "target_h": 640,
+  "target_w": 640,
+  "warmup": 1,
+  "runs_per_image": 1,
+  "threads_intra": 0,
+  "sequential": true
+}

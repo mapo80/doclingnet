@@ -1,0 +1,1 @@
+RUN onnx-fp32-cpu ok, N=20

@@ -1,0 +1,1 @@
+RUN dotnet-openvino-fp32-cpu ok, N=2

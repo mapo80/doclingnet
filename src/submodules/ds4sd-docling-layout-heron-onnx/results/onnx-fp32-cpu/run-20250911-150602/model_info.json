@@ -1,0 +1,7 @@
+{
+  "model_path": "models/heron-optimized.onnx",
+  "model_size_bytes": 171477741,
+  "ep": "CPU",
+  "device": "CPU",
+  "precision": "fp32"
+}

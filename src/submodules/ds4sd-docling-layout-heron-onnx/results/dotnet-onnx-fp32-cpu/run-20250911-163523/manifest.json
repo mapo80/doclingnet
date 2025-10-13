@@ -1,0 +1,24 @@
+{
+  "files": [
+    {
+      "file": "timings.csv",
+      "sha256": "9c7718fd8a6f702763b1f1b7f7a0967db6dfe9d9e89063117c14c7aa96c2c094"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "e450af4e1878d96406d57642952a3a8a587b74df239db042b7cbc8dbdaade358"
+    },
+    {
+      "file": "model_info.json",
+      "sha256": "6e0ed0850c0557d91017b9605905c79f68e9d23986db3795c290a910e52355c7"
+    },
+    {
+      "file": "env.json",
+      "sha256": "6a0a7bb18f5150c325f394488b2ab8faa6292c825c89b7e135d2f5647ffd6afa"
+    },
+    {
+      "file": "config.json",
+      "sha256": "747f65ce2c8aad13114cf13569cb022ca74b6428722869e53c5bea251928cb5b"
+    }
+  ]
+}

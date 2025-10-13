@@ -1,0 +1,7 @@
+{
+  "model_path": "/workspace/ds4sd-docling-layout-heron-onnx/models/ov-ir-fp16/heron-optimized.xml",
+  "model_size_bytes": 937,
+  "ep": "OpenVINO",
+  "device": "CPU",
+  "precision": "fp16"
+}

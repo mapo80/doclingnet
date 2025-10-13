@@ -1,0 +1,7 @@
+{
+  "model_path": "/workspace/ds4sd-docling-layout-heron-onnx/models/heron-optimized.onnx",
+  "model_size_bytes": 129,
+  "ep": "CPU",
+  "device": "CPU",
+  "precision": "fp32"
+}

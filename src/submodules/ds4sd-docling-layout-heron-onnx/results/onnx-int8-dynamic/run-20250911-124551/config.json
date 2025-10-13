@@ -1,0 +1,16 @@
+{
+  "ModelPath": "../models/heron-int8-dynamic.onnx",
+  "ImagesFolder": "../dataset",
+  "OutputBase": "../results",
+  "VariantName": "onnx-int8-dynamic",
+  "TargetH": 1024,
+  "TargetW": 1024,
+  "Warmup": 1,
+  "RunsPerImage": 1,
+  "IntraOpNumThreads": 0,
+  "InterOpNumThreads": 1,
+  "SequentialExecution": true,
+  "ExecutionProvider": "CPU",
+  "OpenVINODevice": "CPU_FP32",
+  "UseSynthetic": false
+}

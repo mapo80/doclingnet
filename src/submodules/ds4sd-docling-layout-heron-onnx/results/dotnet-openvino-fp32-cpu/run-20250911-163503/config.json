@@ -1,0 +1,9 @@
+{
+  "engine": "Openvino",
+  "images": "dataset",
+  "variant": "dotnet-openvino-fp32-cpu",
+  "warmup": 1,
+  "runs_per_image": 1,
+  "target_h": 640,
+  "target_w": 640
+}

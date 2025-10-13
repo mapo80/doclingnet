@@ -1,0 +1,7 @@
+{
+  "ModelPath": "../../models/ov-ir-fp16/heron-optimized.xml",
+  "OutputBase": "../../results",
+  "VariantName": "ov-optimized-fp16",
+  "Warmup": 1,
+  "Runs": 5
+}
