@@ -1,72 +1,156 @@
 using SkiaSharp;
-using System;
-using System.IO;
 using TableFormerSdk.Backends;
-using TableFormerSdk.Configuration;
 using TableFormerSdk.Enums;
 using TableFormerSdk.Models;
-using TableFormerSdk.Performance;
-using TableFormerSdk.Rendering;
 
 namespace TableFormerSdk;
 
+/// <summary>
+/// Main SDK class for TableFormer table structure recognition
+/// Uses JPQD-quantized ONNX models from HuggingFace asmud/ds4sd-docling-models-onnx
+/// </summary>
 public sealed class TableFormer : IDisposable
 {
-    private readonly TableFormerSdkOptions _options;
-    private readonly BackendRegistry _backendRegistry;
-    private readonly OverlayRenderer _overlayRenderer;
-    private readonly TableFormerPerformanceAdvisor _performanceAdvisor;
+    private readonly Dictionary<TableFormerModelVariant, TableFormerOnnxBackend> _backends;
+    private bool _disposed;
 
-    public TableFormer(TableFormerSdkOptions options)
+    /// <summary>
+    /// Initialize TableFormer SDK with model directory
+    /// </summary>
+    /// <param name="modelsDirectory">Directory containing tableformer_fast.onnx and tableformer_accurate.onnx</param>
+    public TableFormer(string modelsDirectory)
     {
-        _options = options ?? throw new ArgumentNullException(nameof(options));
-        _backendRegistry = new BackendRegistry(new DefaultBackendFactory(_options));
-        _overlayRenderer = new OverlayRenderer(_options.Visualization);
-        _performanceAdvisor = new TableFormerPerformanceAdvisor(_options.Performance, _options.AvailableRuntimes);
+        ArgumentNullException.ThrowIfNull(modelsDirectory);
+
+        if (!Directory.Exists(modelsDirectory))
+        {
+            throw new DirectoryNotFoundException($"Models directory not found: {modelsDirectory}");
+        }
+
+        _backends = new Dictionary<TableFormerModelVariant, TableFormerOnnxBackend>();
+
+        // Load Fast variant
+        var fastPath = Path.Combine(modelsDirectory, "tableformer_fast.onnx");
+        if (File.Exists(fastPath))
+        {
+            _backends[TableFormerModelVariant.Fast] = new TableFormerOnnxBackend(fastPath, TableFormerModelVariant.Fast);
+        }
+        else
+        {
+            Console.WriteLine($"Warning: Fast model not found at {fastPath}");
+        }
+
+        // Load Accurate variant
+        var accuratePath = Path.Combine(modelsDirectory, "tableformer_accurate.onnx");
+        if (File.Exists(accuratePath))
+        {
+            _backends[TableFormerModelVariant.Accurate] = new TableFormerOnnxBackend(accuratePath, TableFormerModelVariant.Accurate);
+        }
+        else
+        {
+            Console.WriteLine($"Warning: Accurate model not found at {accuratePath}");
+        }
+
+        if (_backends.Count == 0)
+        {
+            throw new FileNotFoundException(
+                $"No TableFormer models found in {modelsDirectory}. " +
+                $"Expected: tableformer_fast.onnx or tableformer_accurate.onnx");
+        }
+
+        Console.WriteLine($"✓ TableFormerSdk initialized with {_backends.Count} model(s)");
     }
 
-    public TableStructureResult Process(
-        string imagePath,
-        bool overlay,
-        TableFormerModelVariant variant,
-        TableFormerRuntime runtime = TableFormerRuntime.Auto,
-        TableFormerLanguage? language = null)
+    /// <summary>
+    /// Extract table structure from image
+    /// </summary>
+    /// <param name="image">Table region image</param>
+    /// <param name="variant">Model variant to use (default: Fast)</param>
+    /// <returns>Table structure result</returns>
+    public TableStructureResult ExtractTableStructure(
+        SKBitmap image,
+        TableFormerModelVariant variant = TableFormerModelVariant.Fast)
     {
-        if (string.IsNullOrWhiteSpace(imagePath))
+        ObjectDisposedException.ThrowIf(_disposed, nameof(TableFormer));
+        ArgumentNullException.ThrowIfNull(image);
+
+        if (!_backends.TryGetValue(variant, out var backend))
         {
-            throw new ArgumentException("Image path is empty", nameof(imagePath));
+            throw new InvalidOperationException(
+                $"Model variant {variant} not loaded. Available: {string.Join(", ", _backends.Keys)}");
         }
+
+        return backend.ExtractTableStructure(image);
+    }
+
+    /// <summary>
+    /// Extract table structure from image file
+    /// </summary>
+    /// <param name="imagePath">Path to table image</param>
+    /// <param name="variant">Model variant to use (default: Fast)</param>
+    /// <returns>Table structure result</returns>
+    public TableStructureResult ExtractTableStructure(
+        string imagePath,
+        TableFormerModelVariant variant = TableFormerModelVariant.Fast)
+    {
+        ArgumentNullException.ThrowIfNull(imagePath);
 
         if (!File.Exists(imagePath))
         {
-            throw new FileNotFoundException("Image not found", imagePath);
+            throw new FileNotFoundException($"Image not found: {imagePath}", imagePath);
         }
 
-        using var bitmap = SKBitmap.Decode(imagePath) ?? throw new InvalidOperationException("Unable to decode image");
-        var selectedLanguage = language ?? _options.DefaultLanguage;
-        _options.EnsureLanguageIsSupported(selectedLanguage);
+        using var bitmap = SKBitmap.Decode(imagePath);
+        if (bitmap == null)
+        {
+            throw new InvalidOperationException($"Failed to decode image: {imagePath}");
+        }
 
-        var backendKey = _performanceAdvisor.ResolveBackend(variant, runtime);
-        var backend = _backendRegistry.GetOrCreateBackend(backendKey.Runtime, backendKey.Variant);
-        var stopwatch = ValueStopwatch.StartNew();
-        var regions = backend.Infer(bitmap, imagePath);
-        var elapsed = stopwatch.GetElapsedTime();
-        var snapshot = _performanceAdvisor.Record(backendKey, elapsed);
-        var overlayImage = overlay ? _overlayRenderer.CreateOverlay(bitmap, regions) : null;
-        return new TableStructureResult(regions, overlayImage, selectedLanguage, backendKey.Runtime, elapsed, snapshot);
+        return ExtractTableStructure(bitmap, variant);
     }
 
-    public void RegisterBackend(TableFormerRuntime runtime, TableFormerModelVariant variant, ITableFormerBackend backend)
-        => _backendRegistry.RegisterBackend(runtime, variant, backend);
+    /// <summary>
+    /// Run performance benchmark
+    /// </summary>
+    /// <param name="variant">Model variant to benchmark</param>
+    /// <param name="iterations">Number of iterations</param>
+    /// <returns>Benchmark results</returns>
+    public BenchmarkResult Benchmark(
+        TableFormerModelVariant variant = TableFormerModelVariant.Fast,
+        int iterations = 100)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, nameof(TableFormer));
 
-    public IReadOnlyList<TableFormerPerformanceSnapshot> GetPerformanceSnapshots(TableFormerModelVariant variant)
-        => _performanceAdvisor.GetSnapshots(variant);
+        if (!_backends.TryGetValue(variant, out var backend))
+        {
+            throw new InvalidOperationException($"Model variant {variant} not loaded");
+        }
 
-    public TableFormerPerformanceSnapshot? GetLatestSnapshot(TableFormerRuntime runtime, TableFormerModelVariant variant)
-        => _performanceAdvisor.TryGetSnapshot(runtime, variant);
+        return backend.Benchmark(iterations);
+    }
+
+    /// <summary>
+    /// Check if a model variant is available
+    /// </summary>
+    public bool IsModelLoaded(TableFormerModelVariant variant) =>
+        _backends.ContainsKey(variant);
+
+    /// <summary>
+    /// Get all loaded model variants
+    /// </summary>
+    public IReadOnlyList<TableFormerModelVariant> LoadedVariants =>
+        _backends.Keys.ToList().AsReadOnly();
 
     public void Dispose()
     {
-        _backendRegistry.Dispose();
+        if (_disposed) return;
+
+        foreach (var backend in _backends.Values)
+        {
+            backend.Dispose();
+        }
+
+        _backends.Clear();
+        _disposed = true;
     }
 }

@@ -1,263 +1,210 @@
 using SkiaSharp;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text.Json;
 using TableFormerSdk;
-using TableFormerSdk.Configuration;
+using TableFormerSdk.Enums;
 
-var repoRoot = ResolveRepoRoot();
-var datasetDir = Path.Combine(repoRoot, "dataset", "FinTabNet");
-var annotationsPath = Path.Combine(datasetDir, "sample_annotations.json");
-var imagesDir = Path.Combine(datasetDir, "images");
-if (!File.Exists(annotationsPath))
+namespace TableFormerSdk.Samples;
+
+/// <summary>
+/// Sample program demonstrating TableFormerSdk usage
+/// Matches the Python example.py functionality
+/// </summary>
+class Program
 {
-    Console.Error.WriteLine($"Missing annotations file: {annotationsPath}");
-    return 1;
-}
-if (!Directory.Exists(imagesDir))
-{
-    Console.Error.WriteLine($"Missing FinTabNet images directory: {imagesDir}");
-    return 1;
-}
-
-var json = File.ReadAllText(annotationsPath);
-var annotations = JsonSerializer.Deserialize<List<SampleAnnotation>>(json, new JsonSerializerOptions
-{
-    PropertyNameCaseInsensitive = true
-}) ?? throw new InvalidOperationException("Unable to parse annotation file");
-
-var modelRoot = Path.Combine(repoRoot, "models", "tableformer-onnx");
-var fastPaths = TableFormerVariantModelPaths.FromDirectory(modelRoot, "tableformer_fast");
-TableFormerVariantModelPaths? accuratePaths = null;
-try
-{
-    accuratePaths = TableFormerVariantModelPaths.FromDirectory(modelRoot, "tableformer_accurate");
-}
-catch (FileNotFoundException)
-{
-    Console.Error.WriteLine("Accurate TableFormer models not found; only fast variant will be available.");
-}
-
-var options = new TableFormerSdkOptions(new TableFormerModelPaths(fastPaths, accuratePaths));
-using var sdk = new TableFormer(options);
-var annotationBackend = new AnnotationBackend(annotations);
-
-sdk.RegisterBackend(TableFormerRuntime.Onnx, TableFormerModelVariant.Fast, annotationBackend);
-if (accuratePaths is not null)
-{
-    sdk.RegisterBackend(TableFormerRuntime.Onnx, TableFormerModelVariant.Accurate, annotationBackend);
-}
-
-var outputDir = Path.Combine(repoRoot, "results", "tableformer-net-sample");
-Directory.CreateDirectory(outputDir);
-
-var reportEntries = new List<SampleReportEntry>();
-var perfEntries = new List<PerformanceReportEntry>();
-var runtimeVariants = new (TableFormerRuntime Runtime, TableFormerModelVariant Variant, string Label)[]
-{
-    (TableFormerRuntime.Onnx, TableFormerModelVariant.Fast, "onnx_fast"),
-};
-
-if (accuratePaths is not null)
-{
-    runtimeVariants = runtimeVariants.Append((TableFormerRuntime.Onnx, TableFormerModelVariant.Accurate, "onnx_accurate")).ToArray();
-}
-
-var globalDurations = runtimeVariants.ToDictionary(cfg => cfg.Label, _ => new List<double>());
-
-foreach (var annotation in annotations)
-{
-    var imagePath = Path.Combine(imagesDir, annotation.Filename);
-    if (!File.Exists(imagePath))
+    static void Main(string[] args)
     {
-        Console.Error.WriteLine($"Skipping missing image {imagePath}");
-        continue;
-    }
+        Console.WriteLine("=".PadRight(70, '='));
+        Console.WriteLine("TableFormer ONNX .NET SDK - Sample Application");
+        Console.WriteLine("Based on HuggingFace asmud/ds4sd-docling-models-onnx");
+        Console.WriteLine("=".PadRight(70, '='));
+        Console.WriteLine();
 
-    var overlayFilename = Path.GetFileNameWithoutExtension(annotation.Filename) + "_overlay.png";
-    var overlayPath = Path.Combine(outputDir, overlayFilename);
-    var runtimeSummaries = new List<RuntimeTimingSummary>();
-    IReadOnlyList<TableRegion>? referenceRegions = null;
-    var overlaySaved = false;
+        // Parse arguments
+        var modelVariant = TableFormerModelVariant.Fast;
+        string? imagePath = null;
+        bool runBenchmark = false;
+        int iterations = 100;
 
-    foreach (var runtime in runtimeVariants)
-    {
-        var durations = new List<double>();
-        TableStructureResult? lastResult = null;
-        for (int run = 0; run < 6; run++)
+        for (int i = 0; i < args.Length; i++)
         {
-            bool requestOverlay = !overlaySaved
-                && runtime.Runtime == TableFormerRuntime.Onnx
-                && runtime.Variant == TableFormerModelVariant.Fast
-                && run == 0;
-            var watch = Stopwatch.StartNew();
-            var result = sdk.Process(imagePath, requestOverlay, runtime.Variant, runtime.Runtime);
-            watch.Stop();
-            lastResult = result;
-
-            if (requestOverlay && result.OverlayImage is { } overlay)
+            switch (args[i])
             {
-                using var data = overlay.Encode(SKEncodedImageFormat.Png, 100);
-                using var stream = File.Open(overlayPath, FileMode.Create, FileAccess.Write);
-                data.SaveTo(stream);
-                overlay.Dispose();
-                overlaySaved = true;
+                case "--model" when i + 1 < args.Length:
+                    modelVariant = args[++i].ToLower() == "accurate"
+                        ? TableFormerModelVariant.Accurate
+                        : TableFormerModelVariant.Fast;
+                    break;
+                case "--image" when i + 1 < args.Length:
+                    imagePath = args[++i];
+                    break;
+                case "--benchmark":
+                    runBenchmark = true;
+                    break;
+                case "--iterations" when i + 1 < args.Length:
+                    iterations = int.Parse(args[++i]);
+                    break;
+                case "--help":
+                    ShowHelp();
+                    return;
             }
-            else if (result.OverlayImage is { } overlayToDispose)
-            {
-                overlayToDispose.Dispose();
-            }
-
-            if (run > 0)
-            {
-                var elapsed = watch.Elapsed.TotalMilliseconds;
-                durations.Add(elapsed);
-                globalDurations[runtime.Label].Add(elapsed);
-            }
-
-            referenceRegions ??= result.Regions;
         }
 
-        if (lastResult is not null && lastResult.OverlayImage is { } overlayRemaining)
+        // Find models directory
+        var modelsDir = FindModelsDirectory();
+        if (modelsDir == null)
         {
-            overlayRemaining.Dispose();
+            Console.WriteLine("❌ Error: Could not find models directory");
+            Console.WriteLine("Expected: ../../models/ relative to executable");
+            return;
         }
 
-        runtimeSummaries.Add(new RuntimeTimingSummary(
-            runtime.Runtime.ToString().ToLowerInvariant(),
-            runtime.Variant.ToString().ToLowerInvariant(),
-            runtime.Label,
-            durations,
-            durations.Count > 0 ? durations.Average() : 0d,
-            durations.Count > 0 ? durations.Min() : 0d,
-            durations.Count > 0 ? durations.Max() : 0d));
-    }
+        Console.WriteLine($"📁 Models directory: {modelsDir}");
+        Console.WriteLine();
 
-    var winner = runtimeSummaries
-        .OrderBy(r => r.AverageMs)
-        .ThenBy(r => r.Runtime)
-        .ThenBy(r => r.Variant)
-        .ThenBy(r => r.Label)
-        .First()
-        .Label;
-
-    perfEntries.Add(new PerformanceReportEntry(annotation.Filename, runtimeSummaries, winner));
-
-    var regions = referenceRegions ?? Array.Empty<TableRegion>();
-    var meanWidth = regions.Count > 0 ? regions.Average(r => r.Width) : 0f;
-    var meanHeight = regions.Count > 0 ? regions.Average(r => r.Height) : 0f;
-    var meanArea = regions.Count > 0 ? regions.Average(r => r.Width * r.Height) : 0f;
-
-    reportEntries.Add(new SampleReportEntry(
-        annotation.Filename,
-        regions.Count,
-        meanWidth,
-        meanHeight,
-        meanArea,
-        overlayFilename
-    ));
-
-    var regionPath = Path.Combine(outputDir, Path.GetFileNameWithoutExtension(annotation.Filename) + "_regions.json");
-    var regionDtos = regions.Select(r => new RegionDto(r.X, r.Y, r.Width, r.Height, r.Label)).ToList();
-    File.WriteAllText(regionPath, JsonSerializer.Serialize(regionDtos, new JsonSerializerOptions { WriteIndented = true }));
-
-    Console.WriteLine($"{annotation.Filename}: winner {winner}, overlay saved to {overlayFilename}");
-}
-
-var reportPath = Path.Combine(outputDir, "report.json");
-File.WriteAllText(reportPath, JsonSerializer.Serialize(reportEntries, new JsonSerializerOptions { WriteIndented = true }));
-Console.WriteLine($"Report saved to {reportPath}");
-
-var perfReportPath = Path.Combine(outputDir, "perf_comparison.json");
-    var overallSummaries = runtimeVariants.Select(cfg => new OverallRuntimeSummary(
-    cfg.Runtime.ToString().ToLowerInvariant(),
-    cfg.Variant.ToString().ToLowerInvariant(),
-    cfg.Label,
-    globalDurations[cfg.Label],
-    globalDurations[cfg.Label].Count > 0 ? globalDurations[cfg.Label].Average() : 0d,
-    globalDurations[cfg.Label].Count > 0 ? globalDurations[cfg.Label].Min() : 0d,
-    globalDurations[cfg.Label].Count > 0 ? globalDurations[cfg.Label].Max() : 0d)).ToList();
-var overallWinner = overallSummaries
-    .OrderBy(s => s.AverageMs)
-        .ThenBy(s => s.Runtime)
-        .ThenBy(s => s.Variant)
-        .ThenBy(s => s.Label)
-    .First()
-    .Label;
-
-var perfReport = new PerformanceReport(perfEntries, overallSummaries, overallWinner);
-File.WriteAllText(perfReportPath, JsonSerializer.Serialize(perfReport, new JsonSerializerOptions { WriteIndented = true }));
-Console.WriteLine($"Performance report saved to {perfReportPath}");
-
-return 0;
-
-static string ResolveRepoRoot()
-{
-    var current = AppContext.BaseDirectory;
-    for (var i = 0; i < 5; i++)
-        current = Path.GetFullPath(Path.Combine(current, ".."));
-    return current;
-}
-
-file sealed record SampleAnnotation(string Filename, SampleRegion[] Regions);
-
-file sealed record SampleRegion(double X, double Y, double Width, double Height, int Label);
-
-file sealed record SampleReportEntry(string Filename, int RegionCount, float MeanWidth, float MeanHeight, float MeanArea, string OverlayImage);
-
-file sealed record RegionDto(float X, float Y, float Width, float Height, string Label);
-
-file sealed record RuntimeTimingSummary(
-    string Runtime,
-    string Variant,
-    string Label,
-    IReadOnlyList<double> MeasurementsMs,
-    double AverageMs,
-    double MinMs,
-    double MaxMs);
-
-file sealed record PerformanceReportEntry(string Filename, IReadOnlyList<RuntimeTimingSummary> Runtimes, string WinnerLabel);
-
-file sealed record OverallRuntimeSummary(
-    string Runtime,
-    string Variant,
-    string Label,
-    IReadOnlyList<double> MeasurementsMs,
-    double AverageMs,
-    double MinMs,
-    double MaxMs);
-
-file sealed record PerformanceReport(
-    IReadOnlyList<PerformanceReportEntry> Samples,
-    IReadOnlyList<OverallRuntimeSummary> Overall,
-    string OverallWinnerLabel);
-
-file sealed class AnnotationBackend : ITableFormerBackend
-{
-    private readonly Dictionary<string, IReadOnlyList<TableRegion>> _lookup;
-
-    public AnnotationBackend(IEnumerable<SampleAnnotation> annotations)
-    {
-        _lookup = annotations.ToDictionary(
-            ann => ann.Filename,
-            ann => (IReadOnlyList<TableRegion>)ann.Regions
-                .Select(r => new TableRegion((float)r.X, (float)r.Y, (float)r.Width, (float)r.Height, r.Label.ToString()))
-                .ToArray(),
-            StringComparer.OrdinalIgnoreCase);
-    }
-
-    public IReadOnlyList<TableRegion> Infer(SKBitmap image, string sourcePath)
-    {
-        var file = Path.GetFileName(sourcePath);
-        if (file is null)
+        try
         {
-            return Array.Empty<TableRegion>();
+            // Initialize SDK
+            using var sdk = new TableFormer(modelsDir);
+
+            // Run benchmark if requested
+            if (runBenchmark)
+            {
+                Console.WriteLine($"🚀 Running benchmark ({modelVariant} model, {iterations} iterations)...");
+                Console.WriteLine();
+
+                var benchResult = sdk.Benchmark(modelVariant, iterations);
+
+                Console.WriteLine("📊 Benchmark Results:");
+                Console.WriteLine($"  Mean time: {benchResult.MeanTimeMs:F3}ms ± {benchResult.StdTimeMs:F3}ms");
+                Console.WriteLine($"  Median time: {benchResult.MedianTimeMs:F3}ms");
+                Console.WriteLine($"  Min time: {benchResult.MinTimeMs:F3}ms");
+                Console.WriteLine($"  Max time: {benchResult.MaxTimeMs:F3}ms");
+                Console.WriteLine($"  Throughput: {benchResult.ThroughputFps:F1} FPS");
+                Console.WriteLine();
+            }
+
+            // Process image if provided
+            if (!string.IsNullOrEmpty(imagePath))
+            {
+                if (!File.Exists(imagePath))
+                {
+                    Console.WriteLine($"❌ Error: Image not found: {imagePath}");
+                    return;
+                }
+
+                Console.WriteLine($"🖼️  Processing image: {imagePath}");
+                Console.WriteLine($"  Model: {modelVariant}");
+                Console.WriteLine();
+
+                var result = sdk.ExtractTableStructure(imagePath, modelVariant);
+
+                Console.WriteLine("✓ Table structure extracted:");
+                Console.WriteLine($"  Regions found: {result.Regions.Count}");
+                Console.WriteLine($"  Inference time: {result.InferenceTime.TotalMilliseconds:F2}ms");
+                Console.WriteLine($"  Model variant: {result.ModelVariant}");
+                Console.WriteLine($"  Raw output shapes: {string.Join(", ", result.RawOutputShapes.Select(kvp => $"{kvp.Key}={string.Join("x", kvp.Value)}"))}");
+                Console.WriteLine();
+
+                if (result.Regions.Count > 0)
+                {
+                    Console.WriteLine("  Sample regions (first 5):");
+                    foreach (var region in result.Regions.Take(5))
+                    {
+                        Console.WriteLine($"    {region}");
+                    }
+                    if (result.Regions.Count > 5)
+                    {
+                        Console.WriteLine($"    ... and {result.Regions.Count - 5} more");
+                    }
+                }
+            }
+
+            // Run demo with dummy data if no image provided
+            if (string.IsNullOrEmpty(imagePath) && !runBenchmark)
+            {
+                Console.WriteLine($"🔬 Running demo with dummy data ({modelVariant} model)...");
+                Console.WriteLine();
+
+                // Create dummy image
+                using var dummyImage = new SKBitmap(400, 300, SKColorType.Rgba8888, SKAlphaType.Premul);
+                using var canvas = new SKCanvas(dummyImage);
+
+                // Fill with random pixels
+                var random = new Random(42);
+                var pixels = dummyImage.GetPixelSpan();
+                random.NextBytes(pixels);
+
+                var result = sdk.ExtractTableStructure(dummyImage, modelVariant);
+
+                Console.WriteLine("✓ Demo completed:");
+                Console.WriteLine($"  Model: {result.ModelVariant}");
+                Console.WriteLine($"  Regions: {result.Regions.Count}");
+                Console.WriteLine($"  Inference time: {result.InferenceTime.TotalMilliseconds:F2}ms");
+                Console.WriteLine($"  Raw outputs: {string.Join(", ", result.RawOutputShapes.Select(kvp => $"{kvp.Key}={string.Join("x", kvp.Value)}"))}");
+                Console.WriteLine();
+            }
+
+            Console.WriteLine("✅ Example completed successfully!");
+            Console.WriteLine();
+            Console.WriteLine("To process a real image, use:");
+            Console.WriteLine($"  dotnet run -- --model {modelVariant.ToString().ToLower()} --image path/to/table.png");
+            Console.WriteLine();
+            Console.WriteLine("To run a benchmark, use:");
+            Console.WriteLine($"  dotnet run -- --model {modelVariant.ToString().ToLower()} --benchmark --iterations 100");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Error: {ex.Message}");
+            if (ex.InnerException != null)
+            {
+                Console.WriteLine($"   {ex.InnerException.Message}");
+            }
+        }
+    }
+
+    static string? FindModelsDirectory()
+    {
+        var baseDir = AppContext.BaseDirectory;
+
+        // Try relative paths
+        var candidates = new[]
+        {
+            Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "..", "models")),
+            Path.GetFullPath(Path.Combine(baseDir, "..", "..", "models")),
+            Path.GetFullPath(Path.Combine(baseDir, "models")),
+            Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "..", "..", "models")),
+            Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "models"))
+        };
+
+        foreach (var candidate in candidates)
+        {
+            if (Directory.Exists(candidate))
+            {
+                // Check if models exist
+                if (File.Exists(Path.Combine(candidate, "tableformer_fast.onnx")) ||
+                    File.Exists(Path.Combine(candidate, "tableformer_accurate.onnx")))
+                {
+                    return candidate;
+                }
+            }
         }
 
-        return _lookup.TryGetValue(file, out var regions)
-            ? regions
-            : Array.Empty<TableRegion>();
+        return null;
+    }
+
+    static void ShowHelp()
+    {
+        Console.WriteLine("Usage: TableFormerSdk.Samples [options]");
+        Console.WriteLine();
+        Console.WriteLine("Options:");
+        Console.WriteLine("  --model <fast|accurate>   Model variant to use (default: fast)");
+        Console.WriteLine("  --image <path>            Path to table image to process");
+        Console.WriteLine("  --benchmark               Run performance benchmark");
+        Console.WriteLine("  --iterations <n>          Number of benchmark iterations (default: 100)");
+        Console.WriteLine("  --help                    Show this help message");
+        Console.WriteLine();
+        Console.WriteLine("Examples:");
+        Console.WriteLine("  dotnet run -- --model fast --image table.png");
+        Console.WriteLine("  dotnet run -- --model accurate --benchmark --iterations 100");
+        Console.WriteLine("  dotnet run -- --help");
     }
 }
