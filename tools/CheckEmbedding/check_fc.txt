@@ -1,0 +1,3 @@
+# Cerco i parametri FC
+_fc.weight
+_fc.bias

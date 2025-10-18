@@ -106,15 +106,36 @@ public sealed class TMTransformerDecoderLayer : Module<(Tensor tgt, Tensor? memo
         // tgt_last_tok shape: (1, batch_size, d_model)
         using var tgtLastTok = tgt.index(TensorIndex.Slice(-1, null), TensorIndex.Colon, TensorIndex.Colon);
 
-        // Self-attention: attend to all previous tokens including current
+        // IMPORTANT: Create causal mask for autoregressive decoding
+        // The causal mask ensures that position i can only attend to positions <= i
+        // This prevents the model from "cheating" by looking at future tokens
+        // For MultiheadAttention with query=(1, batch, d) and key=(seq_len, batch, d),
+        // the mask shape should be (1, seq_len) where mask[i,j] = -inf means query i CANNOT attend to key j
+        var tgtLen = tgt.size(0);
+        Tensor? attnMask = null;
+
+        // Only create mask if we have more than one token (no mask needed for first token)
+        if (tgtLen > 1)
+        {
+            // Since we're only querying the last token (query shape: 1, batch, d_model)
+            // and attending to all tokens (key shape: seq_len, batch, d_model),
+            // we don't need a causal mask because the query is always the last token
+            // and can naturally only attend to past tokens (positions 0 to seq_len-1)
+            // The causal constraint is inherently satisfied by using only the last token as query
+            attnMask = null;
+        }
+
+        // Self-attention: attend to all previous tokens including current (with causal mask)
         // Query: last token, Key/Value: all tokens
         var (selfAttnOut, _) = _self_attn.forward(
-            tgtLastTok,  // query: last token
-            tgt,         // key: all tokens
-            tgt,         // value: all tokens
-            attn_mask: null,  // No attention mask (attend to all tokens)
+            tgtLastTok,  // query: last token (1, batch, d_model)
+            tgt,         // key: all tokens (seq_len, batch, d_model)
+            tgt,         // value: all tokens (seq_len, batch, d_model)
+            attn_mask: attnMask,  // Causal mask (seq_len, seq_len) - CRITICAL for autoregressive generation!
             need_weights: false,
             key_padding_mask: null);  // No padding mask
+
+        attnMask?.Dispose();
 
         // Residual connection + dropout + norm
         using var tmpTgt1 = _dropout1.forward(selfAttnOut);

@@ -52,9 +52,9 @@ public sealed class PositionalEncoding : Module<Tensor, Tensor>
         // pe[:, 1::2] = torch.cos(position * div_term)
         pe.index_put_(torch.cos(position * divTerm), TensorIndex.Colon, TensorIndex.Slice(1, null, 2));
 
-        // Reshape pe from (max_len, d_model) to (max_len, 1, d_model)
-        // In Python: pe.unsqueeze(0).transpose(0, 1)
-        pe = pe.unsqueeze(0).transpose(0, 1);
+        // Reshape pe from (max_len, d_model) to (1, max_len, d_model)
+        // In Python: pe = pe.unsqueeze(0)  (NO transpose!)
+        pe = pe.unsqueeze(0);
 
         // Register as buffer (not a trainable parameter)
         register_buffer("pe", pe);
@@ -70,10 +70,15 @@ public sealed class PositionalEncoding : Module<Tensor, Tensor>
     {
         // Add positional encoding to input
         // x shape: (seq_len, batch_size, d_model)
-        // pe shape: (max_len, 1, d_model)
-        // We slice pe to match the sequence length: pe[:x.size(0), :]
+        // pe shape: (1, max_len, d_model)
+        // We need to permute pe to match: (max_len, 1, d_model) then slice to (seq_len, 1, d_model)
         var seqLen = x.size(0);
-        var peSlice = _pe.index(TensorIndex.Slice(null, seqLen), TensorIndex.Colon);
+
+        // Permute pe from (1, max_len, d_model) to (max_len, 1, d_model)
+        using var pePermuted = _pe.permute(1, 0, 2);
+
+        // Slice to match sequence length: (seq_len, 1, d_model)
+        var peSlice = pePermuted.index(TensorIndex.Slice(null, seqLen), TensorIndex.Colon, TensorIndex.Colon);
 
         x = x + peSlice;
 
