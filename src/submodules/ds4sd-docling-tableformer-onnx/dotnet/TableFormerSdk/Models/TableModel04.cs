@@ -275,25 +275,46 @@ public sealed class TableModel04 : Module<Tensor, TableModel04Result>
             using var lastLogits = predictions[0, predictions.size(1) - 1, TensorIndex.Colon];  // (vocab_size,)
             var newTag = lastLogits.argmax().item<long>();
 
-            // DEBUG: Print logits for first 5 steps
-            if (Environment.GetEnvironmentVariable("DEBUG_LOGITS") == "1" && step < 5)
+            // DEBUG: Print logits for first 10 steps
+            if (Environment.GetEnvironmentVariable("DEBUG_LOGITS") == "1" && step < 10)
             {
                 var logitsArray = lastLogits.data<float>().ToArray();
+
+                Console.WriteLine($"\n[DEBUG Step {step}] ========================================");
+                Console.WriteLine($"  Current sequence: [{string.Join(", ", outputTags.Select(t => _config.WordMapTag.FirstOrDefault(kvp => kvp.Value == t).Key ?? $"idx{t}"))}]");
+                Console.WriteLine($"  Sequence length: {outputTags.Count + 1}");
+
+                // Show all 13 logits
+                Console.WriteLine($"  All logits:");
+                foreach (var kvp in _config.WordMapTag.OrderBy(x => x.Value))
+                {
+                    var idx = kvp.Value;
+                    var tokenName = kvp.Key;
+                    var logit = logitsArray[idx];
+                    var marker = (idx == newTag) ? " ← PREDICTED" : "";
+                    Console.WriteLine($"    [{idx:D2}] {tokenName,-10}: {logit,8:F4}{marker}");
+                }
+
+                // Show top-5 for quick reference
                 var topK = logitsArray
                     .Select((val, idx) => (val, idx))
                     .OrderByDescending(x => x.val)
                     .Take(5)
                     .ToList();
 
-                Console.WriteLine($"[DEBUG Step {step}] Top-5 logits:");
+                Console.WriteLine($"\n  Top-5 logits:");
                 foreach (var (val, idx) in topK)
                 {
                     var tokenName = _config.WordMapTag.FirstOrDefault(kvp => kvp.Value == idx).Key ?? $"idx{idx}";
-                    Console.WriteLine($"  {tokenName}: {val:F4}");
+                    Console.WriteLine($"    {tokenName}: {val:F4}");
                 }
+
+                // Highlight <end> token
                 var endLogit = logitsArray[_endToken];
-                Console.WriteLine($"  <end> logit: {endLogit:F4}");
-                Console.WriteLine($"  Predicted: {_config.WordMapTag.FirstOrDefault(kvp => kvp.Value == newTag).Key}");
+                Console.WriteLine($"\n  <end> token analysis:");
+                Console.WriteLine($"    Logit: {endLogit:F4}");
+                Console.WriteLine($"    Rank: {logitsArray.OrderByDescending(x => x).ToList().IndexOf(endLogit) + 1}/13");
+                Console.WriteLine($"    Distance from max: {logitsArray.Max() - endLogit:F4}");
             }
 
             // Structure error correction (line 199-208 in Python)

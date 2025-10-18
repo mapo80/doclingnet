@@ -18,6 +18,7 @@ public sealed class PositionalEncoding : Module<Tensor, Tensor>
 {
     private readonly TorchSharp.Modules.Dropout _dropout;
     private readonly Tensor _pe;
+    private readonly Parameter _scale;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PositionalEncoding"/> class.
@@ -31,6 +32,10 @@ public sealed class PositionalEncoding : Module<Tensor, Tensor>
     {
         _dropout = Dropout(dropout);
         register_module("dropout", _dropout);
+
+        // Learnable scale parameter (Python has this!)
+        _scale = Parameter(torch.ones(1));
+        register_parameter("scale", _scale);
 
         // Create positional encoding matrix
         // pe shape: (max_len, d_model)
@@ -78,9 +83,12 @@ public sealed class PositionalEncoding : Module<Tensor, Tensor>
         using var pePermuted = _pe.permute(1, 0, 2);
 
         // Slice to match sequence length: (seq_len, 1, d_model)
-        var peSlice = pePermuted.index(TensorIndex.Slice(null, seqLen), TensorIndex.Colon, TensorIndex.Colon);
+        using var peSlice = pePermuted.index(TensorIndex.Slice(null, seqLen), TensorIndex.Colon, TensorIndex.Colon);
 
-        x = x + peSlice;
+        // CRITICAL: Apply learnable scale parameter (Python does this!)
+        // x = x + scale * pe
+        using var scaledPe = _scale * peSlice;
+        x = x + scaledPe;
 
         // Apply dropout
         return _dropout.forward(x);
@@ -92,6 +100,7 @@ public sealed class PositionalEncoding : Module<Tensor, Tensor>
         {
             _dropout?.Dispose();
             _pe?.Dispose();
+            _scale?.Dispose();
         }
         base.Dispose(disposing);
     }
