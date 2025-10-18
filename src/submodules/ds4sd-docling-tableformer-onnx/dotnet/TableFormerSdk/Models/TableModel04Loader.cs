@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using TorchSharp;
 using TableFormerSdk.Utils;
@@ -28,22 +29,33 @@ public static class TableModel04Loader
         using var reader = new SafeTensorsReader(safetensorsPath);
 
         // Get all named parameters from model
-        var modelParams = model.named_parameters().ToList();
+        var modelParams = model
+            .named_parameters()
+            .Where(p => p.parameter is not null)
+            .ToList();
+        var modelParamLookup = modelParams.ToDictionary(p => p.name, p => p.parameter!);
         Console.WriteLine($"\nModel has {modelParams.Count} parameters");
 
         // DEBUG: Save ALL names to files for analysis
-        var debugDir = "/Users/politom/Documents/Workspace/personal/doclingnet/debug";
-        System.IO.Directory.CreateDirectory(debugDir);
+        var debugDir = ResolveDebugDirectory(safetensorsPath);
+        try
+        {
+            Directory.CreateDirectory(debugDir);
 
-        System.IO.File.WriteAllLines(
-            System.IO.Path.Combine(debugDir, "safetensors_names.txt"),
-            reader.TensorNames);
+            File.WriteAllLines(
+                Path.Combine(debugDir, "safetensors_names.txt"),
+                reader.TensorNames);
 
-        System.IO.File.WriteAllLines(
-            System.IO.Path.Combine(debugDir, "torchsharp_names.txt"),
-            modelParams.Select(p => p.name));
+            File.WriteAllLines(
+                Path.Combine(debugDir, "torchsharp_names.txt"),
+                modelParams.Select(p => p.name));
 
-        Console.WriteLine($"\nSaved tensor names to {debugDir}/");
+            Console.WriteLine($"\nSaved tensor names to {debugDir}/");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"  ⚠️  Unable to persist debug name lists: {ex.Message}");
+        }
         Console.WriteLine($"  SafeTensors: {reader.TensorNames.Count()} tensors");
         Console.WriteLine($"  TorchSharp: {modelParams.Count} parameters");
 
@@ -54,11 +66,18 @@ public static class TableModel04Loader
         int skipped = 0;
         var missingInFile = new List<string>();
         var missingInModel = new List<string>();
+        var intentionallySkipped = new List<string>();
         var loadedParams = new HashSet<string>();
 
         // Load each tensor from SafeTensors
         foreach (var tensorName in reader.TensorNames)
         {
+            if (ShouldIgnoreTensor(tensorName))
+            {
+                intentionallySkipped.Add(tensorName);
+                continue;
+            }
+
             // Try to find corresponding model parameter
             string? modelParamName = null;
 
@@ -68,7 +87,7 @@ public static class TableModel04Loader
                 modelParamName = mappedName;
             }
             // Try exact match
-            else if (modelParams.Any(p => p.name == tensorName))
+            else if (modelParamLookup.ContainsKey(tensorName))
             {
                 modelParamName = tensorName;
             }
@@ -76,7 +95,7 @@ public static class TableModel04Loader
             else
             {
                 modelParamName = TransformName(tensorName);
-                if (modelParamName != null && !modelParams.Any(p => p.name == modelParamName))
+                if (modelParamName != null && !modelParamLookup.ContainsKey(modelParamName))
                 {
                     modelParamName = null;
                 }
@@ -85,8 +104,7 @@ public static class TableModel04Loader
             if (modelParamName == null)
             {
                 // DEBUG: Show first few transformation failures
-                if (missingInModel.Count < 10 && !tensorName.Contains("num_batches_tracked") &&
-                    !tensorName.Contains("running_mean") && !tensorName.Contains("running_var"))
+                if (missingInModel.Count < 10)
                 {
                     var transformed = TransformName(tensorName);
                     Console.WriteLine($"  ✗ No match for: {tensorName}");
@@ -97,13 +115,7 @@ public static class TableModel04Loader
             }
 
             // Find the parameter in model
-            var paramMatch = modelParams.FirstOrDefault(p => p.name == modelParamName);
-            if (paramMatch.parameter is null)
-            {
-                missingInModel.Add(tensorName);
-                continue;
-            }
-            var param = paramMatch.parameter;
+            var param = modelParamLookup[modelParamName];
 
             // Load tensor from file
             try
@@ -161,14 +173,16 @@ public static class TableModel04Loader
         foreach (var (name, buffer) in model.named_buffers())
         {
             // Skip if not running_mean or running_var
-            if (!name.EndsWith("running_mean") && !name.EndsWith("running_var"))
+            if (!name.EndsWith("running_mean", StringComparison.Ordinal) &&
+                !name.EndsWith("running_var", StringComparison.Ordinal))
                 continue;
 
             // Transform name to SafeTensors format
             var safetensorsName = name
-                .Replace("_encoder.resnet.", "_encoder._resnet.")
-                .Replace("_tagTransformer", "_tag_transformer")
-                .Replace("_bboxDecoder", "_bbox_decoder");
+                .Replace("_encoder.resnet.", "_encoder._resnet.", StringComparison.Ordinal)
+                .Replace("_tagTransformer", "_tag_transformer", StringComparison.Ordinal)
+                .Replace("_bboxDecoder", "_bbox_decoder", StringComparison.Ordinal)
+                .Replace("_positionalEncoding", "_positional_encoding", StringComparison.Ordinal);
 
             if (availableTensors.Contains(safetensorsName))
             {
@@ -199,6 +213,7 @@ public static class TableModel04Loader
         Console.WriteLine(new string('=', 70));
         Console.WriteLine($"✅ Loaded:  {loaded} parameters");
         Console.WriteLine($"⚠️  Skipped: {skipped} parameters (shape mismatch or errors)");
+        Console.WriteLine($"🛈 Ignored (buffers/tracking): {intentionallySkipped.Count}");
         Console.WriteLine($"❌ Missing in model: {missingInModel.Count} tensors from file");
         Console.WriteLine($"❌ Missing in file:  {missingInFile.Count} model parameters");
 
@@ -249,9 +264,7 @@ public static class TableModel04Loader
     private static string? TransformName(string safetensorsName)
     {
         // Skip BatchNorm tracking parameters not exposed by TorchSharp
-        if (safetensorsName.Contains("num_batches_tracked") ||
-            safetensorsName.Contains("running_mean") ||
-            safetensorsName.Contains("running_var"))
+        if (ShouldIgnoreTensor(safetensorsName))
         {
             return null;
         }
@@ -260,38 +273,67 @@ public static class TableModel04Loader
 
         // Transform module names to TorchSharp conventions:
         // 1. _tag_transformer -> _tagTransformer (camelCase)
-        name = name.Replace("_tag_transformer", "_tagTransformer");
+        name = name.Replace("_tag_transformer", "_tagTransformer", StringComparison.Ordinal);
 
         // 2. _bbox_decoder -> _bboxDecoder (camelCase)
-        name = name.Replace("_bbox_decoder", "_bboxDecoder");
+        name = name.Replace("_bbox_decoder", "_bboxDecoder", StringComparison.Ordinal);
 
-        // 3. Remove underscore prefix ONLY from attention sub-modules
+        // 3. _positional_encoding -> _positionalEncoding
+        name = name.Replace("_positional_encoding", "_positionalEncoding", StringComparison.Ordinal);
+
+        // 4. Remove underscore prefix ONLY from attention sub-modules
         // ._encoder_att -> .encoder_att
         // ._tag_decoder_att -> .tag_decoder_att
         // ._language_att -> .language_att
         // ._full_att -> .full_att
         // But KEEP: ._embedding, ._encoder, ._decoder, ._encoderProjection
-        name = name.Replace("._encoder_att", ".encoder_att");
-        name = name.Replace("._tag_decoder_att", ".tag_decoder_att");
-        name = name.Replace("._language_att", ".language_att");
-        name = name.Replace("._full_att", ".full_att");
+        name = name.Replace("._encoder_att", ".encoder_att", StringComparison.Ordinal);
+        name = name.Replace("._tag_decoder_att", ".tag_decoder_att", StringComparison.Ordinal);
+        name = name.Replace("._language_att", ".language_att", StringComparison.Ordinal);
+        name = name.Replace("._full_att", ".full_att", StringComparison.Ordinal);
 
-        // 4. _encoder._resnet -> _encoder.resnet (no underscore on nested)
-        name = name.Replace("._resnet.", ".resnet.");
+        // 5. _encoder._resnet -> _encoder.resnet (no underscore on nested)
+        name = name.Replace("._resnet.", ".resnet.", StringComparison.Ordinal);
 
-        // 5. layers.N. -> layers_N. ONLY for decoder (TorchSharp decoder uses underscore, encoder uses dot)
+        // 6. layers.N. -> layers_N. ONLY for decoder (TorchSharp decoder uses underscore, encoder uses dot)
         name = System.Text.RegularExpressions.Regex.Replace(name, @"_decoder\.layers\.(\d+)\.", "_decoder.layers_$1.");
 
-        // 6. MLP/embed layers: layers.N. -> layers_N. (for bbox_embed)
+        // 7. MLP/embed layers: layers.N. -> layers_N. (for bbox_embed)
         name = System.Text.RegularExpressions.Regex.Replace(name, @"_embed\.layers\.(\d+)\.", "_embed.layers_$1.");
 
 
-        // 7. Input filter: ._input_filter.N. -> ._input_filter_N. (TorchSharp does not allow dots in module names)
+        // 8. Input filter: ._input_filter.N. -> ._input_filter_N. (TorchSharp does not allow dots in module names)
         name = System.Text.RegularExpressions.Regex.Replace(name, @"\._input_filter\.(\d+)\.", "._input_filter_$1.");
 
-        // 8. Downsample: downsample.N -> downsample_N (TorchSharp does not allow dots in module names)
+        // 9. Downsample: downsample.N -> downsample_N (TorchSharp does not allow dots in module names)
         name = System.Text.RegularExpressions.Regex.Replace(name, @"\.downsample\.(\d+)", ".downsample_$1");
 
         return name;
+    }
+
+    private static string ResolveDebugDirectory(string safetensorsPath)
+    {
+        const string EnvVar = "TABLEFORMER_DEBUG_DIR";
+        var envPath = Environment.GetEnvironmentVariable(EnvVar);
+        if (!string.IsNullOrWhiteSpace(envPath))
+        {
+            return Path.GetFullPath(envPath);
+        }
+
+        var fullPath = Path.GetFullPath(safetensorsPath);
+        var baseDir = Path.GetDirectoryName(fullPath);
+        if (string.IsNullOrEmpty(baseDir))
+        {
+            baseDir = Directory.GetCurrentDirectory();
+        }
+
+        return Path.Combine(baseDir, "debug");
+    }
+
+    private static bool ShouldIgnoreTensor(string name)
+    {
+        return name.Contains("num_batches_tracked", StringComparison.Ordinal) ||
+               name.Contains("running_mean", StringComparison.Ordinal) ||
+               name.Contains("running_var", StringComparison.Ordinal);
     }
 }

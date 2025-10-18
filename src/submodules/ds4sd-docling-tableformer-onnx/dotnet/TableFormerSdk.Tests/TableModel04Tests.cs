@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+using System.Reflection;
 using Xunit;
 using TorchSharp;
 using static TorchSharp.torch;
@@ -157,6 +158,52 @@ public class TableModel04Tests : IDisposable
 
         result.BBoxClasses.Dispose();
         result.BBoxCoords.Dispose();
+    }
+
+    [Fact]
+    public void Forward_NormalizesNhwcInputs()
+    {
+        _model = new TableModel04(_config);
+        _model.eval();
+
+        using var nchw = torch.randn(1, 3, 224, 224);
+        using var nhwc = nchw.permute(0, 2, 3, 1).contiguous();
+
+        var nchwResult = _model.forward(nchw);
+        var nhwcResult = _model.forward(nhwc);
+
+        try
+        {
+            Assert.Equal(nchwResult.Sequence, nhwcResult.Sequence);
+            Assert.True(torch.allclose(nchwResult.BBoxClasses, nhwcResult.BBoxClasses));
+            Assert.True(torch.allclose(nchwResult.BBoxCoords, nhwcResult.BBoxCoords));
+        }
+        finally
+        {
+            nchwResult.BBoxClasses.Dispose();
+            nchwResult.BBoxCoords.Dispose();
+            nhwcResult.BBoxClasses.Dispose();
+            nhwcResult.BBoxCoords.Dispose();
+        }
+    }
+
+    [Fact]
+    public void MergeBBoxes_PreservesDTypeAndDevice()
+    {
+        _model = new TableModel04(_config);
+        var mergeMethod = typeof(TableModel04).GetMethod("MergeBBoxes", BindingFlags.NonPublic | BindingFlags.Instance);
+        Assert.NotNull(mergeMethod);
+
+        using var bbox1 = torch.tensor(new[] { 0.25f, 0.5f, 0.2f, 0.3f }, dtype: ScalarType.Float32, device: torch.CPU);
+        using var bbox2 = torch.tensor(new[] { 0.75f, 0.6f, 0.2f, 0.3f }, dtype: ScalarType.Float32, device: torch.CPU);
+
+        using var merged = (Tensor)mergeMethod!.Invoke(_model, new object[] { bbox1, bbox2 })!;
+
+        Assert.Equal(bbox1.dtype, merged.dtype);
+        Assert.Equal(bbox1.device.ToString(), merged.device.ToString());
+
+        using var expected = torch.tensor(new[] { 0.5f, 0.55f, 0.7f, 0.4f }, dtype: ScalarType.Float32, device: torch.CPU);
+        Assert.True(torch.allclose(expected, merged));
     }
 
     // ==================== Output Value Tests ====================

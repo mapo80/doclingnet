@@ -213,18 +213,29 @@ public sealed class TableModel04 : Module<Tensor, TableModel04Result>
         var newCx = newLeft + newW / 2;
         var newCy = newTop + newH / 2;
 
-        return torch.tensor(new[] { newCx, newCy, newW, newH });
+        return torch.tensor(
+            new[] { newCx, newCy, newW, newH },
+            dtype: bbox1.dtype,
+            device: bbox1.device);
     }
 
     /// <summary>
     /// Forward pass for inference (autoregressive tag generation + bbox prediction).
     /// </summary>
-    /// <param name="images">Input images of shape (batch_size, height, width, 3) or (batch_size, 3, height, width).</param>
+    /// <param name="images">Input images of shape (batch_size, height, width, 3) or (batch_size, 3, height, width).
+    /// When NHWC tensors are provided they are internally permuted to NCHW before encoding.</param>
     /// <returns>Prediction result containing tag sequence, bbox classes, and coordinates.</returns>
     public override TableModel04Result forward(Tensor images)
     {
+        // Normalize layout to NCHW if an NHWC tensor is provided.
+        var encoderInput = images;
+        if (images.dim() == 4 && images.size(-1) == 3 && images.size(1) != 3)
+        {
+            encoderInput = images.permute(0, 3, 1, 2).contiguous();
+        }
+
         // Encode image
-        using var encOut = _encoder.forward(images);
+        using var encOut = _encoder.forward(encoderInput);
 
         // DEBUG: Check encoder output
         if (Environment.GetEnvironmentVariable("DEBUG_ENCODER") == "1")

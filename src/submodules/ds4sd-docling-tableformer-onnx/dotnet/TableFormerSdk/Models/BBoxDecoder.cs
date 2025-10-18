@@ -94,12 +94,12 @@ public sealed class BBoxDecoder : Module<(Tensor encoderOut, Tensor tagH), (Tens
 
         // Classification head (numClasses + 1 for no-object class)
         // Input dimension is decoderDim (the hidden state dimension)
-        _class_embed = Linear(decoderDim, _numClasses + 1);
+        _class_embed = Linear(encoderDim, _numClasses + 1);
         register_module(nameof(_class_embed), _class_embed);
 
         // Bounding box regression head (MLP with 3 layers)
         // Input dimension is decoderDim (the hidden state dimension)
-        _bbox_embed = new MLP(decoderDim, 256, 4, 3);
+        _bbox_embed = new MLP(encoderDim, 256, 4, 3);
         register_module(nameof(_bbox_embed), _bbox_embed);
     }
 
@@ -169,21 +169,20 @@ public sealed class BBoxDecoder : Module<(Tensor encoderOut, Tensor tagH), (Tens
             var (awe, alpha) = _attention.forward((encoderOutFlat, cellTagH, h));
             alpha.Dispose();
 
-            // Apply gating
+            // Apply gating and dropout to the attention context
             using var gate = _sigmoid.forward(_f_beta.forward(h));
-            using var awegated = gate * awe;
+            using var gatedContext = gate * awe;
             awe.Dispose();
 
-            // Update hidden state
-            using var hUpdated = awegated * h;
+            using var context = _dropoutLayer.forward(gatedContext);
 
             // Predict bounding box (apply sigmoid for normalized coordinates)
-            using var bboxRaw = _bbox_embed.forward(hUpdated);
+            using var bboxRaw = _bbox_embed.forward(context);
             var bbox = bboxRaw.sigmoid();
             predictionsBboxes.Add(bbox);
 
             // Predict class logits
-            var classLogits = _class_embed.forward(hUpdated);
+            var classLogits = _class_embed.forward(context);
             predictionsClasses.Add(classLogits);
         }
 
