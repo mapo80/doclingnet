@@ -21,6 +21,7 @@ public sealed class BBoxDecoderTests : IDisposable
     private const long EmbedDim = 256;
     private const long TagDecoderDim = 256;
     private const long DecoderDim = 512;
+    private const long EncoderRawDim = 256;
     private const long NumClasses = 3;  // cell, row header, column header
     private const long EncoderDim = 512;
 
@@ -32,6 +33,7 @@ public sealed class BBoxDecoderTests : IDisposable
             tagDecoderDim: TagDecoderDim,
             decoderDim: DecoderDim,
             numClasses: NumClasses,
+            encoderRawDim: EncoderRawDim,
             encoderDim: EncoderDim,
             dropout: 0.1);
     }
@@ -68,6 +70,7 @@ public sealed class BBoxDecoderTests : IDisposable
             tagDecoderDim: 256,
             decoderDim: 512,
             numClasses: 3,
+            encoderRawDim: 256,
             encoderDim: 256);
 
         // Assert
@@ -107,7 +110,7 @@ public sealed class BBoxDecoderTests : IDisposable
         const long width = 14;
         const long batchSize = 1;
 
-        using var encoderOut = torch.randn(batchSize, height, width, EncoderDim);
+        using var encoderOut = torch.randn(batchSize, height, width, EncoderRawDim);
         using var tagH = torch.randn(numCells, TagDecoderDim);
 
         // Act
@@ -141,7 +144,7 @@ public sealed class BBoxDecoderTests : IDisposable
         const long height = 14;
         const long width = 14;
 
-        using var encoderOut = torch.randn(1, height, width, EncoderDim);
+        using var encoderOut = torch.randn(1, height, width, EncoderRawDim);
         using var tagH = torch.randn(numCells, TagDecoderDim);
 
         // Act
@@ -168,7 +171,7 @@ public sealed class BBoxDecoderTests : IDisposable
         const long height = 14;
         const long width = 14;
 
-        using var encoderOut = torch.randn(1, height, width, EncoderDim);
+        using var encoderOut = torch.randn(1, height, width, EncoderRawDim);
         using var tagH = torch.empty(0, TagDecoderDim);
 
         // Act
@@ -195,7 +198,7 @@ public sealed class BBoxDecoderTests : IDisposable
         _decoder.eval();
         const long numCells = 3;
 
-        using var encoderOut = torch.randn(1, height, width, EncoderDim);
+        using var encoderOut = torch.randn(1, height, width, EncoderRawDim);
         using var tagH = torch.randn(numCells, TagDecoderDim);
 
         // Act
@@ -221,7 +224,7 @@ public sealed class BBoxDecoderTests : IDisposable
     {
         // Arrange
         _decoder.eval();
-        using var encoderOut = torch.randn(1, 14, 14, EncoderDim);
+        using var encoderOut = torch.randn(1, 14, 14, EncoderRawDim);
         using var tagH = torch.randn(5, TagDecoderDim);
 
         // Act
@@ -245,7 +248,7 @@ public sealed class BBoxDecoderTests : IDisposable
     {
         // Arrange
         _decoder.eval();
-        using var encoderOut = torch.randn(1, 14, 14, EncoderDim);
+        using var encoderOut = torch.randn(1, 14, 14, EncoderRawDim);
         using var tagH = torch.randn(5, TagDecoderDim);
 
         // Act
@@ -270,7 +273,7 @@ public sealed class BBoxDecoderTests : IDisposable
     {
         // Arrange
         _decoder.eval();
-        using var encoderOut = torch.randn(1, 14, 14, EncoderDim);
+        using var encoderOut = torch.randn(1, 14, 14, EncoderRawDim);
         using var tagH = torch.randn(5, TagDecoderDim);
 
         // Act
@@ -321,7 +324,7 @@ public sealed class BBoxDecoderTests : IDisposable
     {
         // Arrange
         _decoder.eval();
-        using var encoderOut = torch.randn(1, 14, 14, EncoderDim);
+        using var encoderOut = torch.randn(1, 14, 14, EncoderRawDim);
         using var tagH = torch.randn(3, TagDecoderDim);
 
         // Act
@@ -358,7 +361,7 @@ public sealed class BBoxDecoderTests : IDisposable
     {
         // Arrange
         _decoder.eval();
-        using var encoderOut = torch.zeros(1, 14, 14, EncoderDim);
+        using var encoderOut = torch.zeros(1, 14, 14, EncoderRawDim);
         using var tagH = torch.randn(3, TagDecoderDim);
 
         // Act
@@ -382,7 +385,7 @@ public sealed class BBoxDecoderTests : IDisposable
     {
         // Arrange
         _decoder.eval();
-        using var encoderOut = torch.randn(1, 14, 14, EncoderDim);
+        using var encoderOut = torch.randn(1, 14, 14, EncoderRawDim);
         using var tagH = torch.zeros(3, TagDecoderDim);
 
         // Act
@@ -406,7 +409,7 @@ public sealed class BBoxDecoderTests : IDisposable
     {
         // Arrange
         _decoder.eval();
-        using var encoderOut = torch.full(new long[] { 1, 14, 14, EncoderDim }, 10.0f);
+        using var encoderOut = torch.full(new long[] { 1, 14, 14, EncoderRawDim }, 10.0f);
         using var tagH = torch.full(new long[] { 3, TagDecoderDim }, 10.0f);
 
         // Act
@@ -430,7 +433,7 @@ public sealed class BBoxDecoderTests : IDisposable
     {
         // Arrange
         _decoder.eval();
-        using var encoderOut = torch.full(new long[] { 1, 14, 14, EncoderDim }, -5.0f);
+        using var encoderOut = torch.full(new long[] { 1, 14, 14, EncoderRawDim }, -5.0f);
         using var tagH = torch.full(new long[] { 3, TagDecoderDim }, -5.0f);
 
         // Act
@@ -458,7 +461,7 @@ public sealed class BBoxDecoderTests : IDisposable
     {
         // Arrange
         _decoder.eval();
-        using var encoderOut = torch.randn(1, 14, 14, EncoderDim);
+        using var encoderOut = torch.randn(1, 14, 14, EncoderRawDim);
         using var tagH = torch.randn(5, TagDecoderDim);
 
         // Act & Assert
@@ -484,7 +487,7 @@ public sealed class BBoxDecoderTests : IDisposable
     {
         // Arrange
         _decoder.eval();
-        using var encoderOut = torch.randn(1, 14, 14, EncoderDim);
+        using var encoderOut = torch.randn(1, 14, 14, EncoderRawDim);
 
         // Act & Assert
         using (torch.no_grad())
@@ -536,7 +539,7 @@ public sealed class BBoxDecoderTests : IDisposable
             numClasses: 3))
         {
             // Use the module
-            using var encoderOut = torch.randn(1, 14, 14, 512);
+            using var encoderOut = torch.randn(1, 14, 14, EncoderRawDim);
             using var tagH = torch.randn(3, 256);
             var (classes, boxes) = decoder.forward((encoderOut, tagH));
 

@@ -697,6 +697,42 @@ ecel embedding max_diff:    0.0000000039 ✅
 
 All embedding weights match Python reference.
 
+### 4.6 Python Ground Truth Regression Test
+
+To guard against regressions we now run the full `TableModel04` TorchSharp pipeline against the Python fixtures generated from the official safetensors weights.
+
+- **Test class**: `TableModel04ParityTests.FastVariantMatchesPythonGroundTruth`
+- **Inputs**:
+  - `models/model_artifacts/tableformer/fast/tm_config.json`
+  - `models/model_artifacts/tableformer/fast/tableformer_fast.safetensors` (download from Hugging Face – do **not** commit)
+  - `test-data-python-ground-truth/input_image.npy`
+  - `test-data-python-ground-truth/tableformer_fast_prediction.json`
+- **Assertions**: exact match on the tag sequence and a maximum absolute difference `< 1e-4` for both bbox class logits and bbox coordinates.
+
+Run locally with:
+
+```bash
+dotnet test src/submodules/ds4sd-docling-tableformer-onnx/TableFormerSdk.sln -v minimal
+```
+
+#### Refreshing the Python fixtures
+
+When the upstream weights or preprocessing change, regenerate `tableformer_fast_prediction.json` directly from Python:
+
+```bash
+pip install --no-cache-dir torch==2.2.2+cpu torchvision==0.17.2+cpu \
+  --index-url https://download.pytorch.org/whl/cpu
+pip install --no-deps docling-ibm-models safetensors "numpy<2"
+
+python tools/generate_tableformer_ground_truth.py \
+  models/model_artifacts/tableformer/fast/tm_config.json \
+  /path/to/tableformer_fast.safetensors \
+  test-data-python-ground-truth/input_image.npy \
+  test-data-python-ground-truth/tableformer_fast_prediction.json
+```
+
+The script runs the official Python implementation end-to-end and writes the JSON fixture consumed by the parity test.
+
 ---
 
 ## 5. Current Issues

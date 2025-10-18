@@ -1,0 +1,9 @@
+<Project>
+  <Target Name="EnsureDoclingCustomPackages" BeforeTargets="Restore">
+    <PropertyGroup>
+      <DoclingCustomPackages>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)../../../../packages/custom'))</DoclingCustomPackages>
+    </PropertyGroup>
+    <Message Text="Ensuring custom NuGet feed exists at $(DoclingCustomPackages)" Importance="Low" />
+    <MakeDir Directories="$(DoclingCustomPackages)" Condition="!Exists('$(DoclingCustomPackages)')" />
+  </Target>
+</Project>
