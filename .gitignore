@@ -7,3 +7,9 @@ obj/
 TestResults/
 packages/custom/
 **/packages/custom/
+
+# Table Transformer temporary files
+src/submodules/table-transformer-onnx/temp/
+
+# RapidTable/SLANetPlus temporary files
+src/submodules/rapidtable-onnx/temp/

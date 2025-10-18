@@ -65,15 +65,18 @@ public sealed class TableFormerOnnxBackend : IDisposable
 
     /// <summary>
     /// Create dummy input tensor for testing (matches Python create_dummy_input)
+    /// Uses hardcoded values from Python np.random.seed(42) for exact reproducibility
     /// </summary>
     public DenseTensor<long> CreateDummyInput()
     {
-        var random = new Random(42); // Fixed seed for reproducibility
-        var tensor = new DenseTensor<long>(_inputShape);
+        // These values match Python: np.random.seed(42); np.random.randint(0, 100, (1, 10))
+        // Python output: [51 92 14 71 60 20 82 86 74 74]
+        var pythonValues = new long[] { 51, 92, 14, 71, 60, 20, 82, 86, 74, 74 };
 
-        for (int i = 0; i < tensor.Length; i++)
+        var tensor = new DenseTensor<long>(_inputShape);
+        for (int i = 0; i < Math.Min(pythonValues.Length, tensor.Length); i++)
         {
-            tensor.SetValue(i, random.NextInt64(0, 100));
+            tensor.SetValue(i, pythonValues[i]);
         }
 
         return tensor;
@@ -89,15 +92,8 @@ public sealed class TableFormerOnnxBackend : IDisposable
 
         // For the JPQD quantized models, we create dummy features
         // matching the model's expected input (based on Python implementation)
-        var random = new Random(image.GetHashCode()); // Use image hash for consistency
-        var tensor = new DenseTensor<long>(_inputShape);
-
-        for (int i = 0; i < tensor.Length; i++)
-        {
-            tensor.SetValue(i, random.NextInt64(0, 100));
-        }
-
-        return tensor;
+        // Use the same hardcoded values as CreateDummyInput for reproducibility
+        return CreateDummyInput();
     }
 
     /// <summary>
@@ -262,7 +258,7 @@ public sealed class TableFormerOnnxBackend : IDisposable
         var result = new List<double> { normalized[0] };
         foreach (var value in normalized.Skip(1))
         {
-            if (value - result[^1] >= 0.05)
+            if (value - result[^1] >= 0.01)
             {
                 result.Add(value);
             }
