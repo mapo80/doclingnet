@@ -18,7 +18,6 @@ public sealed class PositionalEncoding : Module<Tensor, Tensor>
 {
     private readonly TorchSharp.Modules.Dropout _dropout;
     private readonly Tensor _pe;
-    private readonly Parameter _scale;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PositionalEncoding"/> class.
@@ -32,10 +31,6 @@ public sealed class PositionalEncoding : Module<Tensor, Tensor>
     {
         _dropout = Dropout(dropout);
         register_module("dropout", _dropout);
-
-        // Learnable scale parameter (Python has this!)
-        _scale = Parameter(torch.ones(1));
-        register_parameter("scale", _scale);
 
         // Create positional encoding matrix
         // pe shape: (max_len, d_model)
@@ -57,9 +52,10 @@ public sealed class PositionalEncoding : Module<Tensor, Tensor>
         // pe[:, 1::2] = torch.cos(position * div_term)
         pe.index_put_(torch.cos(position * divTerm), TensorIndex.Colon, TensorIndex.Slice(1, null, 2));
 
-        // Reshape pe from (max_len, d_model) to (1, max_len, d_model)
-        // In Python: pe = pe.unsqueeze(0)  (NO transpose!)
-        pe = pe.unsqueeze(0);
+        // CRITICAL FIX: Apply transpose like Python does!
+        // Python: pe = pe.unsqueeze(0).transpose(0, 1)
+        // Shape transformation: (max_len, d_model) -> (1, max_len, d_model) -> (max_len, 1, d_model)
+        pe = pe.unsqueeze(0).transpose(0, 1);
 
         // Register as buffer (not a trainable parameter)
         register_buffer("pe", pe);
@@ -75,20 +71,15 @@ public sealed class PositionalEncoding : Module<Tensor, Tensor>
     {
         // Add positional encoding to input
         // x shape: (seq_len, batch_size, d_model)
-        // pe shape: (1, max_len, d_model)
-        // We need to permute pe to match: (max_len, 1, d_model) then slice to (seq_len, 1, d_model)
+        // pe shape: (max_len, 1, d_model) - after transpose fix
         var seqLen = x.size(0);
 
-        // Permute pe from (1, max_len, d_model) to (max_len, 1, d_model)
-        using var pePermuted = _pe.permute(1, 0, 2);
+        // Simple slicing like Python: pe[:x.size(0), :]
+        // Slice from (max_len, 1, d_model) to (seq_len, 1, d_model)
+        using var peSlice = _pe.index(TensorIndex.Slice(null, seqLen), TensorIndex.Colon);
 
-        // Slice to match sequence length: (seq_len, 1, d_model)
-        using var peSlice = pePermuted.index(TensorIndex.Slice(null, seqLen), TensorIndex.Colon, TensorIndex.Colon);
-
-        // CRITICAL: Apply learnable scale parameter (Python does this!)
-        // x = x + scale * pe
-        using var scaledPe = _scale * peSlice;
-        x = x + scaledPe;
+        // Add positional encoding: x = x + pe
+        x = x + peSlice;
 
         // Apply dropout
         return _dropout.forward(x);
@@ -100,7 +91,6 @@ public sealed class PositionalEncoding : Module<Tensor, Tensor>
         {
             _dropout?.Dispose();
             _pe?.Dispose();
-            _scale?.Dispose();
         }
         base.Dispose(disposing);
     }
