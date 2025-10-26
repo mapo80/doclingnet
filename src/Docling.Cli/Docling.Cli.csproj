@@ -10,12 +10,12 @@
   <ItemGroup>
     <ProjectReference Include="..\submodules\ds4sd-docling-layout-heron-onnx\dotnet\LayoutSdk\LayoutSdk.csproj" />
     <ProjectReference Include="..\submodules\ds4sd-docling-tableformer-onnx\dotnet\TableFormerTorchSharpSdk\TableFormerTorchSharpSdk.csproj" />
+    <ProjectReference Include="..\submodules\easyocrnet\EasyOcrNet\EasyOcrNet.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Serilog" Version="4.3.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-    <PackageReference Include="EasyOcrNet" Version="1.0.0" />
   </ItemGroup>
 
 </Project>

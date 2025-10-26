@@ -1,0 +1,60 @@
+[14:40:12 INF] Docling Layout Detection CLI
+[14:40:12 INF] Image path: dataset/2305.03393v1-pg9-img.png
+[14:40:12 INF] Model path: /Users/politom/Documents/Workspace/personal/doclingnet/src/submodules/ds4sd-docling-layout-heron-onnx/models/heron-converted.onnx
+[14:40:12 INF] Model paths validated successfully
+[14:40:13 INF] Processing image with LayoutSdk...
+[14:40:13 INF] 
+[14:40:13 INF] === LAYOUT DETECTION RESULTS ===
+[14:40:13 INF] Detected 12 layout elements
+[14:40:13 INF] Preprocessing time: 6.21 ms
+[14:40:13 INF] Inference time: 441.34 ms
+[14:40:13 INF] Total time: 447.55 ms
+[14:40:13 INF] 
+[14:40:13 INF] Detected layout elements:
+[14:40:13 INF]   - Table           X= 291.11, Y= 703.14, W= 698.20, H= 275.40, Conf=0.991
+[14:40:13 INF]   - Text            X= 279.08, Y= 384.86, W= 723.04, H= 144.97, Conf=0.990
+[14:40:13 INF]   - Text            X= 278.99, Y=1091.87, W= 723.02, H= 194.31, Conf=0.988
+[14:40:13 INF]   - Text            X= 278.77, Y=1290.62, W= 723.05, H=  95.86, Conf=0.984
+[14:40:13 INF]   - Text            X= 279.81, Y= 246.79, W= 721.73, H=  64.76, Conf=0.980
+[14:40:13 INF]   - Caption         X= 279.17, Y= 571.08, W= 721.71, H= 111.55, Conf=0.973
+[14:40:13 INF]   - Section-header  X= 280.30, Y=1056.53, W= 269.76, H=  20.13, Conf=0.955
+[14:40:13 INF]   - Page-header     X= 404.76, Y= 194.26, W= 526.47, H=  18.61, Conf=0.948
+[14:40:13 INF]   - Section-header  X= 280.19, Y= 350.81, W= 382.18, H=  20.20, Conf=0.946
+[14:40:13 INF]   - Page-header     X= 990.57, Y= 195.01, W=  10.10, H=  14.51, Conf=0.850
+[14:40:13 INF]   - Text            X= 278.78, Y=1091.71, W= 723.41, H=  96.43, Conf=0.300
+[14:40:13 INF]   - Text            X= 278.94, Y=1190.98, W= 722.01, H=  96.05, Conf=0.260
+[14:40:13 INF] 
+[14:40:13 INF] === OCR EXTRACTION (EasyOCR) ===
+[14:40:13 INF] No existing EasyOCR models found. Creating directory '/Users/politom/Documents/Workspace/personal/doclingnet/src/Docling.Cli/bin/Release/net9.0/models' for auto-download.
+[14:40:13 INF] Using EasyOCR model directory: /Users/politom/Documents/Workspace/personal/doclingnet/src/Docling.Cli/bin/Release/net9.0/models
+[14:40:13 INF] ↓ Download detection.onnx da https://github.com/mapo80/easyocrnet/releases/download/v1.0.0/detection.onnx
+[14:40:14 ERR] Failed to initialise EasyOCR
+System.Net.Http.HttpRequestException: Response status code does not indicate success: 404 (Not Found).
+   at System.Net.Http.HttpResponseMessage.EnsureSuccessStatusCode()
+   at EasyOcrNet.Assets.OcrReleaseDownloader.DownloadAssetAsync(String assetUrl, ReleaseAsset asset, String destinationPath, Action`1 logger, CancellationToken cancellationToken) in /Users/politom/Documents/Workspace/personal/doclingnet/src/submodules/easyocrnet/EasyOcrNet/Assets/OcrReleaseDownloader.cs:line 184
+   at EasyOcrNet.Assets.OcrReleaseDownloader.EnsureModelAsync(String modelPath, GithubReleaseOptions options, Action`1 logger, CancellationToken cancellationToken) in /Users/politom/Documents/Workspace/personal/doclingnet/src/submodules/easyocrnet/EasyOcrNet/Assets/OcrReleaseDownloader.cs:line 114
+   at Docling.Cli.Program.CreateEasyOcrAsync() in /Users/politom/Documents/Workspace/personal/doclingnet/src/Docling.Cli/Program.cs:line 351
+   at Docling.Cli.Program.ProcessLayoutItemsWithEasyOcrAsync(IEnumerable`1 layoutBoxes, SKBitmap originalImage, String outputDirectory, String imageBaseName) in /Users/politom/Documents/Workspace/personal/doclingnet/src/Docling.Cli/Program.cs:line 249
+[14:40:14 INF] 
+[14:40:14 INF] === TABLE EXTRACTION ===
+[14:40:14 INF] Found 1 table(s)
+[14:40:14 INF] Extracted table 1/1 to: dataset/extracted_tables/2305.03393v1-pg9-img_table_1.png
+[14:40:14 INF] 
+[14:40:14 INF] === TABLE STRUCTURE EXTRACTION (TableFormer) ===
+[14:40:14 INF] TableFormer artifacts directory: /Users/politom/Documents/Workspace/personal/doclingnet/artifacts
+[14:40:14 INF] Initializing TableFormer (downloading models from Hugging Face if needed)...
+[14:40:14 INF] This may take a while on first run (downloading ~100MB of models)...
+[14:40:14 INF] TableFormer models downloaded successfully!
+[14:40:14 INF] Model directory: /Users/politom/Documents/Workspace/personal/doclingnet/artifacts/model_artifacts/tableformer/fast
+[14:40:14 INF] Loading model weights...
+[14:40:14 INF] Model initialized successfully!
+[14:40:14 INF] Creating TableFormer processing pipeline...
+[14:40:14 INF] Found 1 table image(s) to process
+[14:40:14 INF] Processing table 1/1: 2305.03393v1-pg9-img_table_1.png
+[14:40:14 ERR] Error processing single table 2305.03393v1-pg9-img_table_1.png
+System.IO.InvalidDataException: Pixmap color space mismatch. Expected RGBA8888 with Unpremul or Opaque alpha but found Rgba8888/Premul.
+   at TableFormerTorchSharpSdk.PagePreparation.TableFormerDecodedPageImage.Decode(SKBitmap bitmap) in /Users/politom/Documents/Workspace/personal/doclingnet/src/submodules/ds4sd-docling-tableformer-onnx/dotnet/TableFormerTorchSharpSdk/PagePreparation/TableFormerDecodedPageImage.cs:line 108
+   at TableFormerTorchSharpSdk.PagePreparation.TableFormerDecodedPageImage.Decode(FileInfo imageFile) in /Users/politom/Documents/Workspace/personal/doclingnet/src/submodules/ds4sd-docling-tableformer-onnx/dotnet/TableFormerTorchSharpSdk/PagePreparation/TableFormerDecodedPageImage.cs:line 69
+   at Docling.Cli.Program.ProcessSingleTable(FileInfo tableFile, TableFormerNeuralModel neuralModel, TableFormerSequenceDecoder decoder, TableFormerCellMatcher cellMatcher, TableFormerPageInputPreparer preparer, TableFormerTableCropper cropper, TableFormerImageTensorizer tensorizer, TableFormerMatchingPostProcessor postProcessor, TableFormerDoclingResponseAssembler assembler) in /Users/politom/Documents/Workspace/personal/doclingnet/src/Docling.Cli/Program.cs:line 593
+[14:40:14 WRN]   ✗ Failed to process table: 2305.03393v1-pg9-img_table_1.png
+[14:40:14 WRN] No tables were successfully processed

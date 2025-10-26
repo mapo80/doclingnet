@@ -5,13 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using EasyOcrNet;
-using EasyOcrNet.Configuration;
-using EasyOcrNet.Languages;
+using EasyOcrNet.Assets;
+using EasyOcrNet.Models;
 using LayoutSdk;
 using LayoutSdk.Configuration;
 using Serilog;
 using SkiaSharp;
 using TableFormerTorchSharpSdk.Artifacts;
+using TableFormerTorchSharpSdk.Configuration;
 using TableFormerTorchSharpSdk.Decoding;
 using TableFormerTorchSharpSdk.Matching;
 using TableFormerTorchSharpSdk.Model;
@@ -109,7 +110,7 @@ internal static class Program
             }
 
             var ocrOutputDir = Path.Combine(Path.GetDirectoryName(imagePath) ?? ".", "ocr_results");
-            ProcessLayoutItemsWithEasyOcr(result.Boxes, originalImage, ocrOutputDir, imageBaseName);
+            await ProcessLayoutItemsWithEasyOcrAsync(result.Boxes, originalImage, ocrOutputDir, imageBaseName).ConfigureAwait(false);
 
             // Estrai le tabelle rilevate
             var tables = result.Boxes.Where(b => b.Label.Equals("Table", StringComparison.OrdinalIgnoreCase)).ToList();
@@ -157,7 +158,7 @@ internal static class Program
         }
     }
 
-    private static void ExtractAndSaveRegion(SKBitmap sourceImage, BoundingBox region, string outputPath)
+    private static void ExtractAndSaveRegion(SKBitmap sourceImage, LayoutSdk.BoundingBox region, string outputPath)
     {
         using var croppedImage = CropRegion(sourceImage, region);
         if (croppedImage is null)
@@ -172,7 +173,7 @@ internal static class Program
         encoded.SaveTo(fileStream);
     }
 
-    private static SKBitmap? CropRegion(SKBitmap sourceImage, BoundingBox region)
+    private static SKBitmap? CropRegion(SKBitmap sourceImage, LayoutSdk.BoundingBox region)
     {
         var left = (int)Math.Floor(region.X);
         var top = (int)Math.Floor(region.Y);
@@ -202,11 +203,6 @@ internal static class Program
         croppedImage.Dispose();
 
         using var surface = SKSurface.Create(new SKImageInfo(width, height));
-        if (surface is null)
-        {
-            return null;
-        }
-
         var canvas = surface.Canvas;
         canvas.Clear(SKColors.White);
 
@@ -218,8 +214,8 @@ internal static class Program
         return SKBitmap.FromImage(snapshot);
     }
 
-    private static void ProcessLayoutItemsWithEasyOcr(
-        IEnumerable<BoundingBox> layoutBoxes,
+    private static async Task ProcessLayoutItemsWithEasyOcrAsync(
+        IEnumerable<LayoutSdk.BoundingBox> layoutBoxes,
         SKBitmap originalImage,
         string outputDirectory,
         string imageBaseName)
@@ -250,7 +246,7 @@ internal static class Program
 
         try
         {
-            using var easyOcr = CreateEasyOcr();
+            using var ocrEngine = await CreateEasyOcrAsync().ConfigureAwait(false);
             var ocrResults = new List<Dictionary<string, object?>>();
 
             foreach (var box in candidates)
@@ -264,9 +260,11 @@ internal static class Program
                         continue;
                     }
 
-                    var recognition = easyOcr.Read(crop);
-                    var combinedText = recognition.Count > 0
-                        ? string.Join(" ", recognition.Select(r => r.Text)).Trim()
+                    // Process the cropped image with EasyOCR
+                    var results = await ocrEngine.ProcessImageAsync(crop).ConfigureAwait(false);
+
+                    var combinedText = results.Count > 0
+                        ? string.Join(" ", results.Select(r => r.Text)).Trim()
                         : string.Empty;
 
                     if (string.IsNullOrWhiteSpace(combinedText))
@@ -278,18 +276,18 @@ internal static class Program
                         Log.Information("  - {Label,-15} OCR => {Text}", box.Label, combinedText);
                     }
 
-                    var profileDict = CreateOcrProfileDictionary(easyOcr.LastProfile);
-
-                    var segments = recognition.Select(r => new Dictionary<string, object?>(StringComparer.Ordinal)
+                    var segments = results.Select(r => new Dictionary<string, object?>(StringComparer.Ordinal)
                     {
                         ["text"] = r.Text,
                         ["confidence"] = r.Confidence,
-                        ["bounding_box"] = new Dictionary<string, double>(StringComparer.Ordinal)
+                        ["bounding_box"] = new Dictionary<string, object?>(StringComparer.Ordinal)
                         {
-                            ["left"] = r.BoundingBox.Left,
-                            ["top"] = r.BoundingBox.Top,
-                            ["right"] = r.BoundingBox.Right,
-                            ["bottom"] = r.BoundingBox.Bottom,
+                            ["min_x"] = r.BoundingBox.MinX,
+                            ["min_y"] = r.BoundingBox.MinY,
+                            ["max_x"] = r.BoundingBox.MaxX,
+                            ["max_y"] = r.BoundingBox.MaxY,
+                            ["width"] = r.BoundingBox.Width,
+                            ["height"] = r.BoundingBox.Height,
                         },
                     }).ToList();
 
@@ -304,9 +302,9 @@ internal static class Program
                             ["width"] = box.Width,
                             ["height"] = box.Height,
                         },
-                        ["segment_count"] = recognition.Count,
+                        ["segment_count"] = results.Count,
                         ["segments"] = segments,
-                        ["profile"] = profileDict,
+                        ["combined_text"] = combinedText,
                     });
                 }
                 catch (Exception ex)
@@ -331,7 +329,7 @@ internal static class Program
             var outputPath = Path.Combine(outputDirectory, $"{imageBaseName}_ocr_results.json");
             using var stream = new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
             System.Text.Json.JsonSerializer.Serialize(stream, payload, TableResultSerializerOptions);
-            stream.Flush();
+            await stream.FlushAsync().ConfigureAwait(false);
             Log.Information("EasyOCR results saved to: {OutputPath}", outputPath);
         }
         catch (Exception ex)
@@ -340,29 +338,26 @@ internal static class Program
         }
     }
 
-    private static Dictionary<string, object?> CreateOcrProfileDictionary(OcrExecutionProfile profile)
-    {
-        return new Dictionary<string, object?>(StringComparer.Ordinal)
-        {
-            ["detection_ms"] = profile.DetectionDuration.TotalMilliseconds,
-            ["recognition_ms"] = profile.RecognitionDuration.TotalMilliseconds,
-            ["total_ms"] = profile.TotalDuration.TotalMilliseconds,
-            ["warmed_avg_recognition_ms"] = profile.WarmedAverageRecognitionMilliseconds,
-            ["provider"] = profile.Provider,
-            ["recognition_runs_ms"] = profile.RecognitionDurations.ToList(),
-        };
-    }
-
-    private static EasyOcr CreateEasyOcr()
+    private static async Task<OcrEngine> CreateEasyOcrAsync()
     {
         var modelDirectory = ResolveEasyOcrModelDirectory();
         Log.Information("Using EasyOCR model directory: {Directory}", modelDirectory);
-        var options = new OcrOptions(modelDirectory, OcrLanguage.English, InferenceBackend.Onnx);
-        return new EasyOcr(options);
+
+        var detectorPath = Path.Combine(modelDirectory, "detection.onnx");
+        var recognizerPath = Path.Combine(modelDirectory, "english_g2_rec.onnx");
+
+        // Ensure models are downloaded if they don't exist
+        var options = new GithubReleaseOptions(); // Use default repository and tag (v2025.09.19)
+        await OcrReleaseDownloader.EnsureModelAsync(detectorPath, options, msg => Log.Information(msg)).ConfigureAwait(false);
+        await OcrReleaseDownloader.EnsureModelAsync(recognizerPath, options, msg => Log.Information(msg)).ConfigureAwait(false);
+
+        var config = new OcrConfig(Language: "en");
+        return new OcrEngine(detectorPath, recognizerPath, "en", config, Path.Combine(modelDirectory, "character"));
     }
 
     private static string ResolveEasyOcrModelDirectory()
     {
+        // Check for environment variable override
         var overrideDirectory = Environment.GetEnvironmentVariable("EASYOCR_MODEL_DIR");
         if (!string.IsNullOrWhiteSpace(overrideDirectory))
         {
@@ -372,15 +367,21 @@ internal static class Program
                 return resolvedOverride;
             }
 
-            Log.Warning("EasyOCR override directory '{Directory}' does not contain the expected detection model files.", resolvedOverride);
+            // If override is set but doesn't contain models, create it and use it
+            Log.Information("EasyOCR override directory '{Directory}' does not contain models yet. Will download them.", resolvedOverride);
+            Directory.CreateDirectory(resolvedOverride);
+            return resolvedOverride;
         }
 
         var baseDirectory = AppContext.BaseDirectory;
+
+        // Check if models already exist in base directory
         if (ContainsEasyOcrDetectionModel(baseDirectory))
         {
             return baseDirectory;
         }
 
+        // Check common candidate directories
         var candidates = new[]
         {
             Path.Combine(baseDirectory, "contentFiles", "any", "any", "models", "easyocr"),
@@ -398,7 +399,11 @@ internal static class Program
             }
         }
 
-        throw new DirectoryNotFoundException("EasyOCR model directory not found under the application base directory. Ensure the EasyOcrNet package is restored.");
+        // No existing models found - create default directory for auto-download
+        var defaultModelDir = Path.Combine(baseDirectory, "models");
+        Log.Information("No existing EasyOCR models found. Creating directory '{Directory}' for auto-download.", defaultModelDir);
+        Directory.CreateDirectory(defaultModelDir);
+        return defaultModelDir;
     }
 
     private static bool ContainsEasyOcrDetectionModel(string directory)
@@ -438,7 +443,7 @@ internal static class Program
             Log.Information("Initializing TableFormer (downloading models from Hugging Face if needed)...");
             Log.Information("This may take a while on first run (downloading ~100MB of models)...");
 
-            using var bootstrapper = new TableFormerArtifactBootstrapper(artifactsRoot, variant: "fast");
+            using var bootstrapper = new TableFormerArtifactBootstrapper(artifactsRoot, variant: TableFormerModelVariant.Fast);
 
             var bootstrapResult = await bootstrapper.EnsureArtifactsAsync().ConfigureAwait(false);
             Log.Information("TableFormer models downloaded successfully!");

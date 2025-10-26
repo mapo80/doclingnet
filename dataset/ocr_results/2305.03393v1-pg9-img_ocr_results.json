@@ -1,0 +1,915 @@
+{
+  "image": "2305.03393v1-pg9-img",
+  "items": [
+    {
+      "label": "Text",
+      "confidence": 0.9898464,
+      "bounding_box": {
+        "x": 279.07977294921875,
+        "y": 384.86334228515625,
+        "width": 723.0387573242188,
+        "height": 144.9718017578125
+      },
+      "segment_count": 10,
+      "segments": [
+        {
+          "text": "We have chosen the Pub ZabNet data set to perform HPO, since it includes",
+          "confidence": 0.44420734,
+          "bounding_box": {
+            "min_x": 4,
+            "min_y": 0,
+            "max_x": 712,
+            "max_y": 28,
+            "width": 708,
+            "height": 28
+          }
+        },
+        {
+          "text": "highly diverse set of tables:",
+          "confidence": 0.8557194,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 26,
+            "max_x": 246,
+            "max_y": 54,
+            "width": 244,
+            "height": 28
+          }
+        },
+        {
+          "text": "Also we report TED scores separately fOr Simple and",
+          "confidence": 0.56070817,
+          "bounding_box": {
+            "min_x": 252,
+            "min_y": 28,
+            "max_x": 724,
+            "max_y": 54,
+            "width": 472,
+            "height": 26
+          }
+        },
+        {
+          "text": "complex tables (tables with cell spans).",
+          "confidence": 0.9511475,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 52,
+            "max_x": 364,
+            "max_y": 78,
+            "width": 362,
+            "height": 26
+          }
+        },
+        {
+          "text": "Results are presented in Table:",
+          "confidence": 0.73472166,
+          "bounding_box": {
+            "min_x": 370,
+            "min_y": 52,
+            "max_x": 656,
+            "max_y": 78,
+            "width": 286,
+            "height": 26
+          }
+        },
+        {
+          "text": "4",
+          "confidence": 0.7843969,
+          "bounding_box": {
+            "min_x": 663,
+            "min_y": 55,
+            "max_x": 679,
+            "max_y": 77,
+            "width": 16,
+            "height": 22
+          }
+        },
+        {
+          "text": "It is",
+          "confidence": 0.9950658,
+          "bounding_box": {
+            "min_x": 686,
+            "min_y": 52,
+            "max_x": 724,
+            "max_y": 76,
+            "width": 38,
+            "height": 24
+          }
+        },
+        {
+          "text": "evident that with O2SL, Our model achieves the same TED score aud slightly",
+          "confidence": 0.3224595,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 76,
+            "max_x": 724,
+            "max_y": 104,
+            "width": 722,
+            "height": 28
+          }
+        },
+        {
+          "text": "better maP scorcs in comparison to HLML; However OLSL yields a %x speed",
+          "confidence": 0.29511544,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 102,
+            "max_x": 724,
+            "max_y": 128,
+            "width": 722,
+            "height": 26
+          }
+        },
+        {
+          "text": "up in the inference runtime over HTML;",
+          "confidence": 0.7608454,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 126,
+            "max_x": 370,
+            "max_y": 146,
+            "width": 368,
+            "height": 20
+          }
+        }
+      ],
+      "combined_text": "We have chosen the Pub ZabNet data set to perform HPO, since it includes highly diverse set of tables: Also we report TED scores separately fOr Simple and complex tables (tables with cell spans). Results are presented in Table: 4 It is evident that with O2SL, Our model achieves the same TED score aud slightly better maP scorcs in comparison to HLML; However OLSL yields a %x speed up in the inference runtime over HTML;"
+    },
+    {
+      "label": "Text",
+      "confidence": 0.9883211,
+      "bounding_box": {
+        "x": 278.98577880859375,
+        "y": 1091.870361328125,
+        "width": 723.0218505859375,
+        "height": 194.30859375
+      },
+      "segment_count": 10,
+      "segments": [
+        {
+          "text": "We picked the model parameter confguration that produced the best prediction",
+          "confidence": 0.5728566,
+          "bounding_box": {
+            "min_x": 6,
+            "min_y": 2,
+            "max_x": 725,
+            "max_y": 30,
+            "width": 719,
+            "height": 28
+          }
+        },
+        {
+          "text": "quality (enc-6, dec=6, heads=8) with PubZab Vet aloue; then independently",
+          "confidence": 0.57839733,
+          "bounding_box": {
+            "min_x": 4,
+            "min_y": 24,
+            "max_x": 725,
+            "max_y": 54,
+            "width": 721,
+            "height": 30
+          }
+        },
+        {
+          "text": "trained and evaluated it",
+          "confidence": 0.9998735,
+          "bounding_box": {
+            "min_x": 4,
+            "min_y": 48,
+            "max_x": 222,
+            "max_y": 76,
+            "width": 218,
+            "height": 28
+          }
+        },
+        {
+          "text": "on three publicly available data sets: PubTabNet (395k",
+          "confidence": 0.9224945,
+          "bounding_box": {
+            "min_x": 226,
+            "min_y": 50,
+            "max_x": 725,
+            "max_y": 78,
+            "width": 499,
+            "height": 28
+          }
+        },
+        {
+          "text": "Samples) ,",
+          "confidence": 0.7381762,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 76,
+            "max_x": 90,
+            "max_y": 102,
+            "width": 88,
+            "height": 26
+          }
+        },
+        {
+          "text": "Ein LabNet (113k samples ) and Pub Lables-IM (about IM samples)",
+          "confidence": 0.31553984,
+          "bounding_box": {
+            "min_x": 96,
+            "min_y": 76,
+            "max_x": 724,
+            "max_y": 104,
+            "width": 628,
+            "height": 28
+          }
+        },
+        {
+          "text": "Performance results are presented in Table: p} It is clearly evident that the model",
+          "confidence": 0.56293815,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 98,
+            "max_x": 725,
+            "max_y": 128,
+            "width": 723,
+            "height": 30
+          }
+        },
+        {
+          "text": "trained on ( LSL outpertorms H LML across the board, kceping high \u0027IEDs and",
+          "confidence": 0.32625803,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 126,
+            "max_x": 725,
+            "max_y": 154,
+            "width": 723,
+            "height": 28
+          }
+        },
+        {
+          "text": "mAP scores even on difficult financial tables (Fin TabNet) that contain sparse",
+          "confidence": 0.45852274,
+          "bounding_box": {
+            "min_x": 4,
+            "min_y": 150,
+            "max_x": 725,
+            "max_y": 178,
+            "width": 721,
+            "height": 28
+          }
+        },
+        {
+          "text": "and large tables.",
+          "confidence": 0.9589151,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 176,
+            "max_x": 154,
+            "max_y": 196,
+            "width": 152,
+            "height": 20
+          }
+        }
+      ],
+      "combined_text": "We picked the model parameter confguration that produced the best prediction quality (enc-6, dec=6, heads=8) with PubZab Vet aloue; then independently trained and evaluated it on three publicly available data sets: PubTabNet (395k Samples) , Ein LabNet (113k samples ) and Pub Lables-IM (about IM samples) Performance results are presented in Table: p} It is clearly evident that the model trained on ( LSL outpertorms H LML across the board, kceping high \u0027IEDs and mAP scores even on difficult financial tables (Fin TabNet) that contain sparse and large tables."
+    },
+    {
+      "label": "Text",
+      "confidence": 0.9843577,
+      "bounding_box": {
+        "x": 278.766845703125,
+        "y": 1290.6158447265625,
+        "width": 723.0457763671875,
+        "height": 95.855224609375
+      },
+      "segment_count": 7,
+      "segments": [
+        {
+          "text": "Additionally; the results show that OTSL",
+          "confidence": 0.7543101,
+          "bounding_box": {
+            "min_x": 36,
+            "min_y": 2,
+            "max_x": 434,
+            "max_y": 28,
+            "width": 398,
+            "height": 26
+          }
+        },
+        {
+          "text": "has",
+          "confidence": 0.9999474,
+          "bounding_box": {
+            "min_x": 440,
+            "min_y": 2,
+            "max_x": 476,
+            "max_y": 26,
+            "width": 36,
+            "height": 24
+          }
+        },
+        {
+          "text": "an",
+          "confidence": 0.99947095,
+          "bounding_box": {
+            "min_x": 481,
+            "min_y": 7,
+            "max_x": 507,
+            "max_y": 25,
+            "width": 26,
+            "height": 18
+          }
+        },
+        {
+          "text": "advantage over  HTML",
+          "confidence": 0.9410003,
+          "bounding_box": {
+            "min_x": 512,
+            "min_y": 2,
+            "max_x": 724,
+            "max_y": 30,
+            "width": 212,
+            "height": 28
+          }
+        },
+        {
+          "text": "when applied ox a bigger data set like PubZables-LM and achieves siguifcautly",
+          "confidence": 0.5243894,
+          "bounding_box": {
+            "min_x": 4,
+            "min_y": 26,
+            "max_x": 724,
+            "max_y": 54,
+            "width": 720,
+            "height": 28
+          }
+        },
+        {
+          "text": "improved scorcs; Linaly; ( ISL achieves Easter interence due to tewer decoding",
+          "confidence": 0.24301021,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 52,
+            "max_x": 724,
+            "max_y": 78,
+            "width": 722,
+            "height": 26
+          }
+        },
+        {
+          "text": "steps which is a result of the reduced sequence representation;",
+          "confidence": 0.58786756,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 72,
+            "max_x": 570,
+            "max_y": 97,
+            "width": 568,
+            "height": 25
+          }
+        }
+      ],
+      "combined_text": "Additionally; the results show that OTSL has an advantage over  HTML when applied ox a bigger data set like PubZables-LM and achieves siguifcautly improved scorcs; Linaly; ( ISL achieves Easter interence due to tewer decoding steps which is a result of the reduced sequence representation;"
+    },
+    {
+      "label": "Text",
+      "confidence": 0.9801958,
+      "bounding_box": {
+        "x": 279.8146667480469,
+        "y": 246.79342651367188,
+        "width": 721.72802734375,
+        "height": 64.76498413085938
+      },
+      "segment_count": 3,
+      "segments": [
+        {
+          "text": "order to compute the LBD score: Intereuce timning results for all experiments",
+          "confidence": 0.35213882,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 2,
+            "max_x": 723,
+            "max_y": 30,
+            "width": 721,
+            "height": 28
+          }
+        },
+        {
+          "text": "were obtained Erom the same machiue ox \u0026 siugte core with AMD BPYC 7763",
+          "confidence": 0.21356769,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 26,
+            "max_x": 723,
+            "max_y": 54,
+            "width": 721,
+            "height": 28
+          }
+        },
+        {
+          "text": "CPU @2 45 GHz",
+          "confidence": 0.68717545,
+          "bounding_box": {
+            "min_x": 4,
+            "min_y": 50,
+            "max_x": 164,
+            "max_y": 66,
+            "width": 160,
+            "height": 16
+          }
+        }
+      ],
+      "combined_text": "order to compute the LBD score: Intereuce timning results for all experiments were obtained Erom the same machiue ox \u0026 siugte core with AMD BPYC 7763 CPU @2 45 GHz"
+    },
+    {
+      "label": "Caption",
+      "confidence": 0.97313404,
+      "bounding_box": {
+        "x": 279.1742248535156,
+        "y": 571.0814819335938,
+        "width": 721.706787109375,
+        "height": 111.54718017578125
+      },
+      "segment_count": 18,
+      "segments": [
+        {
+          "text": "Table",
+          "confidence": 0.96680975,
+          "bounding_box": {
+            "min_x": 3,
+            "min_y": 3,
+            "max_x": 61,
+            "max_y": 23,
+            "width": 58,
+            "height": 20
+          }
+        },
+        {
+          "text": "1.",
+          "confidence": 0.9152497,
+          "bounding_box": {
+            "min_x": 71,
+            "min_y": 3,
+            "max_x": 93,
+            "max_y": 23,
+            "width": 22,
+            "height": 20
+          }
+        },
+        {
+          "text": "HPO",
+          "confidence": 0.9866385,
+          "bounding_box": {
+            "min_x": 115,
+            "min_y": 3,
+            "max_x": 161,
+            "max_y": 23,
+            "width": 46,
+            "height": 20
+          }
+        },
+        {
+          "text": "performed",
+          "confidence": 0.649857,
+          "bounding_box": {
+            "min_x": 168,
+            "min_y": 2,
+            "max_x": 260,
+            "max_y": 26,
+            "width": 92,
+            "height": 24
+          }
+        },
+        {
+          "text": "1n",
+          "confidence": 0.80733603,
+          "bounding_box": {
+            "min_x": 267,
+            "min_y": 5,
+            "max_x": 289,
+            "max_y": 23,
+            "width": 22,
+            "height": 18
+          }
+        },
+        {
+          "text": "OTSL",
+          "confidence": 0.4463384,
+          "bounding_box": {
+            "min_x": 297,
+            "min_y": 3,
+            "max_x": 353,
+            "max_y": 23,
+            "width": 56,
+            "height": 20
+          }
+        },
+        {
+          "text": "and",
+          "confidence": 0.9889707,
+          "bounding_box": {
+            "min_x": 361,
+            "min_y": 3,
+            "max_x": 397,
+            "max_y": 23,
+            "width": 36,
+            "height": 20
+          }
+        },
+        {
+          "text": "HTML",
+          "confidence": 0.9937804,
+          "bounding_box": {
+            "min_x": 405,
+            "min_y": 3,
+            "max_x": 467,
+            "max_y": 23,
+            "width": 62,
+            "height": 20
+          }
+        },
+        {
+          "text": "representation",
+          "confidence": 0.9723897,
+          "bounding_box": {
+            "min_x": 474,
+            "min_y": 2,
+            "max_x": 602,
+            "max_y": 26,
+            "width": 128,
+            "height": 24
+          }
+        },
+        {
+          "text": "DII",
+          "confidence": 0.39528626,
+          "bounding_box": {
+            "min_x": 609,
+            "min_y": 7,
+            "max_x": 633,
+            "max_y": 23,
+            "width": 24,
+            "height": 16
+          }
+        },
+        {
+          "text": "the",
+          "confidence": 0.99986196,
+          "bounding_box": {
+            "min_x": 641,
+            "min_y": 3,
+            "max_x": 675,
+            "max_y": 23,
+            "width": 34,
+            "height": 20
+          }
+        },
+        {
+          "text": "Sallle",
+          "confidence": 0.13181236,
+          "bounding_box": {
+            "min_x": 681,
+            "min_y": 7,
+            "max_x": 722,
+            "max_y": 23,
+            "width": 41,
+            "height": 16
+          }
+        },
+        {
+          "text": "transformer-based TableFormer [9]",
+          "confidence": 0.8127091,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 20,
+            "max_x": 296,
+            "max_y": 46,
+            "width": 294,
+            "height": 26
+          }
+        },
+        {
+          "text": "architecture; trained only on PubTabNet [22]:",
+          "confidence": 0.54305625,
+          "bounding_box": {
+            "min_x": 302,
+            "min_y": 24,
+            "max_x": 692,
+            "max_y": 50,
+            "width": 390,
+            "height": 26
+          }
+        },
+        {
+          "text": "Ef-",
+          "confidence": 0.91408634,
+          "bounding_box": {
+            "min_x": 699,
+            "min_y": 25,
+            "max_x": 722,
+            "max_y": 45,
+            "width": 23,
+            "height": 20
+          }
+        },
+        {
+          "text": "lects of reducing (he # 0l layers in encoder and decoder stages 01 the uodel show (hat",
+          "confidence": 0.33498144,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 48,
+            "max_x": 722,
+            "max_y": 74,
+            "width": 720,
+            "height": 26
+          }
+        },
+        {
+          "text": "Sualler models trained on OTSL perform better; especially in recoguizing complex",
+          "confidence": 0.2264942,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 70,
+            "max_x": 722,
+            "max_y": 96,
+            "width": 720,
+            "height": 26
+          }
+        },
+        {
+          "text": "lable struchures; Ald maittai a Iuch higher Ial scure Hhan Hhe HLLML couuterpan6",
+          "confidence": 0.0120938495,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 94,
+            "max_x": 722,
+            "max_y": 112,
+            "width": 720,
+            "height": 18
+          }
+        }
+      ],
+      "combined_text": "Table 1. HPO performed 1n OTSL and HTML representation DII the Sallle transformer-based TableFormer [9] architecture; trained only on PubTabNet [22]: Ef- lects of reducing (he # 0l layers in encoder and decoder stages 01 the uodel show (hat Sualler models trained on OTSL perform better; especially in recoguizing complex lable struchures; Ald maittai a Iuch higher Ial scure Hhan Hhe HLLML couuterpan6"
+    },
+    {
+      "label": "Section-header",
+      "confidence": 0.9552824,
+      "bounding_box": {
+        "x": 280.2971496582031,
+        "y": 1056.525390625,
+        "width": 269.7636413574219,
+        "height": 20.1290283203125
+      },
+      "segment_count": 2,
+      "segments": [
+        {
+          "text": "5.2",
+          "confidence": 0.999966,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 2,
+            "max_x": 38,
+            "max_y": 21,
+            "width": 36,
+            "height": 19
+          }
+        },
+        {
+          "text": "Quantitative Results",
+          "confidence": 0.7662195,
+          "bounding_box": {
+            "min_x": 56,
+            "min_y": 2,
+            "max_x": 271,
+            "max_y": 21,
+            "width": 215,
+            "height": 19
+          }
+        }
+      ],
+      "combined_text": "5.2 Quantitative Results"
+    },
+    {
+      "label": "Page-header",
+      "confidence": 0.94754124,
+      "bounding_box": {
+        "x": 404.76043701171875,
+        "y": 194.259521484375,
+        "width": 526.474365234375,
+        "height": 18.614410400390625
+      },
+      "segment_count": 1,
+      "segments": [
+        {
+          "text": "Optimized \u0027Lable \u0027LOkehizalioul Lor \u0027Lable Suructure Recoguitiol",
+          "confidence": 0.16041145,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 2,
+            "max_x": 528,
+            "max_y": 19,
+            "width": 526,
+            "height": 17
+          }
+        }
+      ],
+      "combined_text": "Optimized \u0027Lable \u0027LOkehizalioul Lor \u0027Lable Suructure Recoguitiol"
+    },
+    {
+      "label": "Section-header",
+      "confidence": 0.94558287,
+      "bounding_box": {
+        "x": 280.1855773925781,
+        "y": 350.8106384277344,
+        "width": 382.1831970214844,
+        "height": 20.19873046875
+      },
+      "segment_count": 2,
+      "segments": [
+        {
+          "text": "5.1",
+          "confidence": 0.99996006,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 2,
+            "max_x": 36,
+            "max_y": 22,
+            "width": 34,
+            "height": 20
+          }
+        },
+        {
+          "text": "Hyper Parameter Optimization",
+          "confidence": 0.75651073,
+          "bounding_box": {
+            "min_x": 56,
+            "min_y": 2,
+            "max_x": 383,
+            "max_y": 22,
+            "width": 327,
+            "height": 20
+          }
+        }
+      ],
+      "combined_text": "5.1 Hyper Parameter Optimization"
+    },
+    {
+      "label": "Page-header",
+      "confidence": 0.85004026,
+      "bounding_box": {
+        "x": 990.5665893554688,
+        "y": 195.01370239257812,
+        "width": 10.09771728515625,
+        "height": 14.509185791015625
+      },
+      "segment_count": 0,
+      "segments": [],
+      "combined_text": ""
+    },
+    {
+      "label": "Text",
+      "confidence": 0.30001903,
+      "bounding_box": {
+        "x": 278.7839660644531,
+        "y": 1091.7125244140625,
+        "width": 723.40673828125,
+        "height": 96.43212890625
+      },
+      "segment_count": 6,
+      "segments": [
+        {
+          "text": "We picked the model parameter confguration that produced the best prediction",
+          "confidence": 0.5728566,
+          "bounding_box": {
+            "min_x": 6,
+            "min_y": 2,
+            "max_x": 725,
+            "max_y": 30,
+            "width": 719,
+            "height": 28
+          }
+        },
+        {
+          "text": "quality (enc-6, dec=6, heads=8) with PubZab Vet aloue; then independently",
+          "confidence": 0.57839733,
+          "bounding_box": {
+            "min_x": 4,
+            "min_y": 24,
+            "max_x": 725,
+            "max_y": 54,
+            "width": 721,
+            "height": 30
+          }
+        },
+        {
+          "text": "trained and evaluated it",
+          "confidence": 0.99987537,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 48,
+            "max_x": 222,
+            "max_y": 76,
+            "width": 220,
+            "height": 28
+          }
+        },
+        {
+          "text": "on three _",
+          "confidence": 0.91563886,
+          "bounding_box": {
+            "min_x": 227,
+            "min_y": 53,
+            "max_x": 307,
+            "max_y": 73,
+            "width": 80,
+            "height": 20
+          }
+        },
+        {
+          "text": "publicly available data sets: PubTabNet (395k",
+          "confidence": 0.83739114,
+          "bounding_box": {
+            "min_x": 306,
+            "min_y": 50,
+            "max_x": 725,
+            "max_y": 78,
+            "width": 419,
+            "height": 28
+          }
+        },
+        {
+          "text": "Salples); Lin ZabNet (LLSk sanpkes) and PubZables-IM (about IML samples) ",
+          "confidence": 0.053198427,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 76,
+            "max_x": 724,
+            "max_y": 98,
+            "width": 722,
+            "height": 22
+          }
+        }
+      ],
+      "combined_text": "We picked the model parameter confguration that produced the best prediction quality (enc-6, dec=6, heads=8) with PubZab Vet aloue; then independently trained and evaluated it on three _ publicly available data sets: PubTabNet (395k Salples); Lin ZabNet (LLSk sanpkes) and PubZables-IM (about IML samples)"
+    },
+    {
+      "label": "Text",
+      "confidence": 0.26029122,
+      "bounding_box": {
+        "x": 278.9391174316406,
+        "y": 1190.98095703125,
+        "width": 722.014404296875,
+        "height": 96.0545654296875
+      },
+      "segment_count": 4,
+      "segments": [
+        {
+          "text": "Performauce results are presented in Iable: p} It is clearly evident that the model",
+          "confidence": 0.38433674,
+          "bounding_box": {
+            "min_x": 4,
+            "min_y": 0,
+            "max_x": 723,
+            "max_y": 28,
+            "width": 719,
+            "height": 28
+          }
+        },
+        {
+          "text": "trained on OTSL outperforms HTML across the board, keeping high TEDs and",
+          "confidence": 0.6259552,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 26,
+            "max_x": 723,
+            "max_y": 54,
+            "width": 721,
+            "height": 28
+          }
+        },
+        {
+          "text": "maP scorcs even o=1 dificult financial tablcs (Lin LabNet) that coutain sparsc",
+          "confidence": 0.20866647,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 52,
+            "max_x": 723,
+            "max_y": 78,
+            "width": 721,
+            "height": 26
+          }
+        },
+        {
+          "text": "and large tables:",
+          "confidence": 0.5498119,
+          "bounding_box": {
+            "min_x": 2,
+            "min_y": 76,
+            "max_x": 154,
+            "max_y": 98,
+            "width": 152,
+            "height": 22
+          }
+        }
+      ],
+      "combined_text": "Performauce results are presented in Iable: p} It is clearly evident that the model trained on OTSL outperforms HTML across the board, keeping high TEDs and maP scorcs even o=1 dificult financial tablcs (Lin LabNet) that coutain sparsc and large tables:"
+    }
+  ],
+  "processed_at_utc": "2025-10-26T13:58:51.0306380Z"
+}
