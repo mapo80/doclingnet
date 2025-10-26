@@ -3,8 +3,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Docling.Core\Docling.Core.csproj" />
     <ProjectReference Include="..\submodules\ds4sd-docling-layout-heron-onnx\dotnet\LayoutSdk\LayoutSdk.csproj" />
-    <ProjectReference Include="..\submodules\ds4sd-docling-tableformer-onnx\dotnet\TableFormerSdk\TableFormerSdk.csproj" />
-    <ProjectReference Include="..\submodules\easyocrnet\EasyOcrNet\EasyOcrNet.csproj" />
+    <!-- Temporarily commented out until these projects are operational -->
+    <!-- <ProjectReference Include="..\submodules\ds4sd-docling-tableformer-onnx\dotnet\TableFormerSdk\TableFormerSdk.csproj" /> -->
+    <!-- <ProjectReference Include="..\submodules\easyocrnet\EasyOcrNet\EasyOcrNet.csproj" /> -->
   </ItemGroup>
 
   <PropertyGroup>

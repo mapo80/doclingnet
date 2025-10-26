@@ -7,3 +7,4 @@ obj/
 TestResults/
 packages/custom/
 **/packages/custom/
+artifacts/

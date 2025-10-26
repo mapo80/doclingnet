@@ -80,6 +80,18 @@ internal static class Program
             return 0;
         }
 
+        // Handle layout-test command
+        if (string.Equals(args[0], "layout-test", StringComparison.OrdinalIgnoreCase))
+        {
+            if (args.Length < 2)
+            {
+                Log.Error("layout-test command requires an image path argument");
+                return 1;
+            }
+            LayoutTest.Run(args[1]);
+            return 0;
+        }
+
         if (!string.Equals(args[0], "convert", StringComparison.OrdinalIgnoreCase))
         {
             Log.Error("Unknown command '{Command}'.", args[0]);
