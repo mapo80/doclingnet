@@ -14,9 +14,9 @@ from pathlib import Path
 sys.path.insert(0, "/Users/politom/.pyenv/versions/3.11.8/lib/python3.11/site-packages")
 
 from docling_ibm_models.tableformer.models.table04_rs.tablemodel04_rs import TableModel04_rs
-from docling_ibm_models.tableformer.data_management.tf_predictor import TFTableStructurePredictor
 
-def load_and_preprocess_image(image_path, target_size=896):
+
+def load_and_preprocess_image(image_path, target_size=448):
     """Load and preprocess image to match C# preprocessing."""
     img = Image.open(image_path).convert('RGB')
     img_resized = img.resize((target_size, target_size), Image.Resampling.BILINEAR)
@@ -39,13 +39,16 @@ def main():
     print("=== Python Reference Inference ===\n")
 
     # Paths
-    config_path = "/Users/politom/Documents/Workspace/personal/doclingnet/models/model_artifacts/tableformer/fast/config.json"
-    weights_path = "/Users/politom/Documents/Workspace/personal/doclingnet/models/model_artifacts/tableformer/fast/model.safetensors"
-    image_path = "/Users/politom/Documents/Workspace/personal/doclingnet/dataset/2305.03393v1-pg9-img.png"
+    config_path = "/Users/politom/Documents/Workspace/personal/doclingnet/models/model_artifacts/tableformer/fast/tm_config.json"
+    weights_path = "/Users/politom/Documents/Workspace/personal/doclingnet/models/model_artifacts/tableformer/fast/tableformer_fast.safetensors"
+    image_path = "/Users/politom/Documents/Workspace/personal/doclingnet/src/submodules/ds4sd-docling-tableformer-onnx/dataset/FinTabNet/benchmark/HAL.2004.page_82.pdf_125315.png"
 
     # Load config
     with open(config_path, 'r') as f:
         config = json.load(f)
+
+    # Add save_dir to config for base_model.py
+    config["model"]["save_dir"] = str(Path(weights_path).parent)
 
     print(f"Config: {json.dumps(config, indent=2)}\n")
 
@@ -53,13 +56,20 @@ def main():
     print("Loading model...")
     device = torch.device('cpu')
 
-    # Initialize predictor (handles model loading)
-    predictor = TFTableStructurePredictor.from_pretrained(
-        model_path=Path(weights_path).parent,
-        device=device
-    )
+    # Initialize model directly
+    # Prepare init_data for model constructor
+    init_data_for_model = {
+        "word_map": config["dataset_wordmap"]
+    }
 
-    model = predictor.model
+    model = TableModel04_rs(config, init_data=init_data_for_model, device=device)
+
+    # Load weights from safetensors file
+    from safetensors.torch import load_file
+    state_dict = load_file(weights_path, device="cpu")
+    model.load_state_dict(state_dict)
+
+    model.to(device)
     model.eval()
 
     print("✓ Model loaded\n")
@@ -76,14 +86,40 @@ def main():
     img_tensor = load_and_preprocess_image(image_path)
     print(f"Image tensor shape: {list(img_tensor.shape)}\n")
 
+    # Save ground truth tensors for comparison
+    debug_dir = Path("/Users/politom/Documents/Workspace/personal/doclingnet/debug")
+    debug_dir.mkdir(exist_ok=True)
+    np.save(debug_dir / "python_preprocessed_image.npy", img_tensor.numpy())
+
     # Run inference
     print("Running inference (max 100 steps for debug)...")
     with torch.no_grad():
+        # Get encoder output first
+        enc_out = model._encoder(img_tensor)
+        np.save(debug_dir / "python_encoder_output.npy", enc_out.numpy())
+
+        # Manually run first step to get logits
+        enc_proj = model._tag_transformer._input_filter(enc_out.permute(0, 3, 1, 2)).permute(0, 2, 3, 1)
+        enc_flat = enc_proj.reshape(enc_proj.shape[0], -1, enc_proj.shape[-1])
+        memory = model._tag_transformer._encoder(enc_flat.permute(1, 0, 2))
+
+        start_token = torch.tensor([[init_data_for_model["word_map"]["word_map_tag"]["<start>"]]], device=device)
+        tgt_embed = model._tag_transformer._embedding(start_token)
+        tgt_pos = model._tag_transformer._positional_encoding(tgt_embed.permute(1,0,2))
+        
+        pred, _ = model._tag_transformer._decoder(tgt_pos, memory, None)
+        scores = model._tag_transformer._fc(pred)
+        np.save(debug_dir / "python_first_step_logits.npy", scores.numpy())
+
+        # Run full prediction for sequence comparison
         result = model.predict(img_tensor, max_steps=100, k=1, return_attention=False)
 
     # Extract results
-    tags = result['tags'][0]  # First batch
-    tokens = [model._tag_decode[tag] for tag in tags]
+    # Create reverse map for decoding tokens
+    reverse_word_map_tag = {v: k for k, v in init_data_for_model["word_map"]["word_map_tag"].items()}
+
+    tags = result[0]  # First batch, list of tags
+    tokens = [reverse_word_map_tag[tag] for tag in tags]
 
     print(f"\n✓ Generated {len(tokens)} tokens")
     print(f"  Tokens: {' '.join(tokens[:50])}")  # First 50 tokens

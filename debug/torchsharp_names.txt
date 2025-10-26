@@ -44,7 +44,6 @@ _encoder.resnet.6.1.conv2.weight
 _encoder.resnet.6.1.bn2.weight
 _encoder.resnet.6.1.bn2.bias
 _tagTransformer._embedding.weight
-_tagTransformer._positionalEncoding.scale
 _tagTransformer._input_filter_0.conv1.weight
 _tagTransformer._input_filter_0.bn1.weight
 _tagTransformer._input_filter_0.bn1.bias

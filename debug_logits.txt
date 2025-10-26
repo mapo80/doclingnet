@@ -1,0 +1,300 @@
+
+[DEBUG Step 0] ========================================
+  Current sequence: []
+  Sequence length: 1
+  All logits:
+    [00] <pad>     : -12,7747
+    [01] <unk>     : -12,8034
+    [02] <start>   : -12,8145
+    [03] <end>     :  -1,5390
+    [04] ecel      :   0,5968
+    [05] fcel      :   1,4975
+    [06] lcel      :   2,1824 ← PREDICTED
+    [07] ucel      : -10,5125
+    [08] xcel      :  -9,4815
+    [09] nl        :   0,1484
+    [10] ched      :   2,0894
+    [11] rhed      :  -1,1792
+    [12] srow      :  -5,8967
+
+  Top-5 logits:
+    lcel: 2,1824
+    ched: 2,0894
+    fcel: 1,4975
+    ecel: 0,5968
+    nl: 0,1484
+
+  <end> token analysis:
+    Logit: -1,5390
+    Rank: 7/13
+    Distance from max: 3,7214
+
+[DEBUG Step 1] ========================================
+  Current sequence: [lcel]
+  Sequence length: 2
+  All logits:
+    [00] <pad>     : -13,2107
+    [01] <unk>     : -13,1583
+    [02] <start>   : -13,1146
+    [03] <end>     :  -1,1834
+    [04] ecel      :  -1,5468
+    [05] fcel      :   3,9186 ← PREDICTED
+    [06] lcel      :   2,6081
+    [07] ucel      : -10,4242
+    [08] xcel      : -11,4164
+    [09] nl        :  -1,9026
+    [10] ched      :   0,5974
+    [11] rhed      :  -1,7792
+    [12] srow      :  -5,0089
+
+  Top-5 logits:
+    fcel: 3,9186
+    lcel: 2,6081
+    ched: 0,5974
+    <end>: -1,1834
+    ecel: -1,5468
+
+  <end> token analysis:
+    Logit: -1,1834
+    Rank: 4/13
+    Distance from max: 5,1020
+
+[DEBUG Step 2] ========================================
+  Current sequence: [lcel, fcel]
+  Sequence length: 3
+  All logits:
+    [00] <pad>     : -12,5812
+    [01] <unk>     : -12,5930
+    [02] <start>   : -12,5211
+    [03] <end>     :  -2,3286
+    [04] ecel      :   0,7240
+    [05] fcel      :   3,1739 ← PREDICTED
+    [06] lcel      :   0,7533
+    [07] ucel      :  -7,0752
+    [08] xcel      :  -8,7605
+    [09] nl        :   0,6299
+    [10] ched      :  -0,9301
+    [11] rhed      :  -0,9146
+    [12] srow      :  -6,0937
+
+  Top-5 logits:
+    fcel: 3,1739
+    lcel: 0,7533
+    ecel: 0,7240
+    nl: 0,6299
+    rhed: -0,9146
+
+  <end> token analysis:
+    Logit: -2,3286
+    Rank: 7/13
+    Distance from max: 5,5025
+
+[DEBUG Step 3] ========================================
+  Current sequence: [lcel, fcel, fcel]
+  Sequence length: 4
+  All logits:
+    [00] <pad>     : -11,9765
+    [01] <unk>     : -11,9962
+    [02] <start>   : -11,9583
+    [03] <end>     :  -2,1560
+    [04] ecel      :   2,2331
+    [05] fcel      :   4,6314 ← PREDICTED
+    [06] lcel      :  -0,4692
+    [07] ucel      :  -9,4267
+    [08] xcel      :  -9,4184
+    [09] nl        :   2,2130
+    [10] ched      :  -1,9603
+    [11] rhed      :   1,3640
+    [12] srow      :  -6,0132
+
+  Top-5 logits:
+    fcel: 4,6314
+    ecel: 2,2331
+    nl: 2,2130
+    rhed: 1,3640
+    lcel: -0,4692
+
+  <end> token analysis:
+    Logit: -2,1560
+    Rank: 7/13
+    Distance from max: 6,7874
+
+[DEBUG Step 4] ========================================
+  Current sequence: [lcel, fcel, fcel, fcel]
+  Sequence length: 5
+  All logits:
+    [00] <pad>     : -13,4745
+    [01] <unk>     : -13,4909
+    [02] <start>   : -13,4886
+    [03] <end>     :  -2,6419
+    [04] ecel      :   1,4705
+    [05] fcel      :   4,8340 ← PREDICTED
+    [06] lcel      :  -0,7770
+    [07] ucel      :  -9,7400
+    [08] xcel      : -10,5193
+    [09] nl        :   0,3328
+    [10] ched      :  -1,4569
+    [11] rhed      :   0,4402
+    [12] srow      :  -6,9770
+
+  Top-5 logits:
+    fcel: 4,8340
+    ecel: 1,4705
+    rhed: 0,4402
+    nl: 0,3328
+    lcel: -0,7770
+
+  <end> token analysis:
+    Logit: -2,6419
+    Rank: 7/13
+    Distance from max: 7,4758
+
+[DEBUG Step 5] ========================================
+  Current sequence: [lcel, fcel, fcel, fcel, fcel]
+  Sequence length: 6
+  All logits:
+    [00] <pad>     : -13,4049
+    [01] <unk>     : -13,4412
+    [02] <start>   : -13,4265
+    [03] <end>     :  -2,8176
+    [04] ecel      :   0,6690
+    [05] fcel      :   4,2999 ← PREDICTED
+    [06] lcel      :   0,3465
+    [07] ucel      :  -9,9042
+    [08] xcel      :  -9,7039
+    [09] nl        :  -0,4449
+    [10] ched      :  -1,1495
+    [11] rhed      :  -0,4097
+    [12] srow      :  -6,6809
+
+  Top-5 logits:
+    fcel: 4,2999
+    ecel: 0,6690
+    lcel: 0,3465
+    rhed: -0,4097
+    nl: -0,4449
+
+  <end> token analysis:
+    Logit: -2,8176
+    Rank: 7/13
+    Distance from max: 7,1175
+
+[DEBUG Step 6] ========================================
+  Current sequence: [lcel, fcel, fcel, fcel, fcel, fcel]
+  Sequence length: 7
+  All logits:
+    [00] <pad>     : -13,1743
+    [01] <unk>     : -13,2136
+    [02] <start>   : -13,1739
+    [03] <end>     :  -2,5436
+    [04] ecel      :  -0,4345
+    [05] fcel      :   4,4991 ← PREDICTED
+    [06] lcel      :  -0,1350
+    [07] ucel      :  -8,6047
+    [08] xcel      :  -9,7521
+    [09] nl        :  -0,0737
+    [10] ched      :  -1,3128
+    [11] rhed      :  -1,7265
+    [12] srow      :  -7,7310
+
+  Top-5 logits:
+    fcel: 4,4991
+    nl: -0,0737
+    lcel: -0,1350
+    ecel: -0,4345
+    ched: -1,3128
+
+  <end> token analysis:
+    Logit: -2,5436
+    Rank: 7/13
+    Distance from max: 7,0428
+
+[DEBUG Step 7] ========================================
+  Current sequence: [lcel, fcel, fcel, fcel, fcel, fcel, fcel]
+  Sequence length: 8
+  All logits:
+    [00] <pad>     : -13,3599
+    [01] <unk>     : -13,3741
+    [02] <start>   : -13,3540
+    [03] <end>     :  -1,9416
+    [04] ecel      :  -1,1199
+    [05] fcel      :   5,2543 ← PREDICTED
+    [06] lcel      :  -0,4656
+    [07] ucel      :  -7,6584
+    [08] xcel      :  -9,1344
+    [09] nl        :   0,3312
+    [10] ched      :  -0,6178
+    [11] rhed      :  -1,0318
+    [12] srow      :  -7,8076
+
+  Top-5 logits:
+    fcel: 5,2543
+    nl: 0,3312
+    lcel: -0,4656
+    ched: -0,6178
+    rhed: -1,0318
+
+  <end> token analysis:
+    Logit: -1,9416
+    Rank: 7/13
+    Distance from max: 7,1959
+
+[DEBUG Step 8] ========================================
+  Current sequence: [lcel, fcel, fcel, fcel, fcel, fcel, fcel, fcel]
+  Sequence length: 9
+  All logits:
+    [00] <pad>     : -13,3227
+    [01] <unk>     : -13,3330
+    [02] <start>   : -13,3179
+    [03] <end>     :  -2,3849
+    [04] ecel      :  -1,5767
+    [05] fcel      :   5,1799 ← PREDICTED
+    [06] lcel      :  -0,5244
+    [07] ucel      :  -6,8170
+    [08] xcel      :  -8,4540
+    [09] nl        :   0,1027
+    [10] ched      :  -0,4886
+    [11] rhed      :  -1,5247
+    [12] srow      :  -8,6042
+
+  Top-5 logits:
+    fcel: 5,1799
+    nl: 0,1027
+    ched: -0,4886
+    lcel: -0,5244
+    rhed: -1,5247
+
+  <end> token analysis:
+    Logit: -2,3849
+    Rank: 7/13
+    Distance from max: 7,5648
+
+[DEBUG Step 9] ========================================
+  Current sequence: [lcel, fcel, fcel, fcel, fcel, fcel, fcel, fcel, fcel]
+  Sequence length: 10
+  All logits:
+    [00] <pad>     : -12,9997
+    [01] <unk>     : -12,9958
+    [02] <start>   : -12,9928
+    [03] <end>     :  -2,1776
+    [04] ecel      :  -1,4851
+    [05] fcel      :   5,0735 ← PREDICTED
+    [06] lcel      :  -0,4373
+    [07] ucel      :  -6,3256
+    [08] xcel      :  -8,1097
+    [09] nl        :   0,9237
+    [10] ched      :  -0,2323
+    [11] rhed      :  -0,8399
+    [12] srow      :  -7,9214
+
+  Top-5 logits:
+    fcel: 5,0735
+    nl: 0,9237
+    ched: -0,2323
+    lcel: -0,4373
+    rhed: -0,8399
+
+  <end> token analysis:
+    Logit: -2,1776
+    Rank: 7/13
+    Distance from max: 7,2512

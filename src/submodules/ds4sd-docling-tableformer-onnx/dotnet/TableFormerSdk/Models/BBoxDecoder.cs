@@ -93,13 +93,14 @@ public sealed class BBoxDecoder : Module<(Tensor encoderOut, Tensor tagH), (Tens
         register_module(nameof(_dropoutLayer), _dropoutLayer);
 
         // Classification head (numClasses + 1 for no-object class)
-        // Input dimension is decoderDim (the hidden state dimension)
-        _class_embed = Linear(decoderDim, _numClasses + 1);
+        // CRITICAL FIX: Python uses hardcoded 512 (encoder_dim), not decoder_dim
+        // This is because h gets updated to encoder_dim shape after gating: h = awe * h
+        _class_embed = Linear(encoderDim, _numClasses + 1);
         register_module(nameof(_class_embed), _class_embed);
 
         // Bounding box regression head (MLP with 3 layers)
-        // Input dimension is decoderDim (the hidden state dimension)
-        _bbox_embed = new MLP(decoderDim, 256, 4, 3);
+        // CRITICAL FIX: Python uses hardcoded 512 (encoder_dim), not decoder_dim
+        _bbox_embed = new MLP(encoderDim, 256, 4, 3);
         register_module(nameof(_bbox_embed), _bbox_embed);
     }
 

@@ -113,6 +113,8 @@ public sealed class TableModel04 : Module<Tensor, TableModel04Result>
     private readonly TagTransformer _tagTransformer;
     private readonly BBoxDecoder _bboxDecoder;
 
+    private long _maxStepsOverride = -1;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TableModel04"/> class.
     /// </summary>
@@ -174,6 +176,15 @@ public sealed class TableModel04 : Module<Tensor, TableModel04Result>
         register_module(nameof(_bboxDecoder), _bboxDecoder);
     }
 
+    // --- Test Script Helpers ---
+    public TagTransformer GetTagTransformer() => _tagTransformer;
+    public IEnumerable<(string name, Parameter parameter)> GetTagTransformerEncoderParameters() => _tagTransformer.GetEncoderParameters();
+    public long GetMaxSteps() => _config.MaxSteps;
+    public void SetMaxSteps(long maxSteps) => _maxStepsOverride = maxSteps;
+    public TableModel04Config GetConfig() => _config;
+    // ---------------------------
+
+
     /// <summary>
     /// Create TableModel04 and load weights from SafeTensors file.
     /// </summary>
@@ -223,7 +234,7 @@ public sealed class TableModel04 : Module<Tensor, TableModel04Result>
     /// <returns>Prediction result containing tag sequence, bbox classes, and coordinates.</returns>
     public override TableModel04Result forward(Tensor images)
     {
-        // Encode image
+        // 1. Encode image features (once)
         using var encOut = _encoder.forward(images);
 
         // DEBUG: Check encoder output
@@ -234,7 +245,11 @@ public sealed class TableModel04 : Module<Tensor, TableModel04Result>
             Console.WriteLine($"[DEBUG] Encoder output mean: {encOut.mean().item<float>():F6}");
         }
 
-        // Tag sequence generation (autoregressive)
+        // 2. Pre-process image features for the decoder (once)
+        // This creates the 'memory' for the attention mechanism in the decoder.
+        using var memory = _tagTransformer.EncodeImageFeatures(encOut);
+
+        // 3. Autoregressive tag sequence generation
         var outputTags = new List<long>();
         var tagHiddenStates = new List<Tensor>();
 
@@ -261,11 +276,12 @@ public sealed class TableModel04 : Module<Tensor, TableModel04Result>
         var currentDecodedTags = decodedTags;
         var isFirstIteration = true;
 
-        // Autoregressive generation
-        for (int step = 0; step < _config.MaxSteps; step++)
+        // Autoregressive generation loop
+        var maxSteps = _maxStepsOverride > 0 ? _maxStepsOverride : _config.MaxSteps;
+        for (int step = 0; step < maxSteps; step++)
         {
-            // Run tag transformer
-            var (predictions, decoderOutput, newCache) = _tagTransformer.forward((encOut, currentDecodedTags));
+            // Run one step of the decoder
+            var (predictions, decoderOutput, newCache) = _tagTransformer.DecodeStep(currentDecodedTags, memory, cache);
 
             // Cleanup old cache
             cache?.Dispose();
@@ -279,20 +295,23 @@ public sealed class TableModel04 : Module<Tensor, TableModel04Result>
             if (Environment.GetEnvironmentVariable("DEBUG_LOGITS") == "1" && step < 10)
             {
                 var logitsArray = lastLogits.data<float>().ToArray();
+                var debugFile = "/Users/politom/Documents/Workspace/personal/doclingnet/debug_logits.txt";
 
-                Console.WriteLine($"\n[DEBUG Step {step}] ========================================");
-                Console.WriteLine($"  Current sequence: [{string.Join(", ", outputTags.Select(t => _config.WordMapTag.FirstOrDefault(kvp => kvp.Value == t).Key ?? $"idx{t}"))}]");
-                Console.WriteLine($"  Sequence length: {outputTags.Count + 1}");
+                using var writer = step == 0 ? new System.IO.StreamWriter(debugFile, false) : new System.IO.StreamWriter(debugFile, true);
+
+                writer.WriteLine($"\n[DEBUG Step {step}] ========================================");
+                writer.WriteLine($"  Current sequence: [{string.Join(", ", outputTags.Select(t => _config.WordMapTag.FirstOrDefault(kvp => kvp.Value == t).Key ?? $"idx{t}"))}]");
+                writer.WriteLine($"  Sequence length: {outputTags.Count + 1}");
 
                 // Show all 13 logits
-                Console.WriteLine($"  All logits:");
+                writer.WriteLine($"  All logits:");
                 foreach (var kvp in _config.WordMapTag.OrderBy(x => x.Value))
                 {
                     var idx = kvp.Value;
                     var tokenName = kvp.Key;
                     var logit = logitsArray[idx];
                     var marker = (idx == newTag) ? " ← PREDICTED" : "";
-                    Console.WriteLine($"    [{idx:D2}] {tokenName,-10}: {logit,8:F4}{marker}");
+                    writer.WriteLine($"    [{idx:D2}] {tokenName,-10}: {logit,8:F4}{marker}");
                 }
 
                 // Show top-5 for quick reference
@@ -302,19 +321,19 @@ public sealed class TableModel04 : Module<Tensor, TableModel04Result>
                     .Take(5)
                     .ToList();
 
-                Console.WriteLine($"\n  Top-5 logits:");
+                writer.WriteLine($"\n  Top-5 logits:");
                 foreach (var (val, idx) in topK)
                 {
                     var tokenName = _config.WordMapTag.FirstOrDefault(kvp => kvp.Value == idx).Key ?? $"idx{idx}";
-                    Console.WriteLine($"    {tokenName}: {val:F4}");
+                    writer.WriteLine($"    {tokenName}: {val:F4}");
                 }
 
                 // Highlight <end> token
                 var endLogit = logitsArray[_endToken];
-                Console.WriteLine($"\n  <end> token analysis:");
-                Console.WriteLine($"    Logit: {endLogit:F4}");
-                Console.WriteLine($"    Rank: {logitsArray.OrderByDescending(x => x).ToList().IndexOf(endLogit) + 1}/13");
-                Console.WriteLine($"    Distance from max: {logitsArray.Max() - endLogit:F4}");
+                writer.WriteLine($"\n  <end> token analysis:");
+                writer.WriteLine($"    Logit: {endLogit:F4}");
+                writer.WriteLine($"    Rank: {logitsArray.OrderByDescending(x => x).ToList().IndexOf(endLogit) + 1}/13");
+                writer.WriteLine($"    Distance from max: {logitsArray.Max() - endLogit:F4}");
             }
 
             // Structure error correction (line 199-208 in Python)
@@ -417,7 +436,7 @@ public sealed class TableModel04 : Module<Tensor, TableModel04Result>
             decoderOutput.Dispose();
         }
 
-        // Predict bounding boxes
+        // 4. Predict bounding boxes
         Tensor bboxClasses;
         Tensor bboxCoords;
 
@@ -425,6 +444,7 @@ public sealed class TableModel04 : Module<Tensor, TableModel04Result>
         {
             // Stack tag hidden states: (num_cells, decoder_dim)
             using var tagHStacked = torch.stack(tagHiddenStates.ToArray(), dim: 0).squeeze(1);
+            // NOTE: The bbox decoder also needs the original encoder output (encOut)
             (bboxClasses, bboxCoords) = _bboxDecoder.forward((encOut, tagHStacked));
         }
         else
@@ -433,7 +453,7 @@ public sealed class TableModel04 : Module<Tensor, TableModel04Result>
             bboxCoords = torch.empty(0, 4);
         }
 
-        // Merge bounding boxes for horizontal spans
+        // 5. Merge bounding boxes for horizontal spans
         var finalBBoxClasses = new List<Tensor>();
         var finalBBoxCoords = new List<Tensor>();
         var boxesToSkip = new HashSet<long>();
@@ -464,7 +484,7 @@ public sealed class TableModel04 : Module<Tensor, TableModel04Result>
             }
         }
 
-        // Stack final outputs
+        // 6. Stack final outputs
         Tensor finalClasses;
         Tensor finalCoords;
 
@@ -479,7 +499,7 @@ public sealed class TableModel04 : Module<Tensor, TableModel04Result>
             finalCoords = torch.empty(0, 4);
         }
 
-        // Cleanup
+        // 7. Cleanup
         cache?.Dispose();
         bboxClasses.Dispose();
         bboxCoords.Dispose();
@@ -499,6 +519,9 @@ public sealed class TableModel04 : Module<Tensor, TableModel04Result>
         {
             currentDecodedTags.Dispose();
         }
+
+        // Reset override
+        _maxStepsOverride = -1;
 
         return new TableModel04Result
         {

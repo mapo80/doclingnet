@@ -45,7 +45,9 @@ public class TableModel04Tests : IDisposable
             TagDecoderDim = 256,
             BBoxAttentionDim = 256,
             BBoxEmbedDim = 128,
-            BBoxDecoderDim = 256,
+            // CRITICAL: BBoxDecoderDim must equal encoderDim AFTER input_filter (512)
+            // Python always uses hidden_dim (512) for both encoder and decoder dims
+            BBoxDecoderDim = 512,  // Must match encoderDim after input_filter (256->512)
             EncLayers = 2,
             DecLayers = 1,
             NumHeads = 4,
@@ -273,7 +275,7 @@ public class TableModel04Tests : IDisposable
             TagDecoderDim = 256,
             BBoxAttentionDim = 256,
             BBoxEmbedDim = 128,
-            BBoxDecoderDim = 256,
+            BBoxDecoderDim = 512,  // Must match encoderDim after input_filter
             EncLayers = 2,
             DecLayers = 1,
             NumHeads = 4,
@@ -467,7 +469,7 @@ public class TableModel04Tests : IDisposable
             TagDecoderDim = 256,
             BBoxAttentionDim = 256,
             BBoxEmbedDim = 128,
-            BBoxDecoderDim = 256,
+            BBoxDecoderDim = 512,  // Must match encoderDim after input_filter
             EncLayers = 2,
             DecLayers = 1,
             NumHeads = 4,

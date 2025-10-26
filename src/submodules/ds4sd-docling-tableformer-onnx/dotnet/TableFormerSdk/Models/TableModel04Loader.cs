@@ -43,6 +43,40 @@ public static class TableModel04Loader
             System.IO.Path.Combine(debugDir, "torchsharp_names.txt"),
             modelParams.Select(p => p.name));
 
+        System.IO.File.WriteAllLines(
+            System.IO.Path.Combine(debugDir, "torchsharp_model_params_dump.txt"),
+            modelParams.Select(p => p.name));
+
+        Console.WriteLine($"\nSaved TorchSharp model parameter names to {debugDir}/torchsharp_model_params_dump.txt");
+
+        Console.WriteLine("\n--- _tagTransformer._encoder Parameters ---");
+        foreach (var param in model.GetTagTransformerEncoderParameters())
+        {
+            Console.WriteLine($"  {param.name}");
+        }
+        Console.WriteLine("----------------------------------------");
+
+        Console.WriteLine("\n--- _tagTransformer._encoder Parameters ---");
+        foreach (var param in model.GetTagTransformerEncoderParameters())
+        {
+            Console.WriteLine($"  {param.name}");
+        }
+        Console.WriteLine("----------------------------------------");
+
+        Console.WriteLine("\n--- _tagTransformer._encoder Parameters ---");
+        foreach (var param in model.GetTagTransformerEncoderParameters())
+        {
+            Console.WriteLine($"  {param.name}");
+        }
+        Console.WriteLine("----------------------------------------");
+
+        Console.WriteLine("\n--- _tagTransformer._encoder Parameters ---");
+        foreach (var param in model.GetTagTransformerEncoderParameters())
+        {
+            Console.WriteLine($"  {param.name}");
+        }
+        Console.WriteLine("----------------------------------------");
+
         Console.WriteLine($"\nSaved tensor names to {debugDir}/");
         Console.WriteLine($"  SafeTensors: {reader.TensorNames.Count()} tensors");
         Console.WriteLine($"  TorchSharp: {modelParams.Count} parameters");
@@ -248,9 +282,9 @@ public static class TableModel04Loader
     /// </summary>
     private static string? TransformName(string safetensorsName)
     {
-        // Skip BatchNorm tracking parameters not exposed by TorchSharp
-        if (safetensorsName.Contains("num_batches_tracked") ||
-            safetensorsName.Contains("running_mean") ||
+        // Skip buffers and tracking parameters, which are handled separately or not used.
+        if (safetensorsName.Contains("num_batches_tracked") || 
+            safetensorsName.Contains("running_mean") || 
             safetensorsName.Contains("running_var"))
         {
             return null;
@@ -258,39 +292,34 @@ public static class TableModel04Loader
 
         var name = safetensorsName;
 
-        // Transform module names to TorchSharp conventions:
-        // 1. _tag_transformer -> _tagTransformer (camelCase)
+        // Main module name changes (Python snake_case to C# camelCase)
         name = name.Replace("_tag_transformer", "_tagTransformer");
-
-        // 2. _bbox_decoder -> _bboxDecoder (camelCase)
         name = name.Replace("_bbox_decoder", "_bboxDecoder");
 
-        // 3. Remove underscore prefix ONLY from attention sub-modules
-        // ._encoder_att -> .encoder_att
-        // ._tag_decoder_att -> .tag_decoder_att
-        // ._language_att -> .language_att
-        // ._full_att -> .full_att
-        // But KEEP: ._embedding, ._encoder, ._decoder, ._encoderProjection
+        // In TorchSharp, modules in a list/sequential are named with underscores (e.g., layers_0)
+        // instead of dots like in PyTorch. These regexes target ONLY the specific modules
+        // that need this transformation.
+
+        // Pattern for _decoder.layers.N -> _decoder.layers_N
+        name = System.Text.RegularExpressions.Regex.Replace(name, @"(_decoder\.layers)\.(\d+)", "$1_$2");
+
+        // Pattern for _embed.layers.N -> _embed.layers_N (for bbox_embed)
+        name = System.Text.RegularExpressions.Regex.Replace(name, @"(_embed\.layers)\.(\d+)", "$1_$2");
+
+        // Pattern for .downsample.N -> .downsample_N
+        name = System.Text.RegularExpressions.Regex.Replace(name, @"(\.downsample)\.(\d+)", "$1_$2");
+
+        // Pattern for ._input_filter.N -> ._input_filter_N
+        name = System.Text.RegularExpressions.Regex.Replace(name, @"(\._input_filter)\.(\d+)", "$1_$2");
+
+        // Remove underscore prefix from BBoxDecoder's attention sub-modules
         name = name.Replace("._encoder_att", ".encoder_att");
         name = name.Replace("._tag_decoder_att", ".tag_decoder_att");
         name = name.Replace("._language_att", ".language_att");
         name = name.Replace("._full_att", ".full_att");
 
-        // 4. _encoder._resnet -> _encoder.resnet (no underscore on nested)
+        // Clean up ResNet naming
         name = name.Replace("._resnet.", ".resnet.");
-
-        // 5. layers.N. -> layers_N. ONLY for decoder (TorchSharp decoder uses underscore, encoder uses dot)
-        name = System.Text.RegularExpressions.Regex.Replace(name, @"_decoder\.layers\.(\d+)\.", "_decoder.layers_$1.");
-
-        // 6. MLP/embed layers: layers.N. -> layers_N. (for bbox_embed)
-        name = System.Text.RegularExpressions.Regex.Replace(name, @"_embed\.layers\.(\d+)\.", "_embed.layers_$1.");
-
-
-        // 7. Input filter: ._input_filter.N. -> ._input_filter_N. (TorchSharp does not allow dots in module names)
-        name = System.Text.RegularExpressions.Regex.Replace(name, @"\._input_filter\.(\d+)\.", "._input_filter_$1.");
-
-        // 8. Downsample: downsample.N -> downsample_N (TorchSharp does not allow dots in module names)
-        name = System.Text.RegularExpressions.Regex.Replace(name, @"\.downsample\.(\d+)", ".downsample_$1");
 
         return name;
     }
