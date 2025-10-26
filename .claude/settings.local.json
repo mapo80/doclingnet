@@ -21,7 +21,9 @@
       "Bash(git switch:*)",
       "Bash(OUTPUT_DIR=\"dataset/test-fase3-validation\")",
       "Bash(echo \"Output directory: $OUTPUT_DIR\")",
-      "Read(//private/var/folders/09/zgb8cky974d49wxs8m6ttlzr0000gn/T/**)"
+      "Read(//private/var/folders/09/zgb8cky974d49wxs8m6ttlzr0000gn/T/**)",
+      "Bash(find src/submodules/ds4sd-docling-tableformer-onnx/dotnet/TableFormerTorchSharpSdk -name \"*.cs\" -exec grep -l \"class.*Predictor\\|public.*Predict\" {} ;)",
+      "Bash(find src/submodules/ds4sd-docling-tableformer-onnx/dotnet -name \"*.cs\" -exec grep -l \"class.*Predictor\\|public.*Predict\" {} ;)"
     ],
     "deny": [],
     "ask": []

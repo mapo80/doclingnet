@@ -1,18 +1,34 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using EasyOcrNet;
+using EasyOcrNet.Configuration;
+using EasyOcrNet.Languages;
 using LayoutSdk;
 using LayoutSdk.Configuration;
 using Serilog;
 using SkiaSharp;
 using TableFormerTorchSharpSdk.Artifacts;
+using TableFormerTorchSharpSdk.Decoding;
+using TableFormerTorchSharpSdk.Matching;
+using TableFormerTorchSharpSdk.Model;
+using TableFormerTorchSharpSdk.PagePreparation;
+using TableFormerTorchSharpSdk.Results;
+using TableFormerTorchSharpSdk.Tensorization;
 
 namespace Docling.Cli;
 
 internal static class Program
 {
+    private static readonly System.Text.Json.JsonSerializerOptions TableResultSerializerOptions = new()
+    {
+        WriteIndented = true,
+        PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase,
+    };
+
     public static async Task<int> Main(string[] args)
     {
         Log.Logger = new LoggerConfiguration()
@@ -79,6 +95,22 @@ internal static class Program
                     box.Label, box.X, box.Y, box.Width, box.Height, box.Confidence);
             }
 
+            var imageBaseName = Path.GetFileNameWithoutExtension(imagePath);
+            if (string.IsNullOrEmpty(imageBaseName))
+            {
+                imageBaseName = "image";
+            }
+
+            using var originalImage = SKBitmap.Decode(imagePath);
+            if (originalImage is null)
+            {
+                Log.Error("Failed to load original image for OCR and table extraction");
+                return 1;
+            }
+
+            var ocrOutputDir = Path.Combine(Path.GetDirectoryName(imagePath) ?? ".", "ocr_results");
+            ProcessLayoutItemsWithEasyOcr(result.Boxes, originalImage, ocrOutputDir, imageBaseName);
+
             // Estrai le tabelle rilevate
             var tables = result.Boxes.Where(b => b.Label.Equals("Table", StringComparison.OrdinalIgnoreCase)).ToList();
             if (tables.Count > 0)
@@ -87,14 +119,6 @@ internal static class Program
                 Log.Information("=== TABLE EXTRACTION ===");
                 Log.Information("Found {Count} table(s)", tables.Count);
 
-                // Carica l'immagine originale per estrarre le tabelle
-                using var originalImage = SKBitmap.Decode(imagePath);
-                if (originalImage == null)
-                {
-                    Log.Error("Failed to load original image for table extraction");
-                    return 1;
-                }
-
                 // Crea una directory per salvare le tabelle estratte
                 var outputDir = Path.Combine(Path.GetDirectoryName(imagePath) ?? ".", "extracted_tables");
                 Directory.CreateDirectory(outputDir);
@@ -102,7 +126,7 @@ internal static class Program
                 for (int i = 0; i < tables.Count; i++)
                 {
                     var table = tables[i];
-                    var tableFileName = Path.GetFileNameWithoutExtension(imagePath) + $"_table_{i + 1}.png";
+                    var tableFileName = imageBaseName + $"_table_{i + 1}.png";
                     var tablePath = Path.Combine(outputDir, tableFileName);
 
                     ExtractAndSaveRegion(originalImage, table, tablePath);
@@ -135,39 +159,271 @@ internal static class Program
 
     private static void ExtractAndSaveRegion(SKBitmap sourceImage, BoundingBox region, string outputPath)
     {
-        // Calcola le coordinate per il crop
-        var x = (int)Math.Max(0, region.X);
-        var y = (int)Math.Max(0, region.Y);
-        var width = (int)Math.Min(region.Width, sourceImage.Width - x);
-        var height = (int)Math.Min(region.Height, sourceImage.Height - y);
-
-        // Crea un subset dell'immagine
-        var cropRect = new SKRectI(x, y, x + width, y + height);
-        using var croppedImage = new SKBitmap(width, height);
-
-        if (!sourceImage.ExtractSubset(croppedImage, cropRect))
+        using var croppedImage = CropRegion(sourceImage, region);
+        if (croppedImage is null)
         {
-            // Se ExtractSubset fallisce, usa un approccio manuale
-            using var surface = SKSurface.Create(new SKImageInfo(width, height));
-            using var canvas = surface.Canvas;
-            canvas.Clear(SKColors.White);
-
-            var srcRect = new SKRect(x, y, x + width, y + height);
-            var destRect = new SKRect(0, 0, width, height);
-            canvas.DrawBitmap(sourceImage, srcRect, destRect);
-
-            using var image = surface.Snapshot();
-            using var data = image.Encode(SKEncodedImageFormat.Png, 100);
-            using var stream = File.OpenWrite(outputPath);
-            data.SaveTo(stream);
+            Log.Warning("Unable to crop region '{Label}' for output '{OutputPath}'", region.Label, outputPath);
             return;
         }
 
-        // Salva l'immagine croppata
-        using var img = SKImage.FromBitmap(croppedImage);
-        using var encoded = img.Encode(SKEncodedImageFormat.Png, 100);
-        using var fileStream = File.OpenWrite(outputPath);
+        using var image = SKImage.FromBitmap(croppedImage);
+        using var encoded = image.Encode(SKEncodedImageFormat.Png, 100);
+        using var fileStream = new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
         encoded.SaveTo(fileStream);
+    }
+
+    private static SKBitmap? CropRegion(SKBitmap sourceImage, BoundingBox region)
+    {
+        var left = (int)Math.Floor(region.X);
+        var top = (int)Math.Floor(region.Y);
+        var right = (int)Math.Ceiling(region.X + region.Width);
+        var bottom = (int)Math.Ceiling(region.Y + region.Height);
+
+        left = Math.Clamp(left, 0, sourceImage.Width);
+        top = Math.Clamp(top, 0, sourceImage.Height);
+        right = Math.Clamp(right, 0, sourceImage.Width);
+        bottom = Math.Clamp(bottom, 0, sourceImage.Height);
+
+        if (right <= left || bottom <= top)
+        {
+            return null;
+        }
+
+        var width = right - left;
+        var height = bottom - top;
+        var cropRect = new SKRectI(left, top, right, bottom);
+        var croppedImage = new SKBitmap(width, height);
+
+        if (sourceImage.ExtractSubset(croppedImage, cropRect))
+        {
+            return croppedImage;
+        }
+
+        croppedImage.Dispose();
+
+        using var surface = SKSurface.Create(new SKImageInfo(width, height));
+        if (surface is null)
+        {
+            return null;
+        }
+
+        var canvas = surface.Canvas;
+        canvas.Clear(SKColors.White);
+
+        var srcRect = new SKRect(left, top, right, bottom);
+        var destRect = new SKRect(0, 0, width, height);
+        canvas.DrawBitmap(sourceImage, srcRect, destRect);
+
+        using var snapshot = surface.Snapshot();
+        return SKBitmap.FromImage(snapshot);
+    }
+
+    private static void ProcessLayoutItemsWithEasyOcr(
+        IEnumerable<BoundingBox> layoutBoxes,
+        SKBitmap originalImage,
+        string outputDirectory,
+        string imageBaseName)
+    {
+        var candidates = layoutBoxes
+            .Where(box => !box.Label.Equals("Table", StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        if (candidates.Count == 0)
+        {
+            Log.Information("");
+            Log.Information("No non-table layout elements to process with EasyOCR.");
+            return;
+        }
+
+        Log.Information("");
+        Log.Information("=== OCR EXTRACTION (EasyOCR) ===");
+
+        try
+        {
+            Directory.CreateDirectory(outputDirectory);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to create EasyOCR output directory {Directory}", outputDirectory);
+            return;
+        }
+
+        try
+        {
+            using var easyOcr = CreateEasyOcr();
+            var ocrResults = new List<Dictionary<string, object?>>();
+
+            foreach (var box in candidates)
+            {
+                try
+                {
+                    using var crop = CropRegion(originalImage, box);
+                    if (crop is null)
+                    {
+                        Log.Warning("Skipping OCR for '{Label}' due to invalid crop bounds", box.Label);
+                        continue;
+                    }
+
+                    var recognition = easyOcr.Read(crop);
+                    var combinedText = recognition.Count > 0
+                        ? string.Join(" ", recognition.Select(r => r.Text)).Trim()
+                        : string.Empty;
+
+                    if (string.IsNullOrWhiteSpace(combinedText))
+                    {
+                        Log.Information("  - {Label,-15} OCR => <no text>", box.Label);
+                    }
+                    else
+                    {
+                        Log.Information("  - {Label,-15} OCR => {Text}", box.Label, combinedText);
+                    }
+
+                    var profileDict = CreateOcrProfileDictionary(easyOcr.LastProfile);
+
+                    var segments = recognition.Select(r => new Dictionary<string, object?>(StringComparer.Ordinal)
+                    {
+                        ["text"] = r.Text,
+                        ["confidence"] = r.Confidence,
+                        ["bounding_box"] = new Dictionary<string, double>(StringComparer.Ordinal)
+                        {
+                            ["left"] = r.BoundingBox.Left,
+                            ["top"] = r.BoundingBox.Top,
+                            ["right"] = r.BoundingBox.Right,
+                            ["bottom"] = r.BoundingBox.Bottom,
+                        },
+                    }).ToList();
+
+                    ocrResults.Add(new Dictionary<string, object?>(StringComparer.Ordinal)
+                    {
+                        ["label"] = box.Label,
+                        ["confidence"] = box.Confidence,
+                        ["bounding_box"] = new Dictionary<string, double>(StringComparer.Ordinal)
+                        {
+                            ["x"] = box.X,
+                            ["y"] = box.Y,
+                            ["width"] = box.Width,
+                            ["height"] = box.Height,
+                        },
+                        ["segment_count"] = recognition.Count,
+                        ["segments"] = segments,
+                        ["profile"] = profileDict,
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "EasyOCR failed for layout element '{Label}'", box.Label);
+                }
+            }
+
+            if (ocrResults.Count == 0)
+            {
+                Log.Warning("EasyOCR did not produce results for any layout elements.");
+                return;
+            }
+
+            var payload = new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                ["image"] = imageBaseName,
+                ["items"] = ocrResults,
+                ["processed_at_utc"] = DateTime.UtcNow.ToString("O", CultureInfo.InvariantCulture),
+            };
+
+            var outputPath = Path.Combine(outputDirectory, $"{imageBaseName}_ocr_results.json");
+            using var stream = new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+            System.Text.Json.JsonSerializer.Serialize(stream, payload, TableResultSerializerOptions);
+            stream.Flush();
+            Log.Information("EasyOCR results saved to: {OutputPath}", outputPath);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to initialise EasyOCR");
+        }
+    }
+
+    private static Dictionary<string, object?> CreateOcrProfileDictionary(OcrExecutionProfile profile)
+    {
+        return new Dictionary<string, object?>(StringComparer.Ordinal)
+        {
+            ["detection_ms"] = profile.DetectionDuration.TotalMilliseconds,
+            ["recognition_ms"] = profile.RecognitionDuration.TotalMilliseconds,
+            ["total_ms"] = profile.TotalDuration.TotalMilliseconds,
+            ["warmed_avg_recognition_ms"] = profile.WarmedAverageRecognitionMilliseconds,
+            ["provider"] = profile.Provider,
+            ["recognition_runs_ms"] = profile.RecognitionDurations.ToList(),
+        };
+    }
+
+    private static EasyOcr CreateEasyOcr()
+    {
+        var modelDirectory = ResolveEasyOcrModelDirectory();
+        Log.Information("Using EasyOCR model directory: {Directory}", modelDirectory);
+        var options = new OcrOptions(modelDirectory, OcrLanguage.English, InferenceBackend.Onnx);
+        return new EasyOcr(options);
+    }
+
+    private static string ResolveEasyOcrModelDirectory()
+    {
+        var overrideDirectory = Environment.GetEnvironmentVariable("EASYOCR_MODEL_DIR");
+        if (!string.IsNullOrWhiteSpace(overrideDirectory))
+        {
+            var resolvedOverride = Path.GetFullPath(overrideDirectory);
+            if (ContainsEasyOcrDetectionModel(resolvedOverride))
+            {
+                return resolvedOverride;
+            }
+
+            Log.Warning("EasyOCR override directory '{Directory}' does not contain the expected detection model files.", resolvedOverride);
+        }
+
+        var baseDirectory = AppContext.BaseDirectory;
+        if (ContainsEasyOcrDetectionModel(baseDirectory))
+        {
+            return baseDirectory;
+        }
+
+        var candidates = new[]
+        {
+            Path.Combine(baseDirectory, "contentFiles", "any", "any", "models", "easyocr"),
+            Path.Combine(baseDirectory, "contentFiles", "any", "any", "models"),
+            Path.Combine(baseDirectory, "models", "easyocr"),
+            Path.Combine(baseDirectory, "models", "onnx"),
+            Path.Combine(baseDirectory, "models"),
+        };
+
+        foreach (var candidate in candidates)
+        {
+            if (ContainsEasyOcrDetectionModel(candidate))
+            {
+                return candidate;
+            }
+        }
+
+        throw new DirectoryNotFoundException("EasyOCR model directory not found under the application base directory. Ensure the EasyOcrNet package is restored.");
+    }
+
+    private static bool ContainsEasyOcrDetectionModel(string directory)
+    {
+        if (string.IsNullOrWhiteSpace(directory) || !Directory.Exists(directory))
+        {
+            return false;
+        }
+
+        var detectionFiles = new[]
+        {
+            "detection.onnx",
+            "detection.xml",
+            "EasyOCRDetector.onnx",
+        };
+
+        foreach (var file in detectionFiles)
+        {
+            if (File.Exists(Path.Combine(directory, file)))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static async Task ProcessTablesWithTableFormer(string tablesDirectory)
@@ -193,15 +449,203 @@ internal static class Program
             var initSnapshot = await bootstrapResult.InitializePredictorAsync().ConfigureAwait(false);
             Log.Information("Model initialized successfully!");
 
-            Log.Information("");
-            Log.Information("TableFormer is ready to process tables!");
-            Log.Information("Note: Full table structure extraction requires access to internal APIs.");
-            Log.Information("The models have been successfully downloaded and initialized.");
-            Log.Information("Extracted table images are available in: {Path}", tablesDirectory);
+            // Create neural model and supporting components
+            Log.Information("Creating TableFormer processing pipeline...");
+            using var neuralModel = new TableFormerNeuralModel(
+                bootstrapResult.ConfigSnapshot,
+                initSnapshot,
+                bootstrapResult.ModelDirectory);
+
+            var decoder = new TableFormerSequenceDecoder(initSnapshot);
+            var cellMatcher = new TableFormerCellMatcher(bootstrapResult.ConfigSnapshot);
+            var preparer = new TableFormerPageInputPreparer();
+            var cropper = new TableFormerTableCropper();
+            var tensorizer = TableFormerImageTensorizer.FromConfig(bootstrapResult.ConfigSnapshot);
+            var postProcessor = new TableFormerMatchingPostProcessor();
+            var assembler = new TableFormerDoclingResponseAssembler();
+
+            // Get all table image files
+            var tableFiles = Directory.GetFiles(tablesDirectory, "*.png")
+                .Concat(Directory.GetFiles(tablesDirectory, "*.jpg"))
+                .Concat(Directory.GetFiles(tablesDirectory, "*.jpeg"))
+                .ToArray();
+
+            if (tableFiles.Length == 0)
+            {
+                Log.Warning("No table image files found in {Directory}", tablesDirectory);
+                return;
+            }
+
+            Log.Information("Found {Count} table image(s) to process", tableFiles.Length);
+
+            var allTables = new List<Dictionary<string, object?>>();
+
+            // Process each table image
+            for (int i = 0; i < tableFiles.Length; i++)
+            {
+                var tableFile = new FileInfo(tableFiles[i]);
+                Log.Information("Processing table {Index}/{Total}: {FileName}", i + 1, tableFiles.Length, tableFile.Name);
+
+                try
+                {
+                    var tableResult = ProcessSingleTable(
+                        tableFile,
+                        neuralModel,
+                        decoder,
+                        cellMatcher,
+                        preparer,
+                        cropper,
+                        tensorizer,
+                        postProcessor,
+                        assembler);
+
+                    if (tableResult != null)
+                    {
+                        allTables.Add(tableResult);
+                        var cellCount = 0;
+                        if (tableResult.TryGetValue("cell_count", out var cellCountValue)
+                            && cellCountValue is int resolvedCellCount)
+                        {
+                            cellCount = resolvedCellCount;
+                        }
+
+                        Log.Information("  ✓ Table processed successfully - {CellCount} cells detected", cellCount);
+                    }
+                    else
+                    {
+                        Log.Warning("  ✗ Failed to process table: {FileName}", tableFile.Name);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Error processing table {FileName}", tableFile.Name);
+                }
+            }
+
+            // Save results
+            if (allTables.Count > 0)
+            {
+                var resultsPath = Path.Combine(tablesDirectory, "table_structure_results.json");
+                var results = new Dictionary<string, object?>
+                {
+                    ["num_tables"] = allTables.Count,
+                    ["tables"] = allTables,
+                    ["processing_timestamp"] = DateTime.UtcNow.ToString("O")
+                };
+
+                using var fileStream = new FileStream(resultsPath, FileMode.Create, FileAccess.Write, FileShare.None);
+                await System.Text.Json.JsonSerializer.SerializeAsync(
+                    fileStream,
+                    results,
+                    TableResultSerializerOptions).ConfigureAwait(false);
+
+                Log.Information("");
+                Log.Information("=== TABLE STRUCTURE EXTRACTION COMPLETED ===");
+                Log.Information("Processed {ProcessedCount}/{TotalCount} tables successfully", allTables.Count, tableFiles.Length);
+                Log.Information("Results saved to: {ResultsPath}", resultsPath);
+
+                // Print summary of each table
+                Log.Information("");
+                Log.Information("Table Summary:");
+                for (int i = 0; i < allTables.Count; i++)
+                {
+                    var table = allTables[i];
+                    var summaryCellCount = 0;
+                    if (table.TryGetValue("cell_count", out var cellCountValue)
+                        && cellCountValue is int resolvedCellCount)
+                    {
+                        summaryCellCount = resolvedCellCount;
+                    }
+
+                    Log.Information("  Table {Index}: {CellCount} cells", i + 1, summaryCellCount);
+                }
+            }
+            else
+            {
+                Log.Warning("No tables were successfully processed");
+            }
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Error initializing TableFormer");
+            Log.Error(ex, "Error in TableFormer processing pipeline");
+        }
+    }
+
+    private static Dictionary<string, object?>? ProcessSingleTable(
+        FileInfo tableFile,
+        TableFormerNeuralModel neuralModel,
+        TableFormerSequenceDecoder decoder,
+        TableFormerCellMatcher cellMatcher,
+        TableFormerPageInputPreparer preparer,
+        TableFormerTableCropper cropper,
+        TableFormerImageTensorizer tensorizer,
+        TableFormerMatchingPostProcessor postProcessor,
+        TableFormerDoclingResponseAssembler assembler)
+    {
+        try
+        {
+            // Decode the table image
+            var decodedImage = TableFormerDecodedPageImage.Decode(tableFile);
+
+            // Prepare page input (even though it's a single table, we need the page structure)
+            var pageSnapshot = preparer.PreparePageInput(decodedImage);
+
+            // Since this is already a cropped table image, we'll treat the entire image as one table
+            var tableBoundingBoxes = new List<TableFormerBoundingBox>
+            {
+                new TableFormerBoundingBox(0, 0, decodedImage.Width, decodedImage.Height)
+            };
+
+            var cropSnapshot = cropper.PrepareTableCrops(decodedImage, tableBoundingBoxes);
+
+            if (cropSnapshot.TableCrops.Count == 0)
+            {
+                return null;
+            }
+
+            var tables = new List<Dictionary<string, object?>>();
+            var cellCount = 0;
+
+            // Process the table crop (there should be only one)
+            foreach (var crop in cropSnapshot.TableCrops)
+            {
+                // Create tensor from the cropped table image
+                using var tensorSnapshot = tensorizer.CreateTensor(crop);
+
+                // Run neural inference
+                using var prediction = neuralModel.Predict(tensorSnapshot.Tensor);
+
+                // Decode the sequence predictions
+                var decoded = decoder.Decode(prediction);
+
+                // Match cells to table structure
+                var matchingResult = cellMatcher.MatchCells(pageSnapshot, crop, decoded);
+                var matchingDetails = matchingResult.ToMatchingDetails();
+
+                // Post-process the matching results
+                var processed = pageSnapshot.Tokens.Count > 0
+                    ? postProcessor.Process(matchingDetails.ToMutable(), correctOverlappingCells: false)
+                    : matchingDetails;
+
+                // Assemble final table structure
+                var assembled = assembler.Assemble(processed, decoded, sortRowColIndexes: true);
+
+                tables.Add(assembled.ToDictionary());
+                cellCount += assembled.TfResponses.Count;
+            }
+
+            return new Dictionary<string, object?>
+            {
+                ["filename"] = tableFile.Name,
+                ["num_tables"] = tables.Count,
+                ["tables"] = tables,
+                ["cell_count"] = cellCount
+            };
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error processing single table {FileName}", tableFile.Name);
+            return null;
         }
     }
 
