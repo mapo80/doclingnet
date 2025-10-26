@@ -149,7 +149,7 @@ public sealed class DoclingConverter : IDisposable
         if (_config.EnableTableRecognition)
         {
             _logger.LogInformation("Step 3: Running table structure recognition...");
-            tableStructures = await ProcessTablesAsync(layoutResult.Boxes, originalImage, fullPageOcrResults, cancellationToken);
+            tableStructures = await ProcessTablesAsync(imagePath, layoutResult.Boxes, originalImage, fullPageOcrResults, cancellationToken);
             _logger.LogInformation("Processed {Count} tables", tableStructures.Count);
         }
 
@@ -337,10 +337,11 @@ public sealed class DoclingConverter : IDisposable
     {
         if (ocrResults == null || ocrResults.Count == 0)
         {
-            return new List<TableFormerPageToken>();
+            return new List<TableFormerPageToken>(0);
         }
 
-        var tokens = new List<TableFormerPageToken>();
+        // OPTIMIZATION: Pre-allocate with estimated capacity (typically 10-30% of total OCR results overlap with table)
+        var tokens = new List<TableFormerPageToken>(Math.Min(ocrResults.Count / 3, 50));
         int tokenId = 0;
 
         // Find OCR results that overlap with the table region
@@ -363,7 +364,6 @@ public sealed class DoclingConverter : IDisposable
             }
         }
 
-        _logger.LogDebug("Converted {Count} OCR results to TableFormer tokens for table region", tokens.Count);
         return tokens;
     }
 
@@ -385,6 +385,7 @@ public sealed class DoclingConverter : IDisposable
     }
 
     private async Task<Dictionary<string, TableStructureInfo>> ProcessTablesAsync(
+        string imagePath,
         IReadOnlyList<LayoutSdk.BoundingBox> layoutBoxes,
         SKBitmap originalImage,
         List<OcrResult>? fullPageOcrResults,
@@ -431,6 +432,9 @@ public sealed class DoclingConverter : IDisposable
             var postProcessor = new TableFormerMatchingPostProcessor();
             var assembler = new TableFormerDoclingResponseAssembler();
 
+            // OPTIMIZATION: Decode image once and reuse for all tables
+            var decodedImage = TableFormerDecodedPageImage.Decode(new FileInfo(imagePath));
+
             // Process each table
             for (int i = 0; i < tables.Count; i++)
             {
@@ -450,7 +454,7 @@ public sealed class DoclingConverter : IDisposable
                         table.Y + table.Height);
 
                     var tableStructure = ProcessSingleTable(
-                        originalImage,
+                        decodedImage,
                         tableBbox,
                         tableTokens,
                         neuralModel,
@@ -483,7 +487,7 @@ public sealed class DoclingConverter : IDisposable
     }
 
     private TableStructureInfo? ProcessSingleTable(
-        SKBitmap fullPageImage,
+        TableFormerDecodedPageImage decodedImage,
         TableFormerBoundingBox tableBbox,
         List<TableFormerPageToken> tokens,
         TableFormerNeuralModel neuralModel,
@@ -497,80 +501,52 @@ public sealed class DoclingConverter : IDisposable
     {
         try
         {
-            // Create a temporary file for the FULL page image (TableFormer needs a file path)
-            var tempFile = Path.GetTempFileName();
-            try
+            // OPTIMIZATION: Reuse already decoded image instead of saving/reloading temp file
+            // Prepare page input with OCR tokens (tokens have full-page coordinates)
+            var pageSnapshot = preparer.PreparePageInput(decodedImage, tokens: tokens);
+
+            // Pass the table bounding box (in full-page coordinates)
+            var tableBoundingBoxes = new List<TableFormerBoundingBox> { tableBbox };
+
+            var cropSnapshot = cropper.PrepareTableCrops(decodedImage, tableBoundingBoxes);
+
+            if (cropSnapshot.TableCrops.Count == 0)
             {
-                using (var image = SKImage.FromBitmap(fullPageImage))
-                using (var encoded = image.Encode(SKEncodedImageFormat.Png, 100))
-                using (var stream = File.OpenWrite(tempFile))
-                {
-                    encoded.SaveTo(stream);
-                }
-
-                // Decode the FULL page image
-                var decodedImage = TableFormerDecodedPageImage.Decode(new FileInfo(tempFile));
-
-                // Prepare page input with OCR tokens (tokens have full-page coordinates)
-                var pageSnapshot = preparer.PreparePageInput(decodedImage, tokens: tokens);
-
-                // Pass the table bounding box (in full-page coordinates)
-                var tableBoundingBoxes = new List<TableFormerBoundingBox> { tableBbox };
-
-                var cropSnapshot = cropper.PrepareTableCrops(decodedImage, tableBoundingBoxes);
-
-                if (cropSnapshot.TableCrops.Count == 0)
-                {
-                    return null;
-                }
-
-                // Process the table crop (there should be only one)
-                foreach (var crop in cropSnapshot.TableCrops)
-                {
-                    // Create tensor from the cropped table image
-                    using var tensorSnapshot = tensorizer.CreateTensor(crop);
-
-                    // Run neural inference
-                    using var prediction = neuralModel.Predict(tensorSnapshot.Tensor);
-
-                    // Decode the sequence predictions
-                    var decoded = decoder.Decode(prediction);
-
-                    // Match cells to table structure
-                    var matchingResult = cellMatcher.MatchCells(pageSnapshot, crop, decoded);
-                    var matchingDetails = matchingResult.ToMatchingDetails();
-
-                    // Post-process the matching results
-                    var processed = pageSnapshot.Tokens.Count > 0
-                        ? postProcessor.Process(matchingDetails.ToMutable(), correctOverlappingCells: false)
-                        : matchingDetails;
-
-                    // Assemble final table structure
-                    var assembled = assembler.Assemble(processed, decoded, sortRowColIndexes: true);
-
-                    return new TableStructureInfo(
-                        Rows: assembled.PredictDetails.NumRows,
-                        Columns: assembled.PredictDetails.NumCols,
-                        CellCount: assembled.TfResponses.Count,
-                        Cells: assembled.TfResponses);
-                }
-
                 return null;
             }
-            finally
+
+            // Process the table crop (there should be only one)
+            foreach (var crop in cropSnapshot.TableCrops)
             {
-                try
-                {
-                    if (File.Exists(tempFile))
-                    {
-                        File.Delete(tempFile);
-                    }
-                }
-                catch
-                {
-                    // Ignore cleanup errors
-                }
+                // Create tensor from the cropped table image
+                using var tensorSnapshot = tensorizer.CreateTensor(crop);
+
+                // Run neural inference
+                using var prediction = neuralModel.Predict(tensorSnapshot.Tensor);
+
+                // Decode the sequence predictions
+                var decoded = decoder.Decode(prediction);
+
+                // Match cells to table structure
+                var matchingResult = cellMatcher.MatchCells(pageSnapshot, crop, decoded);
+                var matchingDetails = matchingResult.ToMatchingDetails();
+
+                // Post-process the matching results
+                var processed = pageSnapshot.Tokens.Count > 0
+                    ? postProcessor.Process(matchingDetails.ToMutable(), correctOverlappingCells: false)
+                    : matchingDetails;
+
+                // Assemble final table structure
+                var assembled = assembler.Assemble(processed, decoded, sortRowColIndexes: true);
+
+                return new TableStructureInfo(
+                    Rows: assembled.PredictDetails.NumRows,
+                    Columns: assembled.PredictDetails.NumCols,
+                    CellCount: assembled.TfResponses.Count,
+                    Cells: assembled.TfResponses);
             }
+
+            return null;
         }
         catch (Exception ex)
         {
