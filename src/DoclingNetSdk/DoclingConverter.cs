@@ -10,7 +10,9 @@ using Docling.Core.Primitives;
 using Docling.Export.Serialization;
 using EasyOcrNet;
 using EasyOcrNet.Assets;
-using EasyOcrNet.Models;
+using OcrResult = EasyOcrNet.Models.OcrResult;
+using OcrBoundingBox = EasyOcrNet.Models.BoundingBox;
+using OcrConfig = EasyOcrNet.Models.OcrConfig;
 using LayoutSdk;
 using LayoutSdk.Configuration;
 using Microsoft.Extensions.Logging;
@@ -126,21 +128,28 @@ public sealed class DoclingConverter : IDisposable
             throw new InvalidOperationException($"Failed to decode image: {imagePath}");
         }
 
-        // Step 2: OCR Extraction (for non-table elements)
-        var ocrTexts = new Dictionary<string, string>();
+        // Step 2: Full-page OCR to get all tokens (needed for both text extraction and table matching)
+        List<OcrResult>? fullPageOcrResults = null;
         if (_config.EnableOcr)
         {
-            _logger.LogInformation("Step 2: Running OCR extraction...");
-            ocrTexts = await ExtractOcrTextAsync(layoutResult.Boxes, originalImage, cancellationToken);
-            _logger.LogInformation("Extracted text from {Count} elements", ocrTexts.Count);
+            _logger.LogInformation("Step 2: Running full-page OCR...");
+            fullPageOcrResults = await ProcessFullPageOcrAsync(originalImage, cancellationToken);
+            _logger.LogInformation("Extracted {Count} OCR tokens from full page", fullPageOcrResults?.Count ?? 0);
         }
 
-        // Step 3: Table Structure Recognition
+        // Step 3: Extract text for non-table elements from full-page OCR
+        var ocrTexts = new Dictionary<string, string>();
+        if (fullPageOcrResults != null)
+        {
+            ocrTexts = ExtractTextForLayoutElements(layoutResult.Boxes, fullPageOcrResults);
+        }
+
+        // Step 4: Table Structure Recognition (with OCR tokens)
         var tableStructures = new Dictionary<string, TableStructureInfo>();
         if (_config.EnableTableRecognition)
         {
             _logger.LogInformation("Step 3: Running table structure recognition...");
-            tableStructures = await ProcessTablesAsync(layoutResult.Boxes, originalImage, cancellationToken);
+            tableStructures = await ProcessTablesAsync(layoutResult.Boxes, originalImage, fullPageOcrResults, cancellationToken);
             _logger.LogInformation("Processed {Count} tables", tableStructures.Count);
         }
 
@@ -246,6 +255,118 @@ public sealed class DoclingConverter : IDisposable
         return results;
     }
 
+    private async Task<List<OcrResult>> ProcessFullPageOcrAsync(
+        SKBitmap originalImage,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            using var ocrEngine = await CreateEasyOcrAsync(cancellationToken);
+            var ocrResults = await ocrEngine.ProcessImageAsync(originalImage);
+            return ocrResults;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to process full-page OCR");
+            return new List<OcrResult>();
+        }
+    }
+
+    private Dictionary<string, string> ExtractTextForLayoutElements(
+        IReadOnlyList<LayoutSdk.BoundingBox> layoutBoxes,
+        List<OcrResult> ocrResults)
+    {
+        var results = new Dictionary<string, string>();
+
+        // For each non-table layout element, find overlapping OCR results
+        var nonTableBoxes = layoutBoxes
+            .Where(box => !box.Label.Equals("Table", StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        foreach (var box in nonTableBoxes)
+        {
+            var key = $"{box.Label}_{box.X}_{box.Y}";
+
+            // Find OCR results that overlap with this layout box
+            var overlappingOcr = ocrResults
+                .Where(ocr => BoxesOverlap(box, ocr.BoundingBox))
+                .OrderBy(ocr => ocr.BoundingBox.MinY)
+                .ThenBy(ocr => ocr.BoundingBox.MinX)
+                .ToList();
+
+            if (overlappingOcr.Count > 0)
+            {
+                var combinedText = string.Join(" ", overlappingOcr.Select(r => r.Text)).Trim();
+                if (!string.IsNullOrWhiteSpace(combinedText))
+                {
+                    results[key] = combinedText;
+                    _logger.LogDebug("Matched {Count} OCR results to {Label}", overlappingOcr.Count, box.Label);
+                }
+            }
+        }
+
+        return results;
+    }
+
+    private static bool BoxesOverlap(LayoutSdk.BoundingBox layoutBox, OcrBoundingBox ocrBox)
+    {
+        // Convert layout box to absolute coordinates
+        var layoutLeft = layoutBox.X;
+        var layoutTop = layoutBox.Y;
+        var layoutRight = layoutBox.X + layoutBox.Width;
+        var layoutBottom = layoutBox.Y + layoutBox.Height;
+
+        // OCR box coordinates (BoundingBox has 4 corners, compute min/max)
+        var ocrLeft = ocrBox.MinX;
+        var ocrTop = ocrBox.MinY;
+        var ocrRight = ocrBox.MaxX;
+        var ocrBottom = ocrBox.MaxY;
+
+        // Check if boxes overlap
+        return !(layoutRight < ocrLeft ||
+                 layoutLeft > ocrRight ||
+                 layoutBottom < ocrTop ||
+                 layoutTop > ocrBottom);
+    }
+
+    private List<TableFormerPageToken> ConvertOcrToTableFormerTokens(
+        List<OcrResult>? ocrResults,
+        LayoutSdk.BoundingBox tableBox,
+        int imageWidth,
+        int imageHeight)
+    {
+        if (ocrResults == null || ocrResults.Count == 0)
+        {
+            return new List<TableFormerPageToken>();
+        }
+
+        var tokens = new List<TableFormerPageToken>();
+        int tokenId = 0;
+
+        // Find OCR results that overlap with the table region
+        foreach (var ocr in ocrResults)
+        {
+            if (BoxesOverlap(tableBox, ocr.BoundingBox))
+            {
+                // Create a TableFormer token
+                // TableFormer expects coordinates relative to the full page
+                var token = new TableFormerPageToken(
+                    tokenId++.ToString(),
+                    ocr.Text,
+                    new TableFormerBoundingBox(
+                        ocr.BoundingBox.MinX,
+                        ocr.BoundingBox.MinY,
+                        ocr.BoundingBox.MaxX,
+                        ocr.BoundingBox.MaxY));
+
+                tokens.Add(token);
+            }
+        }
+
+        _logger.LogDebug("Converted {Count} OCR results to TableFormer tokens for table region", tokens.Count);
+        return tokens;
+    }
+
     private async Task<OcrEngine> CreateEasyOcrAsync(CancellationToken cancellationToken)
     {
         var modelDirectory = _config.ArtifactsPath;
@@ -266,6 +387,7 @@ public sealed class DoclingConverter : IDisposable
     private async Task<Dictionary<string, TableStructureInfo>> ProcessTablesAsync(
         IReadOnlyList<LayoutSdk.BoundingBox> layoutBoxes,
         SKBitmap originalImage,
+        List<OcrResult>? fullPageOcrResults,
         CancellationToken cancellationToken)
     {
         var tables = layoutBoxes
@@ -317,15 +439,20 @@ public sealed class DoclingConverter : IDisposable
                 var table = tables[i];
                 try
                 {
-                    using var tableCrop = CropRegion(originalImage, table);
-                    if (tableCrop is null)
-                    {
-                        _logger.LogWarning("Skipping table {Index} due to invalid crop bounds", i);
-                        continue;
-                    }
+                    // Convert OCR results to TableFormer tokens for this table region
+                    var tableTokens = ConvertOcrToTableFormerTokens(fullPageOcrResults, table, originalImage.Width, originalImage.Height);
+
+                    // Pass the FULL image and the table bounding box (like Python Docling does)
+                    var tableBbox = new TableFormerBoundingBox(
+                        table.X,
+                        table.Y,
+                        table.X + table.Width,
+                        table.Y + table.Height);
 
                     var tableStructure = ProcessSingleTable(
-                        tableCrop,
+                        originalImage,
+                        tableBbox,
+                        tableTokens,
                         neuralModel,
                         decoder,
                         cellMatcher,
@@ -356,7 +483,9 @@ public sealed class DoclingConverter : IDisposable
     }
 
     private TableStructureInfo? ProcessSingleTable(
-        SKBitmap tableImage,
+        SKBitmap fullPageImage,
+        TableFormerBoundingBox tableBbox,
+        List<TableFormerPageToken> tokens,
         TableFormerNeuralModel neuralModel,
         TableFormerSequenceDecoder decoder,
         TableFormerCellMatcher cellMatcher,
@@ -368,28 +497,25 @@ public sealed class DoclingConverter : IDisposable
     {
         try
         {
-            // Create a temporary file for the table image (TableFormer needs a file path)
+            // Create a temporary file for the FULL page image (TableFormer needs a file path)
             var tempFile = Path.GetTempFileName();
             try
             {
-                using (var image = SKImage.FromBitmap(tableImage))
+                using (var image = SKImage.FromBitmap(fullPageImage))
                 using (var encoded = image.Encode(SKEncodedImageFormat.Png, 100))
                 using (var stream = File.OpenWrite(tempFile))
                 {
                     encoded.SaveTo(stream);
                 }
 
-                // Decode the table image
+                // Decode the FULL page image
                 var decodedImage = TableFormerDecodedPageImage.Decode(new FileInfo(tempFile));
 
-                // Prepare page input
-                var pageSnapshot = preparer.PreparePageInput(decodedImage);
+                // Prepare page input with OCR tokens (tokens have full-page coordinates)
+                var pageSnapshot = preparer.PreparePageInput(decodedImage, tokens: tokens);
 
-                // Treat the entire image as one table
-                var tableBoundingBoxes = new List<TableFormerBoundingBox>
-                {
-                    new TableFormerBoundingBox(0, 0, decodedImage.Width, decodedImage.Height)
-                };
+                // Pass the table bounding box (in full-page coordinates)
+                var tableBoundingBoxes = new List<TableFormerBoundingBox> { tableBbox };
 
                 var cropSnapshot = cropper.PrepareTableCrops(decodedImage, tableBoundingBoxes);
 
@@ -513,6 +639,7 @@ public sealed class DoclingConverter : IDisposable
         var builder = new DoclingDocumentBuilder(document);
 
         // Add layout elements as document items
+        var tableIndex = 0;
         foreach (var box in layoutBoxes)
         {
             var bbox = new Docling.Core.Geometry.BoundingBox(
@@ -521,26 +648,71 @@ public sealed class DoclingConverter : IDisposable
                 right: box.X + box.Width,
                 bottom: box.Y + box.Height);
 
-            var key = $"{box.Label}_{box.X}_{box.Y}";
-
             // Check if this is a table
             if (box.Label.Equals("Table", StringComparison.OrdinalIgnoreCase))
             {
-                // For now, add as text item since TableItem requires cells
+                var key = $"Table_{tableIndex}_{box.X}_{box.Y}";
                 if (tableStructures.TryGetValue(key, out var tableInfo))
                 {
-                    var tableText = $"[Table: {tableInfo.Rows}x{tableInfo.Columns}, {tableInfo.CellCount} cells]";
-                    builder.AddItem(new ParagraphItem(pageRef, bbox, tableText));
+                    // Create TableItem with cells
+                    var cells = new List<TableCellItem>();
+
+                    foreach (var cell in tableInfo.Cells)
+                    {
+                        // Extract text from cell tokens
+                        var cellText = string.Empty;
+                        if (cell.TextCellBoundingBoxes != null && cell.TextCellBoundingBoxes.Count > 0)
+                        {
+                            cellText = string.Join(" ", cell.TextCellBoundingBoxes
+                                .Where(bbox => !string.IsNullOrEmpty(bbox.Token))
+                                .Select(bbox => bbox.Token));
+                        }
+
+                        // Get cell bounding box if available
+                        var cellBbox = bbox; // Default to table bbox
+                        if (cell.BoundingBox != null)
+                        {
+                            cellBbox = new Docling.Core.Geometry.BoundingBox(
+                                left: (float)cell.BoundingBox.Left,
+                                top: (float)cell.BoundingBox.Top,
+                                right: (float)cell.BoundingBox.Right,
+                                bottom: (float)cell.BoundingBox.Bottom);
+                        }
+
+                        // Map TableFormer cell to Docling TableCellItem
+                        var cellItem = new TableCellItem(
+                            RowIndex: cell.StartRowOffsetIndex,
+                            ColumnIndex: cell.StartColOffsetIndex,
+                            RowSpan: cell.RowSpan,
+                            ColumnSpan: cell.ColSpan,
+                            BoundingBox: cellBbox,
+                            Text: cellText);
+
+                        cells.Add(cellItem);
+                    }
+
+                    var tableItem = new TableItem(
+                        page: pageRef,
+                        boundingBox: bbox,
+                        cells: cells,
+                        rowCount: tableInfo.Rows,
+                        columnCount: tableInfo.Columns);
+
+                    builder.AddItem(tableItem);
                 }
                 else
                 {
+                    // No table structure available, use placeholder
                     builder.AddItem(new ParagraphItem(pageRef, bbox, "[Table]"));
                 }
+
+                tableIndex++;
             }
             else
             {
                 // Add text from OCR if available
-                if (ocrTexts.TryGetValue(key, out var text))
+                var ocrKey = $"{box.Label}_{box.X}_{box.Y}";
+                if (ocrTexts.TryGetValue(ocrKey, out var text))
                 {
                     builder.AddItem(new ParagraphItem(pageRef, bbox, text));
                 }

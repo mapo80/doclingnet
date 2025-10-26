@@ -387,14 +387,26 @@ public sealed class MarkdownDocSerializer
             Array.Fill(grid[row], string.Empty);
         }
 
+        // Fill grid with cells, replicating spanned cells across all spanned positions
+        // This matches Python docling behavior
         foreach (var cell in table.Cells)
         {
-            if (cell.RowIndex < 0 || cell.RowIndex >= table.RowCount || cell.ColumnIndex < 0 || cell.ColumnIndex >= table.ColumnCount)
-            {
-                continue;
-            }
+            var cellText = cell.Text?.Trim() ?? string.Empty;
 
-            grid[cell.RowIndex][cell.ColumnIndex] = cell.Text?.Trim() ?? string.Empty;
+            // Fill all positions covered by this cell's row and column span
+            var endRow = Math.Min(cell.RowIndex + cell.RowSpan, table.RowCount);
+            var endCol = Math.Min(cell.ColumnIndex + cell.ColumnSpan, table.ColumnCount);
+
+            for (var row = cell.RowIndex; row < endRow; row++)
+            {
+                for (var col = cell.ColumnIndex; col < endCol; col++)
+                {
+                    if (row >= 0 && row < table.RowCount && col >= 0 && col < table.ColumnCount)
+                    {
+                        grid[row][col] = cellText;
+                    }
+                }
+            }
         }
 
         return grid;
@@ -435,12 +447,9 @@ public sealed class MarkdownDocSerializer
             return false;
         }
 
-        if (table.Cells.Count == 0)
-        {
-            return true;
-        }
-
-        return table.Cells.All(cell => cell.RowSpan == 1 && cell.ColumnSpan == 1);
+        // We can now render tables with spans since BuildGrid handles them
+        // by replicating cell content across spanned positions
+        return true;
     }
 
     private static void EmitEmbeddedImage(StringBuilder builder, ImageRef image, string altText)
