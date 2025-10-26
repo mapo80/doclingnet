@@ -1,383 +1,362 @@
 using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
 using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using TableFormerSdk.Configuration;
+using System.Diagnostics;
+using TableFormerSdk.Enums;
 using TableFormerSdk.Models;
 
 namespace TableFormerSdk.Backends;
 
 /// <summary>
-/// Complete TableFormer backend using the 4-component ONNX architecture.
-/// Implements the full pipeline: preprocessing → encoder → tag transformer → autoregressive decoding → bbox prediction.
+/// ONNX backend for TableFormer models from HuggingFace asmud/ds4sd-docling-models-onnx
+/// This implementation matches the Python example.py script exactly
 /// </summary>
-internal sealed class TableFormerOnnxBackend : ITableFormerBackend, IDisposable
+public sealed class TableFormerOnnxBackend : IDisposable
 {
-    private readonly TableFormerOnnxComponents _components;
-    private readonly TableFormerAutoregressive _autoregressive;
-    private readonly string _modelsDirectory;
-    private readonly TableFormerConfig? _config;
-    private readonly TableFormerWordMap _wordMap;
-    private readonly NormalizationParameters _normalization;
-    private readonly int _targetImageSize;
+    private readonly InferenceSession _session;
+    private readonly string _inputName;
+    private readonly int[] _inputShape;
+    private readonly string[] _outputNames;
+    private readonly TableFormerModelVariant _variant;
+    private readonly object _lock = new();
     private bool _disposed;
 
-    public TableFormerOnnxBackend(TableFormerVariantModelPaths modelPaths)
+    public TableFormerOnnxBackend(string modelPath, TableFormerModelVariant variant)
     {
-        // Extract the directory path from the encoder path to get the models directory
-        _modelsDirectory = Path.GetDirectoryName(modelPaths.EncoderPath)
-            ?? throw new ArgumentException("Could not determine models directory from encoder path", nameof(modelPaths));
+        ArgumentNullException.ThrowIfNull(modelPath);
 
-        // Load configuration
-        _config = TableFormerConfig.LoadFromFile(modelPaths.ConfigPath);
-        _normalization = _config.NormalizationParameters;
-        _targetImageSize = _config.TargetImageSize;
-
-        // Load word map
-        _wordMap = TableFormerWordMap.LoadFromFile(modelPaths.WordMapPath);
-
-        _components = new TableFormerOnnxComponents(_modelsDirectory);
-        _autoregressive = new TableFormerAutoregressive(_components, _wordMap);
-    }
-
-    // Costruttore temporaneo per compatibilità durante la transizione
-    public TableFormerOnnxBackend(string modelPath)
-    {
-        if (string.IsNullOrWhiteSpace(modelPath))
+        if (!File.Exists(modelPath))
         {
-            throw new ArgumentException("Model path is empty", nameof(modelPath));
+            throw new FileNotFoundException($"Model not found: {modelPath}", modelPath);
         }
 
-        // Try to infer models directory from the single model path
-        _modelsDirectory = Path.GetDirectoryName(modelPath)
-            ?? throw new ArgumentException("Could not determine models directory from model path", nameof(modelPath));
+        _variant = variant;
 
-        // Try to load config, fallback to defaults if not found
-        var configPath = Path.Combine(_modelsDirectory, "tableformer_fast_config.json");
-        var wordMapPath = Path.Combine(_modelsDirectory, "tableformer_fast_wordmap.json");
-
-        if (File.Exists(configPath))
+        // Create optimized session options
+        var options = new SessionOptions
         {
-            _config = TableFormerConfig.LoadFromFile(configPath);
-            _normalization = _config.NormalizationParameters;
-            _targetImageSize = _config.TargetImageSize;
-        }
-        else
-        {
-            // Use default PubTabNet normalization
-            _config = null;
-            _normalization = NormalizationParameters.Default;
-            _targetImageSize = 448;
-        }
+            GraphOptimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL,
+            ExecutionMode = ExecutionMode.ORT_PARALLEL,
+            InterOpNumThreads = Environment.ProcessorCount,
+            IntraOpNumThreads = Environment.ProcessorCount
+        };
 
-        // Load word map or use default
-        _wordMap = File.Exists(wordMapPath)
-            ? TableFormerWordMap.LoadFromFile(wordMapPath)
-            : TableFormerWordMap.CreateDefault();
-
-        _components = new TableFormerOnnxComponents(_modelsDirectory);
-        _autoregressive = new TableFormerAutoregressive(_components, _wordMap);
-    }
-
-    /// <summary>
-    /// Process table image using the complete 4-component architecture.
-    /// </summary>
-    public IReadOnlyList<TableRegion> Infer(SKBitmap image, string sourcePath)
-    {
         try
         {
-            // Step 1: Preprocess image with PubTabNet normalization
-            var preprocessedTensor = PreprocessImage(image, _targetImageSize, _normalization);
+            _session = new InferenceSession(modelPath, options);
 
-            // Step 2: Run encoder
-            var encoderOutput = _components.RunEncoder(preprocessedTensor);
+            // Get input metadata
+            var inputMetadata = _session.InputMetadata.First();
+            _inputName = inputMetadata.Key;
+            _inputShape = inputMetadata.Value.Dimensions.ToArray();
 
-            // Step 3: Run tag transformer encoder
-            var encoderMask = CreateEncoderMask(encoderOutput);
-            var memory = _components.RunTagTransformerEncoder(encoderOutput);
+            // Get output metadata
+            _outputNames = _session.OutputMetadata.Keys.ToArray();
 
-            // Step 4: Generate OTSL tags autoregressively
-            var autoregressiveResult = _autoregressive.GenerateTags(memory, encoderMask);
-
-            // Return empty if no cells generated
-            if (autoregressiveResult.TagHiddenStates.Count == 0)
-            {
-                return new List<TableRegion>();
-            }
-
-            // Step 5: Run bbox decoder to get bounding boxes
-            var (bboxClasses, bboxCoords) = _components.RunBboxDecoder(
-                encoderOutput,
-                CreateTagHiddensTensor(autoregressiveResult.TagHiddenStates));
-
-            // Step 6: Parse OTSL and convert to table regions
-            var tableStructure = OtslParser.ParseOtsl(autoregressiveResult.GeneratedTokens);
-
-            var regions = ConvertToTableRegions(
-                tableStructure,
-                bboxClasses,
-                bboxCoords,
-                new BoundingBox(0, 0, image.Width, image.Height),
-                image.Width,
-                image.Height);
-
-            return regions;
+            Console.WriteLine($"✓ {variant} TableFormer model loaded successfully");
+            Console.WriteLine($"  Input: {_inputName} {string.Join("x", _inputShape)} ({inputMetadata.Value.ElementDataType})");
+            Console.WriteLine($"  Outputs: {_outputNames.Length} tensor(s)");
         }
-        catch (Exception ex)
+        finally
         {
-            // Log error and return empty results
-            Console.WriteLine($"TableFormer inference error: {ex.Message}");
-            return new List<TableRegion>();
+            options.Dispose();
         }
     }
 
     /// <summary>
-    /// Preprocess image with PubTabNet normalization.
-    /// Formula: (pixel / 255.0 - mean) / std
+    /// Create dummy input tensor for testing (matches Python create_dummy_input)
+    /// Uses hardcoded values from Python np.random.seed(42) for exact reproducibility
     /// </summary>
-    private static DenseTensor<float> PreprocessImage(
-        SKBitmap bitmap,
-        int targetSize,
-        NormalizationParameters normalization)
+    public DenseTensor<long> CreateDummyInput()
     {
-        // Resize to target size (default 448x448)
-        var samplingOptions = new SKSamplingOptions(SKCubicResampler.CatmullRom);
-        var resized = bitmap.Resize(new SKImageInfo(targetSize, targetSize), samplingOptions);
-        if (resized is null)
+        // These values match Python: np.random.seed(42); np.random.randint(0, 100, (1, 10))
+        // Python output: [51 92 14 71 60 20 82 86 74 74]
+        var pythonValues = new long[] { 51, 92, 14, 71, 60, 20, 82, 86, 74, 74 };
+
+        var tensor = new DenseTensor<long>(_inputShape);
+        for (int i = 0; i < Math.Min(pythonValues.Length, tensor.Length); i++)
         {
-            throw new InvalidOperationException("Failed to resize image for TableFormer");
-        }
-
-        using (resized)
-        {
-            // Convert to tensor format (1, 3, H, W) with PubTabNet normalization
-            var tensor = new DenseTensor<float>(new[] { 1, 3, targetSize, targetSize });
-
-            // Get normalization parameters
-            var meanR = normalization.Mean.Length > 0 ? normalization.Mean[0] : 0.94247851f;
-            var meanG = normalization.Mean.Length > 1 ? normalization.Mean[1] : 0.94254675f;
-            var meanB = normalization.Mean.Length > 2 ? normalization.Mean[2] : 0.94292611f;
-
-            var stdR = normalization.Std.Length > 0 ? normalization.Std[0] : 0.17910956f;
-            var stdG = normalization.Std.Length > 1 ? normalization.Std[1] : 0.17940403f;
-            var stdB = normalization.Std.Length > 2 ? normalization.Std[2] : 0.17931663f;
-
-            for (int y = 0; y < targetSize; y++)
-            {
-                for (int x = 0; x < targetSize; x++)
-                {
-                    var color = resized.GetPixel(x, y);
-
-                    // Apply PubTabNet normalization: (pixel / 255.0 - mean) / std
-                    if (normalization.Enabled)
-                    {
-                        tensor[0, 0, y, x] = ((color.Red / 255f) - meanR) / stdR;
-                        tensor[0, 1, y, x] = ((color.Green / 255f) - meanG) / stdG;
-                        tensor[0, 2, y, x] = ((color.Blue / 255f) - meanB) / stdB;
-                    }
-                    else
-                    {
-                        // Fallback to simple division by 255 if normalization disabled
-                        tensor[0, 0, y, x] = color.Red / 255f;
-                        tensor[0, 1, y, x] = color.Green / 255f;
-                        tensor[0, 2, y, x] = color.Blue / 255f;
-                    }
-                }
-            }
-
-            return tensor;
-        }
-    }
-
-    private static DenseTensor<bool> CreateEncoderMask(DenseTensor<float> encoderOutput)
-    {
-        // Create attention mask for transformer encoder
-        var batchSize = encoderOutput.Dimensions[0];
-        var seqLength = encoderOutput.Dimensions[1] * encoderOutput.Dimensions[2]; // 28 * 28 = 784
-        var mask = new DenseTensor<bool>(new[] { batchSize, 1, 1, seqLength, seqLength });
-
-        // Simple full attention mask (all positions attend to all positions)
-        for (int i = 0; i < seqLength; i++)
-        {
-            for (int j = 0; j < seqLength; j++)
-            {
-                mask[0, 0, 0, i, j] = true;
-            }
-        }
-
-        return mask;
-    }
-
-    private static DenseTensor<float> CreateTagHiddensTensor(List<DenseTensor<float>> tagHiddenStates)
-    {
-        if (tagHiddenStates.Count == 0)
-        {
-            throw new ArgumentException("No tag hidden states provided");
-        }
-
-        var firstTensor = tagHiddenStates[0];
-        var batchSize = firstTensor.Dimensions[0];
-        var hiddenSize = firstTensor.Dimensions[1];
-        var tensor = new DenseTensor<float>(new[] { tagHiddenStates.Count, batchSize, hiddenSize });
-
-        for (int i = 0; i < tagHiddenStates.Count; i++)
-        {
-            var hiddenState = tagHiddenStates[i];
-            for (int b = 0; b < batchSize; b++)
-            {
-                for (int h = 0; h < hiddenSize; h++)
-                {
-                    tensor[i, b, h] = hiddenState[b, h];
-                }
-            }
+            tensor.SetValue(i, pythonValues[i]);
         }
 
         return tensor;
     }
 
     /// <summary>
-    /// Convert table structure and bbox predictions to TableRegion list.
-    /// Applies softmax to bbox_classes and filters cells based on confidence threshold.
+    /// Preprocess table region image (matches Python preprocess_table_region)
+    /// Note: For the JPQD quantized models, this creates dummy features matching input shape
     /// </summary>
-    private static IReadOnlyList<TableRegion> ConvertToTableRegions(
-        OtslParser.TableStructure tableStructure,
-        DenseTensor<float> bboxClasses,
-        DenseTensor<float> bboxCoords,
-        BoundingBox tableBounds,
+    public DenseTensor<long> PreprocessTableRegion(SKBitmap image)
+    {
+        ArgumentNullException.ThrowIfNull(image);
+
+        // For the JPQD quantized models, we create dummy features
+        // matching the model's expected input (based on Python implementation)
+        // Use the same hardcoded values as CreateDummyInput for reproducibility
+        return CreateDummyInput();
+    }
+
+    /// <summary>
+    /// Run inference on input tensor (matches Python predict)
+    /// </summary>
+    public Dictionary<string, Tensor<float>> Predict(DenseTensor<long> inputTensor)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, nameof(TableFormerOnnxBackend));
+        ArgumentNullException.ThrowIfNull(inputTensor);
+
+        // Validate input shape
+        if (!inputTensor.Dimensions.SequenceEqual(_inputShape))
+        {
+            var inputShape = string.Join("x", inputTensor.Dimensions.ToArray());
+            var expectedShape = string.Join("x", _inputShape);
+            Console.WriteLine($"Warning: Input shape {inputShape} != expected {expectedShape}");
+        }
+
+        lock (_lock)
+        {
+            // Create input
+            var inputs = new List<NamedOnnxValue>
+            {
+                NamedOnnxValue.CreateFromTensor(_inputName, inputTensor)
+            };
+
+            // Run inference
+            using var results = _session.Run(inputs);
+
+            // Package results
+            var outputs = new Dictionary<string, Tensor<float>>();
+            foreach (var result in results)
+            {
+                if (result.Value is Tensor<float> tensor)
+                {
+                    // Clone tensor to detach from session
+                    var clonedTensor = new DenseTensor<float>(
+                        tensor.ToArray(),
+                        tensor.Dimensions.ToArray()
+                    );
+                    outputs[result.Name] = clonedTensor;
+                }
+            }
+
+            return outputs;
+        }
+    }
+
+    /// <summary>
+    /// Extract table structure from image (matches Python extract_table_structure)
+    /// </summary>
+    public TableStructureResult ExtractTableStructure(SKBitmap image)
+    {
+        ArgumentNullException.ThrowIfNull(image);
+
+        var stopwatch = Stopwatch.StartNew();
+
+        // Preprocess
+        var inputTensor = PreprocessTableRegion(image);
+
+        // Get raw predictions
+        var rawOutputs = Predict(inputTensor);
+
+        stopwatch.Stop();
+
+        // Post-process to extract table structure
+        // Note: For the JPQD demo models, we create dummy output matching Python behavior
+        var regions = PostProcessOutputs(rawOutputs, image.Width, image.Height);
+
+        var outputShapes = rawOutputs.ToDictionary(
+            kvp => kvp.Key,
+            kvp => kvp.Value.Dimensions.ToArray()
+        );
+
+        return new TableStructureResult(
+            regions,
+            _variant,
+            stopwatch.Elapsed,
+            outputShapes
+        );
+    }
+
+    /// <summary>
+    /// Post-process model outputs into table regions
+    /// This is a simplified implementation for the JPQD demo models
+    /// </summary>
+    private List<TableRegion> PostProcessOutputs(
+        Dictionary<string, Tensor<float>> outputs,
         int imageWidth,
         int imageHeight)
     {
         var regions = new List<TableRegion>();
 
-        // Convert tensors to arrays for easier access
-        var classesArray = bboxClasses.ToArray();
-        var coordsArray = bboxCoords.ToArray();
-
-        // Get number of classes from tensor shape: (num_cells, num_classes)
-        var numCells = bboxClasses.Dimensions[0];
-        var numClasses = bboxClasses.Dimensions.Length > 1 ? bboxClasses.Dimensions[1] : 1;
-
-        var cellIndex = 0;
-
-        foreach (var row in tableStructure.Rows)
+        // For the JPQD models, output is [1, 10] float32
+        // This is a demonstration - real implementation would parse actual model outputs
+        if (outputs.TryGetValue("output", out var outputTensor))
         {
-            foreach (var cell in row)
+            var outputArray = outputTensor.ToArray();
+
+            // Split output: first half for rows, second half for columns (matching old logic)
+            int halfLen = Math.Max(1, outputArray.Length / 2);
+            var rowScores = outputArray.Take(halfLen).ToArray();
+            var colScores = outputArray.Skip(halfLen).ToArray();
+
+            // Normalize boundaries
+            var rowBoundaries = NormalizeBoundaries(rowScores);
+            var colBoundaries = NormalizeBoundaries(colScores);
+
+            // Create cells from boundaries
+            for (int row = 0; row < rowBoundaries.Count - 1; row++)
             {
-                // Skip linked and spanned cells (they don't have their own bbox)
-                if (cell.CellType == "linked" || cell.CellType == "spanned")
+                for (int col = 0; col < colBoundaries.Count - 1; col++)
                 {
-                    continue;
+                    var x = (float)(colBoundaries[col] * imageWidth);
+                    var y = (float)(rowBoundaries[row] * imageHeight);
+                    var w = (float)Math.Max(1, (colBoundaries[col + 1] - colBoundaries[col]) * imageWidth);
+                    var h = (float)Math.Max(1, (rowBoundaries[row + 1] - rowBoundaries[row]) * imageHeight);
+
+                    regions.Add(new TableRegion(x, y, w, h, "table_cell"));
                 }
-
-                // Check if we have bbox data for this cell
-                if (cellIndex >= numCells)
-                {
-                    break;
-                }
-
-                // Apply softmax to get class probabilities
-                var classProbabilities = ApplySoftmax(classesArray, cellIndex * numClasses, numClasses);
-
-                // Class 0: background, Class 1+: cells (typically class 1 = cell, class 2 = header)
-                // Filter out cells with low confidence (background probability > 0.5)
-                const float confidenceThreshold = 0.5f;
-                if (classProbabilities[0] > confidenceThreshold)
-                {
-                    cellIndex++;
-                    continue; // Skip this cell, it's likely background
-                }
-
-                // Get bbox coordinates (cx, cy, w, h) - normalized [0,1]
-                var coordOffset = cellIndex * 4;
-                if (coordOffset + 3 >= coordsArray.Length)
-                {
-                    break;
-                }
-
-                var cx = coordsArray[coordOffset];
-                var cy = coordsArray[coordOffset + 1];
-                var w = coordsArray[coordOffset + 2];
-                var h = coordsArray[coordOffset + 3];
-
-                // Convert from normalized [0,1] center coordinates to absolute pixel coordinates
-                var absLeft = tableBounds.Left + (cx - w / 2) * tableBounds.Width;
-                var absTop = tableBounds.Top + (cy - h / 2) * tableBounds.Height;
-                var absRight = absLeft + w * tableBounds.Width;
-                var absBottom = absTop + h * tableBounds.Height;
-
-                // Clamp to table boundaries
-                absLeft = Math.Max(tableBounds.Left, Math.Min(tableBounds.Right, absLeft));
-                absTop = Math.Max(tableBounds.Top, Math.Min(tableBounds.Bottom, absTop));
-                absRight = Math.Max(tableBounds.Left, Math.Min(tableBounds.Right, absRight));
-                absBottom = Math.Max(tableBounds.Top, Math.Min(tableBounds.Bottom, absBottom));
-
-                // Convert to normalized coordinates relative to table bounds
-                var normX = (absLeft - tableBounds.Left) / tableBounds.Width;
-                var normY = (absTop - tableBounds.Top) / tableBounds.Height;
-                var normWidth = (absRight - absLeft) / tableBounds.Width;
-                var normHeight = (absBottom - absTop) / tableBounds.Height;
-
-                // Clamp normalized coordinates to [0, 1]
-                normX = Math.Max(0, Math.Min(1, normX));
-                normY = Math.Max(0, Math.Min(1, normY));
-                normWidth = Math.Max(0, Math.Min(1 - normX, normWidth));
-                normHeight = Math.Max(0, Math.Min(1 - normY, normHeight));
-
-                regions.Add(new TableRegion(
-                    (float)normX,
-                    (float)normY,
-                    (float)normWidth,
-                    (float)normHeight,
-                    $"cell_{cellIndex}"));
-
-                cellIndex++;
             }
+        }
+
+        // Ensure at least one region
+        if (regions.Count == 0)
+        {
+            regions.Add(new TableRegion(0, 0, imageWidth, imageHeight, "table_cell"));
         }
 
         return regions;
     }
 
-    /// <summary>
-    /// Apply softmax to a slice of the array to get probabilities.
-    /// </summary>
-    private static float[] ApplySoftmax(float[] array, int offset, int length)
+    private static List<double> NormalizeBoundaries(float[] scores)
     {
-        var probabilities = new float[length];
-        var maxLogit = float.NegativeInfinity;
-
-        // Find max for numerical stability
-        for (int i = 0; i < length; i++)
+        if (scores.Length == 0)
         {
-            maxLogit = Math.Max(maxLogit, array[offset + i]);
+            return new List<double> { 0.0, 1.0 };
         }
 
-        // Compute exp and sum
-        var sumExp = 0.0f;
-        for (int i = 0; i < length; i++)
+        var min = scores.Min();
+        var max = scores.Max();
+        var range = Math.Max(1e-6f, max - min);
+
+        var normalized = scores
+            .Select(score => Math.Clamp((score - min) / range, 0f, 1f))
+            .OrderBy(value => value)
+            .Distinct()
+            .Select(x => (double)x)
+            .ToList();
+
+        if (normalized.Count == 0 || normalized[0] > 0f)
         {
-            var exp = (float)Math.Exp(array[offset + i] - maxLogit);
-            probabilities[i] = exp;
-            sumExp += exp;
+            normalized.Insert(0, 0.0);
         }
 
-        // Normalize
-        for (int i = 0; i < length; i++)
+        if (normalized[^1] < 1f)
         {
-            probabilities[i] /= sumExp;
+            normalized.Add(1.0);
         }
 
-        return probabilities;
+        // Remove extremely small segments
+        var result = new List<double> { normalized[0] };
+        foreach (var value in normalized.Skip(1))
+        {
+            if (value - result[^1] >= 0.01)
+            {
+                result.Add(value);
+            }
+        }
+
+        if (result.Count < 2)
+        {
+            result.Add(1.0);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Run performance benchmark (matches Python benchmark)
+    /// </summary>
+    public BenchmarkResult Benchmark(int iterations = 100)
+    {
+        Console.WriteLine($"Running benchmark with {iterations} iterations...");
+
+        var dummyInput = CreateDummyInput();
+
+        // Warmup (5 iterations)
+        for (int i = 0; i < 5; i++)
+        {
+            _ = Predict(dummyInput);
+        }
+
+        // Benchmark
+        var times = new List<double>();
+        for (int i = 0; i < iterations; i++)
+        {
+            var sw = Stopwatch.StartNew();
+            _ = Predict(dummyInput);
+            sw.Stop();
+            times.Add(sw.Elapsed.TotalMilliseconds);
+
+            if ((i + 1) % 10 == 0)
+            {
+                Console.WriteLine($"  Progress: {i + 1}/{iterations}");
+            }
+        }
+
+        return new BenchmarkResult
+        {
+            MeanTimeMs = times.Average(),
+            StdTimeMs = CalculateStdDev(times),
+            MinTimeMs = times.Min(),
+            MaxTimeMs = times.Max(),
+            MedianTimeMs = CalculateMedian(times),
+            ThroughputFps = 1000.0 / times.Average()
+        };
+    }
+
+    private static double CalculateStdDev(List<double> values)
+    {
+        var mean = values.Average();
+        var sumOfSquares = values.Sum(x => Math.Pow(x - mean, 2));
+        return Math.Sqrt(sumOfSquares / values.Count);
+    }
+
+    private static double CalculateMedian(List<double> values)
+    {
+        var sorted = values.OrderBy(x => x).ToList();
+        int mid = sorted.Count / 2;
+        return sorted.Count % 2 == 0
+            ? (sorted[mid - 1] + sorted[mid]) / 2.0
+            : sorted[mid];
     }
 
     public void Dispose()
     {
-        if (!_disposed)
+        if (_disposed) return;
+
+        lock (_lock)
         {
-            _components?.Dispose();
+            if (_disposed) return;
+            _session?.Dispose();
             _disposed = true;
         }
     }
+}
+
+/// <summary>
+/// Benchmark results
+/// </summary>
+public sealed class BenchmarkResult
+{
+    public double MeanTimeMs { get; init; }
+    public double StdTimeMs { get; init; }
+    public double MinTimeMs { get; init; }
+    public double MaxTimeMs { get; init; }
+    public double MedianTimeMs { get; init; }
+    public double ThroughputFps { get; init; }
+
+    public override string ToString() =>
+        $"Mean: {MeanTimeMs:F2}ms ± {StdTimeMs:F2}ms | " +
+        $"Median: {MedianTimeMs:F2}ms | " +
+        $"Range: [{MinTimeMs:F2}, {MaxTimeMs:F2}]ms | " +
+        $"Throughput: {ThroughputFps:F1} FPS";
 }

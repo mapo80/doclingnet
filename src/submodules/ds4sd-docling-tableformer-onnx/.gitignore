@@ -63,3 +63,4 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 !models/*.onnx
+debug/**

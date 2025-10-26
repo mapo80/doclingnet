@@ -7,21 +7,3 @@ public enum TableFormerRuntime
     Pipeline,
     OptimizedPipeline
 }
-
-public enum TableFormerModelVariant
-{
-    Fast,
-    Accurate
-}
-
-public enum TableFormerLanguage
-{
-    English,
-    Italian,
-    French,
-    German,
-    Spanish,
-    Portuguese,
-    Chinese,
-    Japanese
-}

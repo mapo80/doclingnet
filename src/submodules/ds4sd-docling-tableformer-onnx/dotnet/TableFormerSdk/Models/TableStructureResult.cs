@@ -1,40 +1,44 @@
-using SkiaSharp;
-using System;
-using System.Collections.Generic;
 using TableFormerSdk.Enums;
-using TableFormerSdk.Performance;
 
 namespace TableFormerSdk.Models;
 
+/// <summary>
+/// Result of TableFormer inference
+/// </summary>
 public sealed class TableStructureResult
 {
     public TableStructureResult(
         IReadOnlyList<TableRegion> regions,
-        SKBitmap? overlay,
-        TableFormerLanguage language,
-        TableFormerRuntime runtime,
+        TableFormerModelVariant modelVariant,
         TimeSpan inferenceTime,
-        TableFormerPerformanceSnapshot performanceSnapshot)
+        Dictionary<string, int[]>? rawOutputShapes = null)
     {
-        Regions = regions ?? throw new ArgumentNullException(nameof(regions));
-        OverlayImage = overlay;
-        Language = language;
-        Runtime = runtime;
+        Regions = regions ?? Array.Empty<TableRegion>();
+        ModelVariant = modelVariant;
         InferenceTime = inferenceTime;
-        PerformanceSnapshot = performanceSnapshot ?? throw new ArgumentNullException(nameof(performanceSnapshot));
+        RawOutputShapes = rawOutputShapes ?? new Dictionary<string, int[]>();
     }
 
+    /// <summary>
+    /// Detected table cells/regions
+    /// </summary>
     public IReadOnlyList<TableRegion> Regions { get; }
 
-    public SKBitmap? OverlayImage { get; }
+    /// <summary>
+    /// Model variant used for inference
+    /// </summary>
+    public TableFormerModelVariant ModelVariant { get; }
 
-    public TableFormerLanguage Language { get; }
-
-    public TableFormerRuntime Runtime { get; }
-
+    /// <summary>
+    /// Time taken for inference
+    /// </summary>
     public TimeSpan InferenceTime { get; }
 
-    public TableFormerPerformanceSnapshot PerformanceSnapshot { get; }
-}
+    /// <summary>
+    /// Raw output tensor shapes (for debugging)
+    /// </summary>
+    public Dictionary<string, int[]> RawOutputShapes { get; }
 
-public sealed record TableRegion(float X, float Y, float Width, float Height, string Label);
+    public override string ToString() =>
+        $"TableStructureResult: {Regions.Count} regions, {InferenceTime.TotalMilliseconds:F2}ms ({ModelVariant})";
+}

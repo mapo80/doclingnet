@@ -1,123 +1,48 @@
-using System;
 using System.IO;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace TableFormerSdk.Configuration;
 
-/// <summary>
-/// Represents the normalization parameters from the TableFormer config.
-/// </summary>
-public sealed record NormalizationParameters
+public sealed class TableFormerSdkOptions
 {
-    [JsonPropertyName("mean")]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "DTO for JSON serialization")]
-    public float[] Mean { get; init; } = Array.Empty<float>();
+    public TableFormerModelPaths Onnx { get; }
 
-    [JsonPropertyName("std")]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "DTO for JSON serialization")]
-    public float[] Std { get; init; } = Array.Empty<float>();
-
-    [JsonPropertyName("state")]
-    public bool Enabled { get; init; } = true;
-
-    public static NormalizationParameters Default => new()
+    public TableFormerSdkOptions(TableFormerModelPaths onnx)
     {
-        Mean = [0.94247851f, 0.94254675f, 0.94292611f],
-        Std = [0.17910956f, 0.17940403f, 0.17931663f],
-        Enabled = true
-    };
+        Onnx = onnx;
+    }
 }
 
-/// <summary>
-/// Dataset configuration from TableFormer config JSON.
-/// </summary>
-public sealed record DatasetConfig
+public sealed class TableFormerModelPaths
 {
-    [JsonPropertyName("resized_image")]
-    public int ResizedImage { get; init; } = 448;
+    public TableFormerVariantModelPaths Fast { get; }
+    public TableFormerVariantModelPaths? Accurate { get; }
 
-    [JsonPropertyName("image_normalization")]
-    public NormalizationParameters? ImageNormalization { get; init; }
+    public TableFormerModelPaths(TableFormerVariantModelPaths fast, TableFormerVariantModelPaths? accurate)
+    {
+        Fast = fast;
+        Accurate = accurate;
+    }
 }
 
-/// <summary>
-/// Model configuration from TableFormer config JSON.
-/// </summary>
-public sealed record ModelConfig
+public sealed class TableFormerVariantModelPaths
 {
-    [JsonPropertyName("type")]
-    public string? Type { get; init; }
+    public string ModelPath { get; }
+    public string? MetadataPath { get; }
 
-    [JsonPropertyName("enc_image_size")]
-    public int EncoderImageSize { get; init; } = 28;
-
-    [JsonPropertyName("bbox_classes")]
-    public int BboxClasses { get; init; } = 2;
-
-    [JsonPropertyName("hidden_dim")]
-    public int HiddenDim { get; init; } = 512;
-}
-
-/// <summary>
-/// Root configuration object loaded from tableformer_*_config.json.
-/// </summary>
-public sealed record TableFormerConfig
-{
-    [JsonPropertyName("dataset")]
-    public DatasetConfig? Dataset { get; init; }
-
-    [JsonPropertyName("model")]
-    public ModelConfig? Model { get; init; }
-
-    [JsonPropertyName("dataset_wordmap")]
-    public JsonElement? DatasetWordmap { get; init; }
-
-    private static readonly JsonSerializerOptions JsonOptions = new()
+    private TableFormerVariantModelPaths(string modelPath, string? metadataPath)
     {
-        PropertyNameCaseInsensitive = true,
-        AllowTrailingCommas = true,
-        ReadCommentHandling = JsonCommentHandling.Skip
-    };
-
-    /// <summary>
-    /// Load TableFormer config from JSON file.
-    /// </summary>
-    public static TableFormerConfig LoadFromFile(string configPath)
-    {
-        if (string.IsNullOrWhiteSpace(configPath))
-        {
-            throw new ArgumentException("Config path is empty", nameof(configPath));
-        }
-
-        if (!File.Exists(configPath))
-        {
-            throw new FileNotFoundException($"Config file not found: {configPath}", configPath);
-        }
-
-        var json = File.ReadAllText(configPath);
-        var config = JsonSerializer.Deserialize<TableFormerConfig>(json, JsonOptions);
-
-        if (config is null)
-        {
-            throw new InvalidOperationException($"Failed to parse config from: {configPath}");
-        }
-
-        return config;
+        ModelPath = modelPath;
+        MetadataPath = metadataPath;
     }
 
-    /// <summary>
-    /// Normalization parameters with fallback to default PubTabNet values.
-    /// </summary>
-    public NormalizationParameters NormalizationParameters => Dataset?.ImageNormalization ?? NormalizationParameters.Default;
+    public static TableFormerVariantModelPaths FromDirectory(string directory, string variant)
+    {
+        var modelPath = Path.Combine(directory, variant, "model.onnx");
+        var metadataPath = Path.Combine(directory, variant, "metadata.json");
 
-    /// <summary>
-    /// Target image size for preprocessing.
-    /// </summary>
-    public int TargetImageSize => Dataset?.ResizedImage ?? 448;
+        if (!File.Exists(modelPath)) throw new FileNotFoundException($"Model file not found: {modelPath}");
+        if (!File.Exists(metadataPath)) metadataPath = null;
 
-    /// <summary>
-    /// Number of bbox classes (not including background).
-    /// </summary>
-    public int BboxClasses => Model?.BboxClasses ?? 2;
+        return new TableFormerVariantModelPaths(modelPath, metadataPath);
+    }
 }

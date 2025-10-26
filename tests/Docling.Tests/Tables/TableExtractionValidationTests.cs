@@ -61,11 +61,23 @@ public sealed class TableExtractionValidationTests : IDisposable
         }
 
         // Carica modelli TableFormer (assumendo che siano nella directory models/)
-        var modelsDir = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "..", "models", "tableformer-onnx"));
-        var fastEncoderPath = Path.Combine(modelsDir, "tableformer_fast_encoder.onnx");
+        var modelsDirCandidates = new[]
+        {
+            Path.GetFullPath(Path.Combine("..", "..", "..", "..", "..", "models", "tableformer-onnx")),
+            Path.GetFullPath(Path.Combine("..", "..", "..", "..", "..", "src", "submodules", "ds4sd-docling-tableformer-onnx", "models"))
+        };
+
+        var modelsDir = modelsDirCandidates.FirstOrDefault(Directory.Exists);
+        if (modelsDir is null)
+        {
+            _output.WriteLine("⚠️ Modelli TableFormer non trovati - saltando il test.");
+            return;
+        }
+
+        var fastModelPath = Path.Combine(modelsDir, "tableformer_fast.onnx");
 
         // Verifica che i modelli esistano
-        if (!File.Exists(fastEncoderPath))
+        if (!File.Exists(fastModelPath))
         {
             _output.WriteLine($"⚠️ Modelli TableFormer non trovati in: {modelsDir}");
             _output.WriteLine("Saltando il test - i modelli devono essere scaricati prima.");
@@ -146,10 +158,22 @@ public sealed class TableExtractionValidationTests : IDisposable
             throw new FileNotFoundException($"Test image not found: {_testImagePath}");
         }
 
-        var modelsDir = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "..", "models", "tableformer-onnx"));
-        var fastEncoderPath = Path.Combine(modelsDir, "tableformer_fast_encoder.onnx");
+        var modelsDirCandidates = new[]
+        {
+            Path.GetFullPath(Path.Combine("..", "..", "..", "..", "..", "models", "tableformer-onnx")),
+            Path.GetFullPath(Path.Combine("..", "..", "..", "..", "..", "src", "submodules", "ds4sd-docling-tableformer-onnx", "models"))
+        };
 
-        if (!File.Exists(fastEncoderPath))
+        var modelsDir = modelsDirCandidates.FirstOrDefault(Directory.Exists);
+        if (modelsDir is null)
+        {
+            _output.WriteLine("⚠️ Modelli non disponibili - saltando test");
+            return;
+        }
+
+        var fastModelPath = Path.Combine(modelsDir, "tableformer_fast.onnx");
+
+        if (!File.Exists(fastModelPath))
         {
             _output.WriteLine("⚠️ Modelli non disponibili - saltando test");
             return;
