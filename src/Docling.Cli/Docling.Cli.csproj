@@ -5,17 +5,17 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AssemblyName>docling-cli</AssemblyName>
+    <!-- Suppress code analysis for CLI application -->
+    <NoWarn>$(NoWarn);CA1303;CA1308;CA1849;CA2007;IDE0011</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\submodules\ds4sd-docling-layout-heron-onnx\dotnet\LayoutSdk\LayoutSdk.csproj" />
-    <ProjectReference Include="..\submodules\ds4sd-docling-tableformer-onnx\dotnet\TableFormerTorchSharpSdk\TableFormerTorchSharpSdk.csproj" />
-    <ProjectReference Include="..\submodules\easyocrnet\EasyOcrNet\EasyOcrNet.csproj" />
+    <ProjectReference Include="..\DoclingNetSdk\DoclingNetSdk.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Serilog" Version="4.3.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.9" />
   </ItemGroup>
 
 </Project>

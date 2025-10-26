@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+
+    <!-- NuGet Package Settings -->
+    <PackageId>DoclingNetSdk</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>DoclingNet Contributors</Authors>
+    <Description>Unified SDK for document processing with AI-powered layout detection, OCR, and table structure recognition. Convert images and PDFs to structured documents and Markdown.</Description>
+    <PackageTags>document-processing;ocr;layout-detection;table-extraction;markdown;ai;ml;pdf;image</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/yourusername/doclingnet</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <!-- Code Analysis: Suppress certain rules for SDK wrapper code -->
+    <NoWarn>$(NoWarn);CA1848;CA2254;CA1307;CA1822;CA1513;CA2007;CA1812;CA1852;IDE0059;CA2000</NoWarn>
+  </PropertyGroup>
+
+  <!-- Core Docling Dependencies -->
+  <ItemGroup>
+    <ProjectReference Include="..\Docling.Core\Docling.Core.csproj" />
+    <ProjectReference Include="..\Docling.Export\Docling.Export.csproj" />
+  </ItemGroup>
+
+  <!-- AI/ML Submodules -->
+  <ItemGroup>
+    <ProjectReference Include="..\submodules\ds4sd-docling-layout-heron-onnx\dotnet\LayoutSdk\LayoutSdk.csproj" />
+    <ProjectReference Include="..\submodules\easyocrnet\EasyOcrNet\EasyOcrNet.csproj" />
+    <ProjectReference Include="..\submodules\ds4sd-docling-tableformer-onnx\dotnet\TableFormerTorchSharpSdk\TableFormerTorchSharpSdk.csproj" />
+  </ItemGroup>
+
+  <!-- External Dependencies -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9" />
+    <PackageReference Include="SkiaSharp" Version="3.119.1" />
+  </ItemGroup>
+
+  <!-- README for NuGet -->
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
