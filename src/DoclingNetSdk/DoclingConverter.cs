@@ -675,27 +675,25 @@ public sealed class DoclingConverter : IDisposable
                         columnCount: tableInfo.Columns);
 
                     builder.AddItem(tableItem);
+                    tableIndex++;
                 }
                 else
                 {
-                    // No table structure available, use placeholder
-                    builder.AddItem(new ParagraphItem(pageRef, bbox, "[Table]"));
+                    // No table structure available - skip this table
+                    // This matches Python Docling behavior when table recognition fails
+                    _logger.LogWarning("Table at ({X},{Y}) has no structure data, skipping", box.X, box.Y);
                 }
-
-                tableIndex++;
             }
             else
             {
                 // Add text from OCR if available
                 var ocrKey = $"{box.Label}_{box.X}_{box.Y}";
-                if (ocrTexts.TryGetValue(ocrKey, out var text))
+                if (ocrTexts.TryGetValue(ocrKey, out var text) && !string.IsNullOrWhiteSpace(text))
                 {
                     builder.AddItem(new ParagraphItem(pageRef, bbox, text));
                 }
-                else
-                {
-                    builder.AddItem(new ParagraphItem(pageRef, bbox, $"[{box.Label}]"));
-                }
+                // Skip elements without text content (like page-header, page-footer, etc.)
+                // This matches Python Docling behavior
             }
         }
 
