@@ -30,7 +30,7 @@ var artifactsPath = "./artifacts";
 var language = "en";
 var enableOcr = true;
 var enableTables = true;
-var variant = TableFormerVariant.Fast;
+var variant = TableFormerVariant.Accurate; // Default to Accurate for best quality
 var verbose = false;
 
 // Parse options

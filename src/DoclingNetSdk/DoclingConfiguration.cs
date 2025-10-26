@@ -34,9 +34,9 @@ public sealed class DoclingConfiguration
 
     /// <summary>
     /// TableFormer model variant (Fast, Base, or Accurate).
-    /// Default: Fast
+    /// Default: Accurate (best quality with only 4.8% performance cost)
     /// </summary>
-    public TableFormerVariant TableFormerVariant { get; set; } = TableFormerVariant.Fast;
+    public TableFormerVariant TableFormerVariant { get; set; } = TableFormerVariant.Accurate;
 
     /// <summary>
     /// Creates a default configuration.
